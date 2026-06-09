@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0] — 2026-06-09
+
+
+### Features
+
+- `mobile` apply dark brand theme to all remaining screens ([bc12728])
+
 ## [1.5.2] — 2026-06-09
 
 
