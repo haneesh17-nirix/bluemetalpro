@@ -14,19 +14,19 @@ jobs:
     name: TypeScript — ${{ matrix.package }}
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false   # run all packages even if one fails
+      fail-fast: false
       matrix:
         include:
           - package: shared
-            dir: packages/shared
+            workspace: packages/shared
           - package: backend
-            dir: backend
+            workspace: backend
           - package: web
-            dir: apps/web
+            workspace: apps/web
           - package: mobile
-            dir: apps/mobile
+            workspace: apps/mobile
           - package: weighbridge-agent
-            dir: packages/weighbridge-agent
+            workspace: packages/weighbridge-agent
 
     steps:
       - uses: actions/checkout@v4
@@ -35,15 +35,87 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        working-directory: ${{ matrix.dir }}
-        run: npm install --ignore-scripts
+      - name: Install dependencies (${{ matrix.package }})
+        run: npm ci --ignore-scripts --workspace=${{ matrix.workspace }} --workspace=packages/shared --include-workspace-root
 
       - name: Type-check
-        working-directory: ${{ matrix.dir }}
-        run: ./node_modules/.bin/tsc --noEmit
+        working-directory: ${{ matrix.workspace }}
+        run: npx tsc --noEmit
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Conventional commit lint — PRs only
+  # Ensures commit messages follow feat/fix/chore/etc. so auto-release works
+  # ─────────────────────────────────────────────────────────────────────────
+  commit-lint:
+    name: Conventional commits
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint PR commit messages
+        run: |
+          python3 - <<'EOF'
+          import subprocess, sys, re
+
+          # Get commits on this PR branch that aren't on main
+          result = subprocess.run(
+            ['git', 'log', 'origin/main..HEAD', '--pretty=format:%s'],
+            capture_output=True, text=True
+          )
+          commits = [l.strip() for l in result.stdout.splitlines() if l.strip()]
+
+          if not commits:
+              print("No commits to check (already merged?)")
+              sys.exit(0)
+
+          VALID = re.compile(
+            r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)'
+            r'(\([^)]+\))?(!)?:\s.+'
+          )
+          SKIP = re.compile(r'^(Merge |chore\(release\):)')
+
+          failed = []
+          for msg in commits:
+              if SKIP.match(msg):
+                  print(f"SKIP  {msg[:72]}")
+                  continue
+              if VALID.match(msg):
+                  print(f"PASS  {msg[:72]}")
+              else:
+                  print(f"FAIL  {msg[:72]}")
+                  failed.append(msg)
+
+          if failed:
+              print(f"\n{len(failed)} commit(s) do not follow conventional commit format.")
+              print("Expected: feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert: description")
+              print("Examples:  feat(sales): add bulk invoice export")
+              print("           fix: correct GST rounding on zero-rated items")
+              sys.exit(1)
+          print(f"\nAll {len(commits)} commit(s) are valid.")
+          EOF
+
+      - name: Lint PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          python3 - <<EOF
+          import sys, re
+          title = """$PR_TITLE"""
+          VALID = re.compile(
+            r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)'
+            r'(\([^)]+\))?(!)?:\s.+'
+          )
+          if VALID.match(title.strip()):
+              print(f"PASS  PR title: {title[:72]}")
+          else:
+              print(f"FAIL  PR title must follow conventional commit format.")
+              print(f"      Got: {title}")
+              sys.exit(1)
+          EOF
 
   # ─────────────────────────────────────────────────────────────────────────
   # SQL migration syntax check
@@ -122,6 +194,7 @@ jobs:
               # Database
               "database/migrations/001_initial.sql",
               "database/migrations/002_weighbridge_cameras.sql",
+              "database/migrations/003_test_accounts.sql",
               # Backend
               "backend/src/index.ts",
               "backend/src/routes/auth.ts",
@@ -163,6 +236,7 @@ jobs:
               "apps/web/src/app/cameras/page.tsx",
               # Mobile
               "apps/mobile/app.json",
+              "apps/mobile/eas.json",
               "apps/mobile/src/screens/LoginScreen.tsx",
               "apps/mobile/src/screens/DashboardScreen.tsx",
               "apps/mobile/src/screens/WeighbridgeScreen.tsx",
@@ -318,6 +392,7 @@ jobs:
       - secrets-scan
       - bicep-check
       - contract-tests
+      - commit-lint
     if: always()
     steps:
       - name: Gate

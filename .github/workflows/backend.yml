@@ -153,6 +153,7 @@ jobs:
           CONN="host=bluemetal-prod-postgres.postgres.database.azure.com port=5432 dbname=stonecrusherdb user=${{ secrets.DB_USER }} sslmode=require"
           psql "$CONN" -f database/migrations/001_initial.sql --set ON_ERROR_STOP=1 -q
           psql "$CONN" -f database/migrations/002_weighbridge_cameras.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/003_test_accounts.sql --set ON_ERROR_STOP=1 -q
 
       - name: Remove runner IP from firewall
         if: always()

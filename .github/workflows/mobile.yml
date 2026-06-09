@@ -5,7 +5,13 @@ on:
     branches: [main]
     paths:
       - 'apps/mobile/**'
+      - 'packages/shared/**'
       - '.github/workflows/mobile.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/shared/**'
   workflow_dispatch:
     inputs:
       platform:
@@ -19,18 +25,42 @@ on:
         required: true
         default: 'preview'
         type: choice
-        options: [preview, production]
+        options: [development, preview, production]
 
 env:
   NODE_VERSION: '20'
 
 jobs:
-  build:
-    name: EAS Build (${{ github.event.inputs.platform || 'android' }})
+  # ─────────────────────────────────────────
+  # 1. TypeScript check (all triggers)
+  # ─────────────────────────────────────────
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (mobile + shared only)
+        run: npm ci --ignore-scripts --workspace=apps/mobile --workspace=packages/shared --include-workspace-root
+
+      - name: Type-check
         working-directory: apps/mobile
+        run: npx tsc --noEmit
+
+  # ─────────────────────────────────────────
+  # 2. EAS Build — main push or manual trigger
+  # ─────────────────────────────────────────
+  build:
+    name: EAS Build (${{ inputs.profile || 'preview' }} / ${{ inputs.platform || 'android' }})
+    runs-on: ubuntu-latest
+    needs: typecheck
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v4
@@ -39,44 +69,26 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: apps/mobile/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts --workspace=apps/mobile --workspace=packages/shared --include-workspace-root
 
-      - name: Setup Expo
+      - name: Set up Expo + EAS
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Write .env
-        run: |
-          echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
+        working-directory: apps/mobile
+        run: echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
 
       - name: EAS Build
+        working-directory: apps/mobile
         run: |
           eas build \
-            --platform ${{ github.event.inputs.platform || 'android' }} \
-            --profile ${{ github.event.inputs.profile || 'preview' }} \
+            --platform "${{ inputs.platform || 'android' }}" \
+            --profile "${{ inputs.profile || 'preview' }}" \
             --non-interactive \
             --no-wait
-
-  # Type-check on every PR (fast, no EAS needed)
-  typecheck:
-    name: Type Check
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    defaults:
-      run:
-        working-directory: apps/mobile
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: apps/mobile/package-lock.json
-      - run: npm ci
-      - run: npx tsc --noEmit
