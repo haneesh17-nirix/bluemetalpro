@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1] — 2026-06-09
+
+
+### Bug Fixes
+
+- `deps` remove @types/pino-http — pino-http v9 ships its own types ([4eea3c8])
+
 ## [1.7.0] — 2026-06-09
 
 
