@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.5] — 2026-06-09
+
+
+### Chores
+
+- sync lockfile after v1.7.4 version bump ([2cfe073])
+
 ## [1.7.4] — 2026-06-09
 
 
