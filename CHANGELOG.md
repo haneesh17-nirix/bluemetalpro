@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3] — 2026-06-09
+
+
+### Bug Fixes
+
+- `web` add root page.tsx redirect → /login for SWA static export ([526d74e])
+
 ## [1.2.2] — 2026-06-09
 
 
