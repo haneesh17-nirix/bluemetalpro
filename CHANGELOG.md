@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1] — 2026-06-09
+
+
+### Bug Fixes
+
+- `mobile` link EAS project haneesh17/bluemetal-pro ([a5b9e19])
+
 ## [1.3.0] — 2026-06-09
 
 
