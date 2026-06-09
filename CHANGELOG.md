@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ci` install only relevant workspaces to avoid mobile native deps ([d622a66])
+
 ## [1.2.1] — 2026-06-09
 
 
