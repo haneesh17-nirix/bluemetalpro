@@ -3,7 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
   RefreshControl, StatusBar,
 } from 'react-native';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboard, getUpcomingMaintenance } from '../lib/api';

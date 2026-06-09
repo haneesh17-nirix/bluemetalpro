@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getWorkers, getAttendance, submitAttendance } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 const statusOptions = ['present', 'absent', 'half_day', 'leave'];
 

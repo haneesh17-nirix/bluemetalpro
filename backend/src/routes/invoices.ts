@@ -18,7 +18,7 @@ invoicesRouter.get('/:sale_id/pdf', async (req, res) => {
 
   const pdfBuffer = await generateInvoicePDF({ sale, items, company: config });
 
-  logAction('invoice.pdf_downloaded', { saleId: req.params.sale_id || req.params.id, by: req.user!.email });
+  logAction('invoice.pdf_downloaded', { saleId: req.params.sale_id, by: req.user!.email });
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `attachment; filename="${sale.invoice_number}.pdf"`);
   res.send(pdfBuffer);

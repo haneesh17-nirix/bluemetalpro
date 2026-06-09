@@ -14,7 +14,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getVehicles, createVehicle } from '../lib/api';
 import { colors, shadows, radius } from '../theme';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 function getStatusChip(status: string) {
   switch (status) {

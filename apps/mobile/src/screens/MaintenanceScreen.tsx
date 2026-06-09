@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getMaintenanceRecords } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 function getStatusChip(status: string) {
   switch (status) {

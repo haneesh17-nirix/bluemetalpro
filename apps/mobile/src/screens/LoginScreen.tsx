@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, ActivityIndicator, KeyboardAvoidingView, Platform,

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import { selectCrusher } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 import { colors, shadows, radius } from '../theme';
 
 export default function CrusherSelectScreen({ route, navigation }: any) {

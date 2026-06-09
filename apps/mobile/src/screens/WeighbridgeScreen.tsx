@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import dayjs from 'dayjs';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   stable:   { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },

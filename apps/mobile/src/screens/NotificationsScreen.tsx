@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } fr
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getNotifications, markAllRead } from '../lib/api';
 import dayjs from 'dayjs';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 export default function NotificationsScreen() {
   useEffect(() => { log.screen('Notifications'); }, []);

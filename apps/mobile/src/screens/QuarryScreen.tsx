@@ -5,7 +5,7 @@ import { getQuarrySales, createQuarrySale, getParties, getProducts, getVehicles 
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 export default function QuarryScreen() {
   useEffect(() => { log.screen('Quarry'); }, []);

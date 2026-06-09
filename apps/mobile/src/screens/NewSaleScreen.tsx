@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert,
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createSale, getParties, getProducts, getVehicles } from '../lib/api';
 import { Picker } from '@react-native-picker/picker';
-import { log } from '../../../packages/shared/src/utils/clientLogger';
+import { log } from '@bluemetal/shared';
 
 const C = { primary: '#1a3c5e', bg: '#f0f4f8', accent: '#f59e0b' };
 
