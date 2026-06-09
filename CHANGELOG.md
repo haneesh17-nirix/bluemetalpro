@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0] — 2026-06-09
+
+
+### Features
+
+- `ui` polish dashboard + sales pages ([3e56d2e])
+
 ## [1.7.6] — 2026-06-09
 
 
