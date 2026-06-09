@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.6] — 2026-06-09
+
+
+### Bug Fixes
+
+- `release` regenerate lockfile as part of version bump commit ([f71b997])
+
 ## [1.7.5] — 2026-06-09
 
 
