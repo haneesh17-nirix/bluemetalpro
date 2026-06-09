@@ -140,10 +140,13 @@ reportsRouter.get('/ledger/:party_id', async (req, res) => {
 // Dashboard KPIs
 reportsRouter.get('/dashboard', async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const [sales, purchases, pending, topProducts] = await Promise.all([
+  const [sales, purchases, pending, topProducts, monthSales, monthPurchases, recentSales, yesterdaySales] = await Promise.all([
+    // Today
     query(`SELECT SUM(grand_total) as total, COUNT(*) as count FROM sales WHERE sale_date = CURRENT_DATE AND status='confirmed' AND crusher_id = $1`, [cid]),
     query(`SELECT SUM(grand_total) as total FROM purchases WHERE purchase_date = CURRENT_DATE AND crusher_id = $1`, [cid]),
+    // All-time receivables
     query(`SELECT SUM(balance_due) as total FROM sales WHERE status='confirmed' AND crusher_id = $1`, [cid]),
+    // Top products last 30 days
     query(`
       SELECT pr.name, SUM(si.quantity) as qty, SUM(si.total_amount) as amount
       FROM sale_items si JOIN products pr ON pr.id = si.product_id
@@ -151,6 +154,19 @@ reportsRouter.get('/dashboard', async (req, res) => {
       WHERE s.sale_date >= now() - interval '30 days' AND s.crusher_id = $1
       GROUP BY pr.name ORDER BY amount DESC LIMIT 5
     `, [cid]),
+    // This month totals
+    query(`SELECT SUM(grand_total) as total, COUNT(*) as count FROM sales WHERE DATE_TRUNC('month', sale_date)=DATE_TRUNC('month', CURRENT_DATE) AND status='confirmed' AND crusher_id = $1`, [cid]),
+    query(`SELECT SUM(grand_total) as total FROM purchases WHERE DATE_TRUNC('month', purchase_date)=DATE_TRUNC('month', CURRENT_DATE) AND crusher_id = $1`, [cid]),
+    // Recent 6 sales
+    query(`
+      SELECT s.id, s.invoice_number, s.sale_date, s.grand_total, s.balance_due, s.status,
+             s.payment_mode, COALESCE(p.name, s.party_name, 'Cash') AS party_name
+      FROM sales s LEFT JOIN parties p ON p.id = s.party_id
+      WHERE s.crusher_id = $1 AND s.status='confirmed'
+      ORDER BY s.created_at DESC LIMIT 6
+    `, [cid]),
+    // Yesterday for delta
+    query(`SELECT SUM(grand_total) as total, COUNT(*) as count FROM sales WHERE sale_date = CURRENT_DATE - 1 AND status='confirmed' AND crusher_id = $1`, [cid]),
   ]);
   logAction('reports.dashboard_viewed', { by: req.user!.email });
   res.json({
@@ -158,5 +174,9 @@ reportsRouter.get('/dashboard', async (req, res) => {
     today_purchases: purchases[0],
     total_pending: pending[0],
     top_products: topProducts,
+    month_sales: monthSales[0],
+    month_purchases: monthPurchases[0],
+    recent_sales: recentSales,
+    yesterday_sales: yesterdaySales[0],
   });
 });
