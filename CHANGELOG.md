@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1] — 2026-06-09
+
+
+### Documentation
+
+- update architecture doc and README to reflect current deployment ([65b9095])
+
 ## [1.5.0] — 2026-06-09
 
 
