@@ -1,9 +1,16 @@
 {
   "cli": {
     "version": ">= 12.0.0",
-    "promptToConfigurePushNotifications": false
+    "promptToConfigurePushNotifications": false,
+    "appVersionSource": "local"
   },
   "build": {
+    "base": {
+      "node": "20.18.0",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/api"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
