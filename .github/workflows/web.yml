@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - 'apps/web/**'
+      - 'packages/shared/**'
       - '.github/workflows/web.yml'
   pull_request:
     branches: [main]
     paths:
       - 'apps/web/**'
-  workflow_dispatch:   # allow manual trigger from GitHub UI
+      - 'packages/shared/**'
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '20'
@@ -22,9 +24,6 @@ jobs:
   build:
     name: Build Next.js
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
 
     steps:
       - uses: actions/checkout@v4
@@ -33,19 +32,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: apps/web/package-lock.json
+          cache-dependency-path: package-lock.json  # root workspace lock
 
-      - name: Install dependencies
+      - name: Install all workspace dependencies
         run: npm ci
 
-      - name: Type-check
-        run: ./node_modules/.bin/tsc --noEmit
+      - name: Type-check web
+        working-directory: apps/web
+        run: ./node_modules/.bin/tsc --noEmit || npx tsc --noEmit
 
-      - name: Build (static export → out/)
+      - name: Build (static export → apps/web/out/)
+        working-directory: apps/web
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: npm run build
-        # next.config.js output:'export' writes to apps/web/out/
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -80,8 +80,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: apps/web/out      # pre-built static files
-          output_location: ''             # already the final output
+          app_location: apps/web/out
+          output_location: ''
           skip_app_build: true
 
   # ─────────────────────────────────────────
@@ -91,9 +91,6 @@ jobs:
     name: PR Preview
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    defaults:
-      run:
-        working-directory: apps/web
 
     steps:
       - uses: actions/checkout@v4
@@ -102,12 +99,16 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: apps/web/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install & build
+      - name: Install all workspace dependencies
+        run: npm ci
+
+      - name: Build static export
+        working-directory: apps/web
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-        run: npm ci && npm run build
+        run: npm run build
 
       - name: Deploy PR preview
         uses: Azure/static-web-apps-deploy@v1
@@ -119,7 +120,6 @@ jobs:
           output_location: ''
           skip_app_build: true
 
-  # Close PR preview environment
   close_preview:
     name: Close PR Preview
     runs-on: ubuntu-latest
