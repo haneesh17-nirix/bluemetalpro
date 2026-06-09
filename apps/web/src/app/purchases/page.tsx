@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
+import TopBar from '@/components/layout/TopBar';
 import { getPurchases, createPurchase, getParties, getProducts, getVehicles } from '@/lib/api';
 import { Plus, X, Package } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -51,11 +52,11 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="text-lg font-bold text-[#1a3c5e]">New Purchase Bill</h2>
-          <button onClick={onClose}><X size={20} className="text-gray-500" /></button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">New Purchase Bill</h2>
+          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
 
@@ -74,7 +75,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
               <select required value={form.party_id} onChange={e => {
                 const p = (parties as any[]).find((x: any) => x.id === e.target.value);
                 setForm(f => ({ ...f, party_id: e.target.value, party_name: p?.name || '' }));
-              }} className="input">
+              }} className="select">
                 <option value="">Select supplier…</option>
                 {(parties as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
@@ -84,7 +85,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
               <select value={form.vehicle_id} onChange={e => {
                 const v = (vehicles as any[]).find((x: any) => x.id === e.target.value);
                 setForm(f => ({ ...f, vehicle_id: e.target.value, vehicle_number: v?.registration_number || '' }));
-              }} className="input">
+              }} className="select">
                 <option value="">None</option>
                 {(vehicles as any[]).map((v: any) => <option key={v.id} value={v.id}>{v.registration_number}</option>)}
               </select>
@@ -94,20 +95,20 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
           {/* Items */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm font-semibold text-gray-700">Items</p>
+              <p className="text-sm font-semibold text-white">Items</p>
               <button type="button" onClick={() => setItems(p => [...p, emptyItem()])}
-                className="text-xs text-[#1a3c5e] font-medium hover:underline">+ Add item</button>
+                className="btn-ghost text-xs px-3 py-1.5">+ Add item</button>
             </div>
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded-lg">
+                <div key={i} className="grid grid-cols-12 gap-2 items-end bg-white/5 border border-white/10 p-3 rounded-lg">
                   <div className="col-span-4">
                     <label className="label">Product</label>
                     <select value={item.product_id} onChange={e => {
                       const p = (products as any[]).find((x: any) => x.id === e.target.value);
                       updateItem(i, 'product_id', e.target.value);
                       if (p) { updateItem(i, 'gst_rate', String(p.gst_rate)); updateItem(i, 'unit', p.unit); }
-                    }} className="input">
+                    }} className="select">
                       <option value="">Select…</option>
                       {(products as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
@@ -122,19 +123,19 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
                   </div>
                   <div className="col-span-2">
                     <label className="label">GST %</label>
-                    <select value={item.gst_rate} onChange={e => updateItem(i, 'gst_rate', e.target.value)} className="input">
+                    <select value={item.gst_rate} onChange={e => updateItem(i, 'gst_rate', e.target.value)} className="select">
                       {[0, 5, 12, 18, 28].map(r => <option key={r} value={r}>{r}%</option>)}
                     </select>
                   </div>
                   <div className="col-span-1 text-right">
                     <label className="label">Amt</label>
-                    <p className="text-xs font-semibold text-gray-700 py-2">
+                    <p className="text-xs font-semibold text-white/70 py-2">
                       ₹{(Number(item.quantity) * Number(item.rate)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                   <div className="col-span-1 flex justify-end pb-1">
                     {items.length > 1 && (
-                      <button type="button" onClick={() => setItems(p => p.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-600">
+                      <button type="button" onClick={() => setItems(p => p.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300">
                         <X size={14} />
                       </button>
                     )}
@@ -145,10 +146,10 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Totals */}
-          <div className="bg-[#1a3c5e] text-white rounded-xl p-4 grid grid-cols-3 gap-4 text-center text-sm">
-            <div><p className="opacity-60">Subtotal</p><p className="font-bold">₹{subtotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
-            <div><p className="opacity-60">GST</p><p className="font-bold">₹{gstTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
-            <div><p className="opacity-60">Grand Total</p><p className="font-bold text-lg">₹{grandTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 grid grid-cols-3 gap-4 text-center text-sm">
+            <div><p className="text-white/50 mb-1">Subtotal</p><p className="font-bold text-white">₹{subtotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
+            <div><p className="text-white/50 mb-1">GST</p><p className="font-bold text-white">₹{gstTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
+            <div><p className="text-white/50 mb-1">Grand Total</p><p className="font-bold text-lg text-white">₹{grandTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
           </div>
 
           {/* Payment */}
@@ -159,7 +160,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <label className="label">Payment Mode</label>
-              <select value={form.payment_mode} onChange={e => setForm(f => ({ ...f, payment_mode: e.target.value }))} className="input">
+              <select value={form.payment_mode} onChange={e => setForm(f => ({ ...f, payment_mode: e.target.value }))} className="select">
                 {['credit', 'cash', 'upi', 'cheque', 'neft', 'rtgs'].map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
               </select>
             </div>
@@ -169,19 +170,14 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border rounded-lg text-gray-600">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="px-6 py-2 bg-[#1a3c5e] text-white text-sm font-medium rounded-lg disabled:opacity-60 hover:bg-[#2563a8]">
+          <div className="flex gap-3 mt-6 justify-end">
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+            <button type="submit" disabled={mutation.isPending} className="btn-primary disabled:opacity-60">
               {mutation.isPending ? 'Saving…' : 'Record Purchase'}
             </button>
           </div>
         </form>
       </div>
-      <style jsx global>{`
-        .label { display:block; font-size:.75rem; font-weight:500; color:#4b5563; margin-bottom:3px; }
-        .input { width:100%; border:1px solid #d1d5db; border-radius:8px; padding:7px 10px; font-size:.875rem; outline:none; background:#fff; }
-        .input:focus { border-color:#1a3c5e; }
-      `}</style>
     </div>
   );
 }
@@ -201,93 +197,91 @@ export default function PurchasesPage() {
   const totalDue = totalAmount - totalPaid;
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 p-8 min-h-screen bg-gray-50">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1a3c5e]">Purchases</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Raw material and supply bills</p>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar
+          title="Purchases"
+          subtitle="Track procurement and supplier orders"
+          actions={
+            <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+              <Plus size={16} /> New Purchase
+            </button>
+          }
+        />
+        <main className="flex-1 overflow-y-auto p-6">
+          {/* Summary cards */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: 'Total Purchases', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-white' },
+              { label: 'Amount Paid', value: `₹${totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-emerald-400' },
+              { label: 'Balance Due', value: `₹${totalDue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-red-400' },
+            ].map(c => (
+              <div key={c.label} className="card p-4">
+                <p className="text-xs text-white/50 uppercase font-medium mb-1">{c.label}</p>
+                <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+              </div>
+            ))}
           </div>
-          <button onClick={() => setShowNew(true)} className="flex items-center gap-2 bg-[#1a3c5e] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-[#2563a8]">
-            <Plus size={16} /> New Purchase
-          </button>
-        </div>
 
-        {/* Summary cards */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {[
-            { label: 'Total Purchases', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-[#1a3c5e]' },
-            { label: 'Amount Paid', value: `₹${totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-green-600' },
-            { label: 'Balance Due', value: `₹${totalDue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-red-600' },
-          ].map(c => (
-            <div key={c.label} className="bg-white rounded-xl shadow-sm p-4">
-              <p className="text-xs text-gray-500">{c.label}</p>
-              <p className={`text-xl font-bold mt-1 ${c.color}`}>{c.value}</p>
+          {/* Filters */}
+          <div className="card p-4 mb-5 flex gap-3 items-end flex-wrap">
+            <div>
+              <label className="label">From</label>
+              <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
             </div>
-          ))}
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex gap-3 items-end">
-          <div>
-            <label className="label">From</label>
-            <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
+            <div>
+              <label className="label">To</label>
+              <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
+            </div>
           </div>
-          <div>
-            <label className="label">To</label>
-            <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
-          </div>
-        </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                {['Bill No.', 'Date', 'Supplier', 'Vehicle', 'Grand Total', 'Paid', 'Balance', 'Mode'].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {isLoading ? (
-                <tr><td colSpan={8} className="text-center py-12 text-gray-400">Loading…</td></tr>
-              ) : !(purchases as any[]).length ? (
-                <tr>
-                  <td colSpan={8}>
-                    <div className="flex flex-col items-center py-16 text-gray-300">
-                      <Package size={40} className="mb-2" />
-                      <p className="text-sm">No purchases in this period</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (purchases as any[]).map((p: any) => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-[#1a3c5e]">{p.bill_number}</td>
-                  <td className="px-4 py-3 text-gray-600">{dayjs(p.purchase_date).format('DD/MM/YYYY')}</td>
-                  <td className="px-4 py-3">{p.party_name || '—'}</td>
-                  <td className="px-4 py-3 text-gray-500">{p.vehicle_number || '—'}</td>
-                  <td className="px-4 py-3 font-semibold">₹{Number(p.grand_total).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-                  <td className="px-4 py-3 text-green-600">₹{Number(p.amount_paid).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-                  <td className={`px-4 py-3 font-medium ${Number(p.balance_due) > 0 ? 'text-red-600' : 'text-gray-400'}`}>
-                    ₹{Number(p.balance_due).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs uppercase font-medium">{p.payment_mode}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+          {/* Table */}
+          <div className="card overflow-hidden">
+            <div className="table-wrapper">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    {['Bill No.', 'Date', 'Supplier', 'Vehicle', 'Grand Total', 'Paid', 'Balance', 'Mode'].map(h => (
+                      <th key={h}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    <tr><td colSpan={8} className="text-center py-12 text-white/40">Loading…</td></tr>
+                  ) : !(purchases as any[]).length ? (
+                    <tr>
+                      <td colSpan={8}>
+                        <div className="flex flex-col items-center py-16 text-white/30">
+                          <Package size={40} className="mb-2" />
+                          <p className="text-sm">No purchases in this period</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (purchases as any[]).map((p: any) => (
+                    <tr key={p.id}>
+                      <td className="font-medium text-white">{p.bill_number}</td>
+                      <td>{dayjs(p.purchase_date).format('DD/MM/YYYY')}</td>
+                      <td>{p.party_name || '—'}</td>
+                      <td>{p.vehicle_number || '—'}</td>
+                      <td className="font-semibold text-white">₹{Number(p.grand_total).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                      <td className="text-emerald-400">₹{Number(p.amount_paid).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                      <td className={Number(p.balance_due) > 0 ? 'text-red-400 font-medium' : 'text-white/40'}>
+                        ₹{Number(p.balance_due).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                      </td>
+                      <td>
+                        <span className="badge-gray uppercase">{p.payment_mode}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
       {showNew && <NewPurchaseModal onClose={() => setShowNew(false)} />}
-      <style jsx global>{`
-        .label { display:block; font-size:.75rem; font-weight:500; color:#4b5563; margin-bottom:3px; }
-        .input { border:1px solid #d1d5db; border-radius:8px; padding:7px 10px; font-size:.875rem; outline:none; background:#fff; }
-        .input:focus { border-color:#1a3c5e; }
-      `}</style>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
+import TopBar from '@/components/layout/TopBar';
 import { getQuarrySales, createQuarrySale, getProducts, getVehicles } from '@/lib/api';
 import { Mountain, Plus, X } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -49,13 +50,13 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
   const amount = Number(form.quantity) * Number(form.rate);
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="font-bold text-[#1a3c5e] text-lg">New Quarry Sale</h2>
-          <button onClick={onClose}><X size={18} className="text-gray-400" /></button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">New Quarry Entry</h2>
+          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
+        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">Date *</label>
@@ -63,21 +64,21 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <label className="label">Payment Mode *</label>
-              <select required value={form.payment_mode} onChange={e => set('payment_mode', e.target.value)} className="input">
+              <select required value={form.payment_mode} onChange={e => set('payment_mode', e.target.value)} className="select">
                 {['cash', 'cheque', 'upi', 'neft', 'rtgs', 'credit'].map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
               </select>
             </div>
           </div>
           <div>
             <label className="label">Material *</label>
-            <select required value={form.product_id} onChange={e => handleProductChange(e.target.value)} className="input">
+            <select required value={form.product_id} onChange={e => handleProductChange(e.target.value)} className="select">
               <option value="">Select material…</option>
               {(products as any[]).map(p => <option key={p.id} value={p.id}>{p.name} ({p.unit})</option>)}
             </select>
           </div>
           <div>
             <label className="label">Vehicle</label>
-            <select value={form.vehicle_id} onChange={e => handleVehicleChange(e.target.value)} className="input">
+            <select value={form.vehicle_id} onChange={e => handleVehicleChange(e.target.value)} className="select">
               <option value="">Select vehicle…</option>
               {(vehicles as any[]).map(v => <option key={v.id} value={v.id}>{v.vehicle_number}</option>)}
             </select>
@@ -93,7 +94,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
           {amount > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm font-medium text-amber-800">
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm font-medium text-amber-300">
               Total: ₹{amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
             </div>
           )}
@@ -105,19 +106,14 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
             <label className="label">Notes</label>
             <input value={form.notes} onChange={e => set('notes', e.target.value)} className="input" placeholder="Optional notes" />
           </div>
-          <div className="flex justify-end gap-2 pt-1">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border rounded-lg text-gray-600">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="px-5 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg disabled:opacity-60 hover:bg-amber-700">
+          <div className="flex gap-3 mt-6 justify-end">
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+            <button type="submit" disabled={mutation.isPending} className="btn-primary disabled:opacity-60">
               {mutation.isPending ? 'Saving…' : 'Record Sale'}
             </button>
           </div>
         </form>
       </div>
-      <style jsx global>{`
-        .label { display:block; font-size:.75rem; font-weight:500; color:#4b5563; margin-bottom:3px; }
-        .input { width:100%; border:1px solid #d1d5db; border-radius:8px; padding:7px 10px; font-size:.875rem; outline:none; }
-        .input:focus { border-color:#1a3c5e; }
-      `}</style>
     </div>
   );
 }
@@ -143,90 +139,90 @@ export default function QuarryPage() {
   const totalQty = filtered.reduce((sum: number, s: any) => sum + Number(s.quantity || 0), 0);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 p-8 min-h-screen bg-gray-50">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1a3c5e]">Quarry Sales</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Direct stone/material dispatch records</p>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar
+          title="Quarry"
+          subtitle="Stone extraction and internal transfers"
+          actions={
+            <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+              <Plus size={16} /> New Entry
+            </button>
+          }
+        />
+        <main className="flex-1 overflow-y-auto p-6">
+          {/* Summary cards */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: 'Total Sales', value: filtered.length.toString(), unit: 'entries' },
+              { label: 'Total Quantity', value: totalQty.toFixed(2), unit: 'MT' },
+              { label: 'Total Amount', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, unit: '' },
+            ].map(c => (
+              <div key={c.label} className="card p-5">
+                <p className="text-xs text-white/50 uppercase font-medium mb-1">{c.label}</p>
+                <p className="text-2xl font-bold text-white mt-1">{c.value}</p>
+                {c.unit && <p className="text-xs text-white/40 mt-0.5">{c.unit}</p>}
+              </div>
+            ))}
           </div>
-          <button onClick={() => setShowNew(true)} className="flex items-center gap-2 bg-amber-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-700">
-            <Plus size={16} /> New Sale
-          </button>
-        </div>
 
-        {/* Summary cards */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {[
-            { label: 'Total Sales', value: filtered.length.toString(), unit: 'entries' },
-            { label: 'Total Quantity', value: totalQty.toFixed(2), unit: 'MT' },
-            { label: 'Total Amount', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, unit: '' },
-          ].map(c => (
-            <div key={c.label} className="bg-white rounded-xl shadow-sm p-5">
-              <p className="text-xs text-gray-500 uppercase font-medium">{c.label}</p>
-              <p className="text-2xl font-bold text-[#1a3c5e] mt-1">{c.value}</p>
-              {c.unit && <p className="text-xs text-gray-400">{c.unit}</p>}
+          {/* Filters */}
+          <div className="card p-4 mb-5 flex flex-wrap gap-3 items-end">
+            <div>
+              <label className="label">From</label>
+              <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
             </div>
-          ))}
-        </div>
+            <div>
+              <label className="label">To</label>
+              <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="label">Search</label>
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Material or vehicle…" className="input w-full" />
+            </div>
+          </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex flex-wrap gap-3 items-center">
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">From</label>
-            <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#1a3c5e]" />
+          {/* Table */}
+          <div className="card overflow-hidden">
+            <div className="table-wrapper">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    {['Date', 'Material', 'Vehicle', 'Quantity', 'Rate', 'Amount', 'Mode'].map(h => (
+                      <th key={h}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    <tr><td colSpan={7} className="text-center py-12 text-white/40">Loading…</td></tr>
+                  ) : !filtered.length ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-14 text-white/30">
+                        <Mountain size={36} className="mx-auto mb-2 opacity-30" />
+                        <p className="text-sm">No quarry sales in this period</p>
+                      </td>
+                    </tr>
+                  ) : filtered.map((s: any) => (
+                    <tr key={s.id}>
+                      <td>{dayjs(s.sale_date).format('DD MMM YYYY')}</td>
+                      <td className="font-medium text-white">{s.product_name}</td>
+                      <td>{s.vehicle_number || '—'}</td>
+                      <td>{Number(s.quantity).toFixed(2)} {s.unit}</td>
+                      <td>₹{Number(s.rate).toLocaleString('en-IN')}</td>
+                      <td className="font-semibold text-white">₹{Number(s.amount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                      <td>
+                        <span className="badge-gray uppercase">{s.payment_mode}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">To</label>
-            <input type="date" value={to} onChange={e => setTo(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#1a3c5e]" />
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Material or vehicle…"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#1a3c5e]" />
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                {['Date', 'Material', 'Vehicle', 'Quantity', 'Rate', 'Amount', 'Mode'].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {isLoading ? (
-                <tr><td colSpan={7} className="text-center py-12 text-gray-400">Loading…</td></tr>
-              ) : !filtered.length ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-14 text-gray-300">
-                    <Mountain size={36} className="mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">No quarry sales in this period</p>
-                  </td>
-                </tr>
-              ) : filtered.map((s: any) => (
-                <tr key={s.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 text-gray-600">{dayjs(s.sale_date).format('DD MMM YYYY')}</td>
-                  <td className="px-4 py-3 font-medium text-gray-800">{s.product_name}</td>
-                  <td className="px-4 py-3 text-gray-600">{s.vehicle_number || '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{Number(s.quantity).toFixed(2)} {s.unit}</td>
-                  <td className="px-4 py-3 text-gray-600">₹{Number(s.rate).toLocaleString('en-IN')}</td>
-                  <td className="px-4 py-3 font-semibold text-gray-800">₹{Number(s.amount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase">{s.payment_mode}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+        </main>
+      </div>
       {showNew && <NewQuarrySaleModal onClose={() => setShowNew(false)} />}
     </div>
   );

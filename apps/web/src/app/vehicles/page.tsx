@@ -3,16 +3,17 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
+import TopBar from '@/components/layout/TopBar';
 import { getVehicles, createVehicle } from '@/lib/api';
 import api from '@/lib/api';
 import { Plus, X, Truck } from 'lucide-react';
 
 type VehicleStatus = 'active' | 'maintenance' | 'retired';
 
-const statusStyles: Record<VehicleStatus, string> = {
-  active: 'bg-green-100 text-green-700',
-  maintenance: 'bg-amber-100 text-amber-700',
-  retired: 'bg-gray-100 text-gray-500',
+const statusBadge: Record<VehicleStatus, string> = {
+  active: 'badge-gem',
+  maintenance: 'badge-gold',
+  retired: 'badge-gray',
 };
 
 const emptyForm = { registration_number: '', vehicle_type: '', owner_name: '', owner_phone: '', capacity_mt: '', notes: '' };
@@ -50,122 +51,127 @@ export default function VehiclesPage() {
   const inMaint = (vehicles as any[]).filter((v: any) => v.status === 'maintenance').length;
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Vehicles</h1>
-          <button onClick={() => { setEditVehicle(null); setForm(emptyForm); setShowForm(true); }}
-            className="flex items-center gap-2 bg-[#1a3c5e] text-white px-4 py-2 rounded-lg hover:bg-[#2563a8] transition-colors text-sm font-medium">
-            <Plus size={16} /> Add Vehicle
-          </button>
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar
+          title="Vehicles"
+          subtitle="Fleet management and status tracking"
+          actions={
+            <button
+              onClick={() => { setEditVehicle(null); setForm(emptyForm); setShowForm(true); }}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus size={16} /> Add Vehicle
+            </button>
+          }
+        />
+        <main className="flex-1 overflow-y-auto p-6">
 
-        {/* Summary */}
-        <div className="flex gap-5 mb-6">
-          {[
-            { label: 'Total', value: (vehicles as any[]).length, color: 'bg-blue-500' },
-            { label: 'Active', value: active, color: 'bg-green-500' },
-            { label: 'In Maintenance', value: inMaint, color: 'bg-amber-500' },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl shadow-sm px-6 py-4 flex items-center gap-4">
-              <div className={`${s.color} w-10 h-10 rounded-lg flex items-center justify-center`}>
-                <Truck size={18} className="text-white" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{s.value}</p>
-                <p className="text-sm text-gray-500">{s.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Vehicles grid */}
-        <div className="grid grid-cols-3 gap-4">
-          {(vehicles as any[]).map((v: any) => (
-            <div key={v.id} className="bg-white rounded-xl shadow-sm p-5">
-              <div className="flex justify-between items-start mb-3">
-                <div className="bg-[#1a3c5e] text-white text-sm font-bold px-3 py-1 rounded-lg">
-                  {v.registration_number}
+          {/* Summary */}
+          <div className="flex gap-5 mb-6">
+            {[
+              { label: 'Total', value: (vehicles as any[]).length, iconClass: 'bg-blue-500/20 text-blue-400' },
+              { label: 'Active', value: active, iconClass: 'bg-emerald-500/20 text-emerald-400' },
+              { label: 'In Maintenance', value: inMaint, iconClass: 'bg-amber-500/20 text-amber-400' },
+            ].map(s => (
+              <div key={s.label} className="card px-6 py-4 flex items-center gap-4">
+                <div className={`${s.iconClass} w-10 h-10 rounded-lg flex items-center justify-center`}>
+                  <Truck size={18} />
                 </div>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusStyles[v.status as VehicleStatus]}`}>{v.status}</span>
+                <div>
+                  <p className="text-2xl font-bold text-white">{s.value}</p>
+                  <p className="text-sm text-white/50">{s.label}</p>
+                </div>
               </div>
-              <p className="font-medium text-gray-700">{v.vehicle_type || 'Unknown type'}</p>
-              <p className="text-sm text-gray-500 mt-1">{v.owner_name || '—'}</p>
-              {v.owner_phone && <p className="text-xs text-gray-400">{v.owner_phone}</p>}
-              {v.capacity_mt && <p className="text-xs text-blue-600 mt-2 font-medium">{v.capacity_mt} MT capacity</p>}
-              {v.notes && <p className="text-xs text-gray-400 mt-1 truncate">{v.notes}</p>}
-              <button onClick={() => openEdit(v)} className="mt-3 text-xs text-[#1a3c5e] hover:underline font-medium">Edit</button>
-            </div>
-          ))}
-        </div>
-        {!(vehicles as any[]).length && (
-          <div className="text-center py-16 text-gray-400">
-            <Truck size={40} className="mx-auto mb-2 opacity-30" />
-            <p>No vehicles added yet</p>
+            ))}
           </div>
-        )}
 
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg">
-              <div className="flex justify-between items-center px-6 py-4 border-b">
-                <h2 className="text-lg font-bold text-[#1a3c5e]">{editVehicle ? 'Edit Vehicle' : 'Add Vehicle'}</h2>
-                <button onClick={() => setShowForm(false)}><X size={20} /></button>
-              </div>
-              <form onSubmit={e => { e.preventDefault(); mutation.mutate({ ...form, capacity_mt: Number(form.capacity_mt) || null }); }} className="p-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <label className="label">Registration Number *</label>
-                    <input required value={form.registration_number} onChange={e => setForm(f => ({ ...f, registration_number: e.target.value.toUpperCase() }))} className="input" placeholder="TN 38 AB 1234" />
-                  </div>
-                  <div>
-                    <label className="label">Vehicle Type</label>
-                    <input value={form.vehicle_type} onChange={e => setForm(f => ({ ...f, vehicle_type: e.target.value }))} className="input" placeholder="Tipper, Tractor, JCB…" />
-                  </div>
-                  <div>
-                    <label className="label">Capacity (MT)</label>
-                    <input type="number" value={form.capacity_mt} onChange={e => setForm(f => ({ ...f, capacity_mt: e.target.value }))} className="input" min="0" step="0.1" />
-                  </div>
-                  <div>
-                    <label className="label">Owner Name</label>
-                    <input value={form.owner_name} onChange={e => setForm(f => ({ ...f, owner_name: e.target.value }))} className="input" />
-                  </div>
-                  <div>
-                    <label className="label">Owner Phone</label>
-                    <input value={form.owner_phone} onChange={e => setForm(f => ({ ...f, owner_phone: e.target.value }))} className="input" />
-                  </div>
-                  {editVehicle && (
-                    <div>
-                      <label className="label">Status</label>
-                      <select value={(form as any).status || 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.value }))} className="input">
-                        <option value="active">Active</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="retired">Retired</option>
-                      </select>
+          {/* Vehicles grid */}
+          {(vehicles as any[]).length ? (
+            <div className="grid grid-cols-3 gap-4">
+              {(vehicles as any[]).map((v: any) => (
+                <div key={v.id} className="card p-5">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="bg-[#1e3a5f] border border-[#263d5e] text-white text-sm font-bold px-3 py-1 rounded-lg">
+                      {v.registration_number}
                     </div>
-                  )}
-                  <div className="col-span-2">
-                    <label className="label">Notes</label>
-                    <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="input" />
+                    <span className={`${statusBadge[v.status as VehicleStatus]} capitalize`}>{v.status}</span>
                   </div>
+                  <p className="font-medium text-white">{v.vehicle_type || 'Unknown type'}</p>
+                  <p className="text-sm text-white/60 mt-1">{v.owner_name || '—'}</p>
+                  {v.owner_phone && <p className="text-xs text-white/40">{v.owner_phone}</p>}
+                  {v.capacity_mt && <p className="text-xs text-amber-400 mt-2 font-medium">{v.capacity_mt} MT capacity</p>}
+                  {v.notes && <p className="text-xs text-white/30 mt-1 truncate">{v.notes}</p>}
+                  <button onClick={() => openEdit(v)} className="btn-ghost text-xs px-2 py-1 mt-3">Edit</button>
                 </div>
-                <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 border rounded-lg text-sm">Cancel</button>
-                  <button type="submit" disabled={mutation.isPending} className="px-6 py-2 bg-[#1a3c5e] text-white rounded-lg text-sm font-medium disabled:opacity-60">
-                    {mutation.isPending ? 'Saving…' : editVehicle ? 'Update' : 'Add Vehicle'}
-                  </button>
-                </div>
-              </form>
+              ))}
             </div>
+          ) : (
+            <div className="text-center py-16 text-white/30">
+              <Truck size={40} className="mx-auto mb-2 opacity-30" />
+              <p>No vehicles added yet</p>
+            </div>
+          )}
+
+        </main>
+      </div>
+
+      {/* Add/Edit modal */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">{editVehicle ? 'Edit Vehicle' : 'Add Vehicle'}</h2>
+              <button onClick={() => setShowForm(false)} className="btn-ghost p-2"><X size={18} /></button>
+            </div>
+            <form onSubmit={e => { e.preventDefault(); mutation.mutate({ ...form, capacity_mt: Number(form.capacity_mt) || null }); }}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="label">Registration Number *</label>
+                  <input required value={form.registration_number} onChange={e => setForm(f => ({ ...f, registration_number: e.target.value.toUpperCase() }))} className="input" placeholder="TN 38 AB 1234" />
+                </div>
+                <div>
+                  <label className="label">Vehicle Type</label>
+                  <input value={form.vehicle_type} onChange={e => setForm(f => ({ ...f, vehicle_type: e.target.value }))} className="input" placeholder="Tipper, Tractor, JCB…" />
+                </div>
+                <div>
+                  <label className="label">Capacity (MT)</label>
+                  <input type="number" value={form.capacity_mt} onChange={e => setForm(f => ({ ...f, capacity_mt: e.target.value }))} className="input" min="0" step="0.1" />
+                </div>
+                <div>
+                  <label className="label">Owner Name</label>
+                  <input value={form.owner_name} onChange={e => setForm(f => ({ ...f, owner_name: e.target.value }))} className="input" />
+                </div>
+                <div>
+                  <label className="label">Owner Phone</label>
+                  <input value={form.owner_phone} onChange={e => setForm(f => ({ ...f, owner_phone: e.target.value }))} className="input" />
+                </div>
+                {editVehicle && (
+                  <div>
+                    <label className="label">Status</label>
+                    <select value={(form as any).status || 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.value }))} className="select">
+                      <option value="active">Active</option>
+                      <option value="maintenance">Maintenance</option>
+                      <option value="retired">Retired</option>
+                    </select>
+                  </div>
+                )}
+                <div className="col-span-2">
+                  <label className="label">Notes</label>
+                  <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="input" />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6 justify-end">
+                <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="submit" disabled={mutation.isPending} className="btn-primary">
+                  {mutation.isPending ? 'Saving…' : editVehicle ? 'Update' : 'Add Vehicle'}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </main>
-      <style jsx global>{`
-        .label { display:block; font-size:.75rem; font-weight:500; color:#4b5563; margin-bottom:4px; }
-        .input { width:100%; border:1px solid #d1d5db; border-radius:8px; padding:8px 12px; font-size:.875rem; outline:none; }
-        .input:focus { border-color:#1a3c5e; }
-      `}</style>
+        </div>
+      )}
     </div>
   );
 }

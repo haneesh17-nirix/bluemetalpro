@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { getSales, createSale, getParties, getProducts, getVehicles, downloadInvoice } from '@/lib/api';
 import Sidebar from '@/components/layout/Sidebar';
+import TopBar from '@/components/layout/TopBar';
 import { Plus, Download, X, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 
@@ -66,211 +67,231 @@ export default function SalesPage() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Sales</h1>
-          <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-[#1a3c5e] text-white px-4 py-2 rounded-lg hover:bg-[#2563a8] transition-colors">
-            <Plus size={18} /> New Sale
-          </button>
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar
+          title="Sales"
+          subtitle="Manage invoices and customer orders"
+          actions={
+            <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
+              <Plus size={16} /> New Sale
+            </button>
+          }
+        />
+        <main className="flex-1 overflow-y-auto p-6">
+          {/* Filters */}
+          <div className="card p-4 mb-5 flex gap-3 items-end flex-wrap">
+            <div>
+              <label className="label">From</label>
+              <input type="date" value={filters.from} onChange={e => setFilters(f => ({ ...f, from: e.target.value }))} className="input w-40" />
+            </div>
+            <div>
+              <label className="label">To</label>
+              <input type="date" value={filters.to} onChange={e => setFilters(f => ({ ...f, to: e.target.value }))} className="input w-40" />
+            </div>
+          </div>
 
-        {/* Filters */}
-        <div className="flex gap-3 mb-5">
-          <input type="date" value={filters.from} onChange={e => setFilters(f => ({ ...f, from: e.target.value }))} className="border rounded-lg px-3 py-2 text-sm" />
-          <input type="date" value={filters.to} onChange={e => setFilters(f => ({ ...f, to: e.target.value }))} className="border rounded-lg px-3 py-2 text-sm" />
-        </div>
+          {/* Sales Table */}
+          <div className="card overflow-hidden">
+            <div className="table-wrapper">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    {['Invoice', 'Date', 'Party', 'Vehicle', 'Amount', 'Received', 'Balance', 'Status', ''].map(h => (
+                      <th key={h}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(sales as any[]).map((s: any) => (
+                    <tr key={s.id}>
+                      <td className="font-medium text-white">{s.invoice_number}</td>
+                      <td>{dayjs(s.sale_date).format('DD/MM/YYYY')}</td>
+                      <td>{s.party_name || 'CASH'}</td>
+                      <td>{s.vehicle_number || '—'}</td>
+                      <td className="font-medium text-white">₹{Number(s.grand_total).toLocaleString('en-IN')}</td>
+                      <td className="text-emerald-400">₹{Number(s.amount_received).toLocaleString('en-IN')}</td>
+                      <td className="text-red-400">₹{Number(s.balance_due).toLocaleString('en-IN')}</td>
+                      <td>
+                        <span className={s.status === 'confirmed' ? 'badge-gem' : 'badge-red'}>
+                          {s.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button onClick={() => handleDownload(s.id, s.invoice_number)} className="btn-ghost p-1.5 text-white/40 hover:text-white">
+                          <Download size={15} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!(sales as any[]).length && (
+                <p className="text-center text-white/40 py-10 text-sm">No sales found</p>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
 
-        {/* Sales Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-[#1a3c5e] text-white">
-              <tr>
-                {['Invoice', 'Date', 'Party', 'Vehicle', 'Amount', 'Received', 'Balance', 'Status', ''].map(h => (
-                  <th key={h} className="px-4 py-3 text-left font-medium">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(sales as any[]).map((s: any, i: number) => (
-                <tr key={s.id} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                  <td className="px-4 py-3 font-medium text-[#1a3c5e]">{s.invoice_number}</td>
-                  <td className="px-4 py-3">{dayjs(s.sale_date).format('DD/MM/YYYY')}</td>
-                  <td className="px-4 py-3">{s.party_name || 'CASH'}</td>
-                  <td className="px-4 py-3">{s.vehicle_number || '-'}</td>
-                  <td className="px-4 py-3 font-medium">₹{Number(s.grand_total).toLocaleString('en-IN')}</td>
-                  <td className="px-4 py-3 text-green-600">₹{Number(s.amount_received).toLocaleString('en-IN')}</td>
-                  <td className="px-4 py-3 text-red-600">₹{Number(s.balance_due).toLocaleString('en-IN')}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${s.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {s.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button onClick={() => handleDownload(s.id, s.invoice_number)} className="text-gray-400 hover:text-[#1a3c5e]">
-                      <Download size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {!(sales as any[]).length && <p className="text-center text-gray-400 py-8">No sales found</p>}
-        </div>
-
-        {/* New Sale Modal */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
-                <h2 className="text-lg font-bold text-[#1a3c5e]">New Sale Invoice</h2>
-                <button onClick={() => setShowForm(false)}><X size={20} /></button>
-              </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="label">Invoice Type</label>
-                    <select value={form.invoice_type} onChange={e => setForm((f: any) => ({ ...f, invoice_type: e.target.value }))} className="input">
-                      <option value="tax_invoice">Tax Invoice</option>
-                      <option value="delivery_challan">Delivery Challan</option>
-                      <option value="bill_of_supply">Bill of Supply</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="label">Sale Date</label>
-                    <input type="date" value={form.sale_date} onChange={e => setForm((f: any) => ({ ...f, sale_date: e.target.value }))} className="input" required />
-                  </div>
-                  <div>
-                    <label className="label">Same State (CGST+SGST)?</label>
-                    <select value={form.is_same_state ? 'yes' : 'no'} onChange={e => setForm((f: any) => ({ ...f, is_same_state: e.target.value === 'yes' }))} className="input">
-                      <option value="yes">Yes (Intra-state)</option>
-                      <option value="no">No (Inter-state / IGST)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="label">Customer</label>
-                    <select value={form.party_id || ''} onChange={e => {
-                      const p = (parties as any[]).find((p: any) => p.id === e.target.value);
-                      setForm((f: any) => ({ ...f, party_id: e.target.value, party_name: p?.name, party_gstin: p?.gstin, party_address: `${p?.address || ''}, ${p?.city || ''}` }));
-                    }} className="input">
-                      <option value="">-- CASH / Select Party --</option>
-                      {(parties as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="label">Vehicle</label>
-                    <select value={form.vehicle_id || ''} onChange={e => {
-                      const v = (vehicles as any[]).find((v: any) => v.id === e.target.value);
-                      setForm((f: any) => ({ ...f, vehicle_id: e.target.value, vehicle_number: v?.registration_number }));
-                    }} className="input">
-                      <option value="">-- Select Vehicle --</option>
-                      {(vehicles as any[]).map((v: any) => <option key={v.id} value={v.id}>{v.registration_number}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="label">Driver Name</label>
-                    <input type="text" value={form.driver_name || ''} onChange={e => setForm((f: any) => ({ ...f, driver_name: e.target.value }))} className="input" placeholder="Driver name" />
-                  </div>
-                  <div>
-                    <label className="label">D.O. Number</label>
-                    <input type="text" value={form.do_number || ''} onChange={e => setForm((f: any) => ({ ...f, do_number: e.target.value }))} className="input" placeholder="Delivery order" />
-                  </div>
-                </div>
-
-                {/* Items */}
+      {/* New Sale Modal */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="card-gold w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">New Sale Invoice</h2>
+              <button onClick={() => setShowForm(false)} className="btn-ghost p-2"><X size={18} /></button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="font-semibold text-[#1a3c5e]">Items</label>
-                    <button type="button" onClick={addItem} className="text-sm text-[#1a3c5e] font-medium hover:underline flex items-center gap-1">
-                      <Plus size={14} /> Add Item
-                    </button>
-                  </div>
-                  <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-100">
-                        <tr>
-                          {['Product', 'Unit', 'Qty', 'Rate', 'GST%', 'Amount', ''].map(h => (
-                            <th key={h} className="px-3 py-2 text-left font-medium text-gray-600">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {items.map((item, idx) => (
-                          <tr key={idx} className="border-t">
-                            <td className="px-2 py-1.5">
-                              <select value={item.product_id} onChange={e => updateItem(idx, 'product_id', e.target.value)} className="input-sm w-40">
-                                <option value="">Select</option>
-                                {(products as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                              </select>
-                            </td>
-                            <td className="px-2 py-1.5 text-gray-500 text-xs">{item.unit}</td>
-                            <td className="px-2 py-1.5">
-                              <input type="number" value={item.quantity || ''} onChange={e => updateItem(idx, 'quantity', Number(e.target.value))} className="input-sm w-20" min="0" step="0.001" />
-                            </td>
-                            <td className="px-2 py-1.5">
-                              <input type="number" value={item.rate || ''} onChange={e => updateItem(idx, 'rate', Number(e.target.value))} className="input-sm w-24" min="0" />
-                            </td>
-                            <td className="px-2 py-1.5 text-gray-500 text-xs">{item.gst_rate}%</td>
-                            <td className="px-2 py-1.5 font-medium text-right">₹{(item.quantity * item.rate).toLocaleString('en-IN')}</td>
-                            <td className="px-2 py-1.5">
-                              {items.length > 1 && <button type="button" onClick={() => removeItem(idx)} className="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>}
-                            </td>
-                          </tr>
+                  <label className="label">Invoice Type</label>
+                  <select value={form.invoice_type} onChange={e => setForm((f: any) => ({ ...f, invoice_type: e.target.value }))} className="select">
+                    <option value="tax_invoice">Tax Invoice</option>
+                    <option value="delivery_challan">Delivery Challan</option>
+                    <option value="bill_of_supply">Bill of Supply</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="label">Sale Date</label>
+                  <input type="date" value={form.sale_date} onChange={e => setForm((f: any) => ({ ...f, sale_date: e.target.value }))} className="input" required />
+                </div>
+                <div>
+                  <label className="label">Same State (CGST+SGST)?</label>
+                  <select value={form.is_same_state ? 'yes' : 'no'} onChange={e => setForm((f: any) => ({ ...f, is_same_state: e.target.value === 'yes' }))} className="select">
+                    <option value="yes">Yes (Intra-state)</option>
+                    <option value="no">No (Inter-state / IGST)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Customer</label>
+                  <select value={form.party_id || ''} onChange={e => {
+                    const p = (parties as any[]).find((p: any) => p.id === e.target.value);
+                    setForm((f: any) => ({ ...f, party_id: e.target.value, party_name: p?.name, party_gstin: p?.gstin, party_address: `${p?.address || ''}, ${p?.city || ''}` }));
+                  }} className="select">
+                    <option value="">-- CASH / Select Party --</option>
+                    {(parties as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="label">Vehicle</label>
+                  <select value={form.vehicle_id || ''} onChange={e => {
+                    const v = (vehicles as any[]).find((v: any) => v.id === e.target.value);
+                    setForm((f: any) => ({ ...f, vehicle_id: e.target.value, vehicle_number: v?.registration_number }));
+                  }} className="select">
+                    <option value="">-- Select Vehicle --</option>
+                    {(vehicles as any[]).map((v: any) => <option key={v.id} value={v.id}>{v.registration_number}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Driver Name</label>
+                  <input type="text" value={form.driver_name || ''} onChange={e => setForm((f: any) => ({ ...f, driver_name: e.target.value }))} className="input" placeholder="Driver name" />
+                </div>
+                <div>
+                  <label className="label">D.O. Number</label>
+                  <input type="text" value={form.do_number || ''} onChange={e => setForm((f: any) => ({ ...f, do_number: e.target.value }))} className="input" placeholder="Delivery order" />
+                </div>
+              </div>
+
+              {/* Items */}
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-sm font-semibold text-white">Items</label>
+                  <button type="button" onClick={addItem} className="btn-ghost text-sm flex items-center gap-1 px-3 py-1.5">
+                    <Plus size={14} /> Add Item
+                  </button>
+                </div>
+                <div className="rounded-lg overflow-hidden border border-white/10">
+                  <table className="w-full text-sm">
+                    <thead className="bg-white/5">
+                      <tr>
+                        {['Product', 'Unit', 'Qty', 'Rate', 'GST%', 'Amount', ''].map(h => (
+                          <th key={h} className="px-3 py-2 text-left text-xs font-medium text-white/50 uppercase tracking-wide">{h}</th>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="mt-3 flex justify-end space-y-1 text-sm">
-                    <div className="text-right space-y-1 min-w-48">
-                      <div className="flex justify-between"><span className="text-gray-500">Subtotal:</span><span>₹{subtotal.toLocaleString('en-IN')}</span></div>
-                      <div className="flex justify-between"><span className="text-gray-500">GST:</span><span>₹{totalGst.toLocaleString('en-IN')}</span></div>
-                      <div className="flex justify-between font-bold text-[#1a3c5e]"><span>Total:</span><span>₹{grandTotal.toLocaleString('en-IN')}</span></div>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((item, idx) => (
+                        <tr key={idx} className="border-t border-white/10">
+                          <td className="px-2 py-1.5">
+                            <select value={item.product_id} onChange={e => updateItem(idx, 'product_id', e.target.value)} className="select w-40">
+                              <option value="">Select</option>
+                              {(products as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            </select>
+                          </td>
+                          <td className="px-2 py-1.5 text-white/50 text-xs">{item.unit}</td>
+                          <td className="px-2 py-1.5">
+                            <input type="number" value={item.quantity || ''} onChange={e => updateItem(idx, 'quantity', Number(e.target.value))} className="input w-20 py-1.5 text-sm" min="0" step="0.001" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <input type="number" value={item.rate || ''} onChange={e => updateItem(idx, 'rate', Number(e.target.value))} className="input w-24 py-1.5 text-sm" min="0" />
+                          </td>
+                          <td className="px-2 py-1.5 text-white/50 text-xs">{item.gst_rate}%</td>
+                          <td className="px-2 py-1.5 font-medium text-white text-right">₹{(item.quantity * item.rate).toLocaleString('en-IN')}</td>
+                          <td className="px-2 py-1.5">
+                            {items.length > 1 && (
+                              <button type="button" onClick={() => removeItem(idx)} className="text-red-400 hover:text-red-300">
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-3 flex justify-end">
+                  <div className="text-right space-y-1 text-sm min-w-48">
+                    <div className="flex justify-between gap-8">
+                      <span className="text-white/50">Subtotal:</span>
+                      <span className="text-white/70">₹{subtotal.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between gap-8">
+                      <span className="text-white/50">GST:</span>
+                      <span className="text-white/70">₹{totalGst.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between gap-8 font-bold">
+                      <span className="text-white">Total:</span>
+                      <span className="text-white">₹{grandTotal.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="label">Payment Mode</label>
-                    <select value={form.payment_mode} onChange={e => setForm((f: any) => ({ ...f, payment_mode: e.target.value }))} className="input">
-                      {['credit', 'cash', 'upi', 'cheque', 'neft', 'rtgs'].map(m => <option key={m} value={m} className="capitalize">{m.toUpperCase()}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="label">Amount Received</label>
-                    <input type="number" value={form.amount_received} onChange={e => setForm((f: any) => ({ ...f, amount_received: Number(e.target.value) }))} className="input" min="0" />
-                  </div>
-                  <div>
-                    <label className="label">Notes</label>
-                    <input type="text" value={form.notes || ''} onChange={e => setForm((f: any) => ({ ...f, notes: e.target.value }))} className="input" />
-                  </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="label">Payment Mode</label>
+                  <select value={form.payment_mode} onChange={e => setForm((f: any) => ({ ...f, payment_mode: e.target.value }))} className="select">
+                    {['credit', 'cash', 'upi', 'cheque', 'neft', 'rtgs'].map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
+                  </select>
                 </div>
+                <div>
+                  <label className="label">Amount Received</label>
+                  <input type="number" value={form.amount_received} onChange={e => setForm((f: any) => ({ ...f, amount_received: Number(e.target.value) }))} className="input" min="0" />
+                </div>
+                <div>
+                  <label className="label">Notes</label>
+                  <input type="text" value={form.notes || ''} onChange={e => setForm((f: any) => ({ ...f, notes: e.target.value }))} className="input" />
+                </div>
+              </div>
 
-                <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 border rounded-lg text-sm">Cancel</button>
-                  <button type="submit" disabled={createMutation.isPending} className="px-6 py-2 bg-[#1a3c5e] text-white rounded-lg text-sm font-medium hover:bg-[#2563a8] disabled:opacity-60">
-                    {createMutation.isPending ? 'Creating...' : 'Create Invoice'}
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="flex gap-3 mt-6 justify-end">
+                <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
+                <button type="submit" disabled={createMutation.isPending} className="btn-primary disabled:opacity-60">
+                  {createMutation.isPending ? 'Creating...' : 'Create Invoice'}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </main>
-
-      <style jsx global>{`
-        .label { display: block; font-size: 0.75rem; font-weight: 500; color: #4b5563; margin-bottom: 4px; }
-        .input { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px; font-size: 0.875rem; outline: none; }
-        .input:focus { ring: 2px; ring-color: #1a3c5e; border-color: transparent; }
-        .input-sm { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 8px; font-size: 0.8rem; outline: none; }
-      `}</style>
+        </div>
+      )}
     </div>
   );
 }
