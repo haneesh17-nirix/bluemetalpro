@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ci` use short flags for az postgres flexible-server commands ([ec5445e])
+
 ## [1.2.3] — 2026-06-09
 
 
