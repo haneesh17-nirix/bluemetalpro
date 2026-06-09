@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Seed default products
+-- Seed default products (idempotent)
 INSERT INTO products (name, code, category, unit, hsn_code, gst_rate) VALUES
   ('M-Sand', 'MSAND', 'm_sand', 'MT', '25171010', 5.00),
   ('P-Sand (Plastering Sand)', 'PSAND', 'p_sand', 'MT', '25171010', 5.00),
@@ -114,7 +114,8 @@ INSERT INTO products (name, code, category, unit, hsn_code, gst_rate) VALUES
   ('Dust / Stone Dust', 'DUST', 'dust', 'MT', '25171010', 5.00),
   ('GSB (Graded Stone Base)', 'GSB', 'gsb', 'MT', '25171010', 5.00),
   ('Boulder / Bollar', 'BOLLAR', 'boulder', 'MT', '25171010', 5.00),
-  ('WMM (Wet Mix Macadam)', 'WMM', 'gsb', 'MT', '25171010', 5.00);
+  ('WMM (Wet Mix Macadam)', 'WMM', 'gsb', 'MT', '25171010', 5.00)
+ON CONFLICT (code) DO NOTHING;
 
 -- ============================================================
 -- PARTIES (CUSTOMERS & SUPPLIERS)
