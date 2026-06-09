@@ -121,8 +121,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update az CLI extensions
-        run: az extension add --name rdbms-connect --allow-preview true || az extension update --name rdbms-connect || true
+      - name: Upgrade az CLI
+        run: |
+          az version
+          pip install --upgrade azure-cli 2>/dev/null || true
+          az version
 
       - name: Add runner IP to firewall
         run: |
