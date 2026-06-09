@@ -504,7 +504,7 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_r
 -- ============================================================
 
 -- Party ledger balance
-CREATE VIEW party_balances AS
+CREATE OR REPLACE VIEW party_balances AS
 SELECT
   p.id,
   p.name,
@@ -524,7 +524,7 @@ LEFT JOIN ledger_transactions lt ON lt.party_id = p.id
 GROUP BY p.id, p.name, p.type, p.opening_balance;
 
 -- Item-wise sales summary
-CREATE VIEW item_wise_sales AS
+CREATE OR REPLACE VIEW item_wise_sales AS
 SELECT
   pr.name AS product_name,
   pr.category,
