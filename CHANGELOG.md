@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.8] — 2026-06-09
+
+
+### Bug Fixes
+
+- `db` add IF NOT EXISTS to CREATE INDEX statements ([2492681])
+
 ## [1.2.7] — 2026-06-09
 
 
