@@ -32,14 +32,15 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: package-lock.json  # root workspace lock
+          cache-dependency-path: package-lock.json
 
-      - name: Install all workspace dependencies
-        run: npm ci
+      - name: Install web + shared dependencies
+        # --ignore-scripts avoids react-native native build steps in mobile workspace
+        run: npm ci --ignore-scripts --workspace=apps/web --workspace=packages/shared --include-workspace-root
 
       - name: Type-check web
         working-directory: apps/web
-        run: ./node_modules/.bin/tsc --noEmit || npx tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Build (static export → apps/web/out/)
         working-directory: apps/web
@@ -101,8 +102,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Install all workspace dependencies
-        run: npm ci
+      - name: Install web + shared dependencies
+        run: npm ci --ignore-scripts --workspace=apps/web --workspace=packages/shared --include-workspace-root
 
       - name: Build static export
         working-directory: apps/web

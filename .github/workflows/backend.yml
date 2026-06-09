@@ -35,8 +35,9 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json  # root workspace lock
 
-      - name: Install all workspace dependencies
-        run: npm ci
+      - name: Install backend + shared dependencies
+        # --ignore-scripts skips react-native native build steps in mobile workspace
+        run: npm ci --ignore-scripts --workspace=backend --workspace=packages/shared --include-workspace-root
 
       - name: Type-check
         working-directory: backend
