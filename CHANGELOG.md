@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2] — 2026-06-09
+
+
+### Bug Fixes
+
+- pino-pretty devDep + crusher access for all users ([bb6151e])
+
 ## [1.7.1] — 2026-06-09
 
 
