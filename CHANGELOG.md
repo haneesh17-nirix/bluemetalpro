@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0] — 2026-06-09
+
+
+### Features
+
+- deploy web dashboard + auto-release pipeline ([9468722])
+
+### Bug Fixes
+
+- `ci` fix release.yml YAML syntax - git commit multiline message ([d33d882])
+- Dockerfile CMD path + backend workflow for Container Apps ([fb3cbc2])
+
+### Other Changes
+
+- Azure Container Apps infrastructure + CI updates ([3fb2055])
+- Remove Python cache files and add __pycache__ to .gitignore ([8fd7632])
+- Initial commit: BlueMetal Pro monorepo ([67faf48])
+
 All notable changes to **BlueMetal Pro** are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
