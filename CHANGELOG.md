@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.2] — 2026-06-09
+
+
+### Features
+
+- `ci` automated testing, doc sync, and deployment process ([dc1150c])
+
+### Bug Fixes
+
+- `mobile` remove unused native deps causing Gradle failure ([119e759])
+- `mobile` fix EAS monorepo install + release workflow branch protection ([dd3a30b])
+- `ci` add infra group to sync_checks.py so infra/main.bicep is tracked ([47279e3])
+
 ## [1.6.1] — 2026-06-09
 
 
