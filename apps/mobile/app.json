@@ -36,8 +36,13 @@
     ],
     "scheme": "bluemetalpro",
     "extra": {
-      "router": { "origin": false },
-      "eas": { "projectId": "YOUR_EAS_PROJECT_ID" }
-    }
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f67a61fa-c0b8-48f8-b4f7-b90fa3fb3233"
+      }
+    },
+    "owner": "haneesh17"
   }
 }
