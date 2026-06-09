@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0] — 2026-06-09
+
+
+### Features
+
+- `web` full dark UI redesign matching BlueMetal Pro brand ([64c228c])
+
 ## [1.3.1] — 2026-06-09
 
 
