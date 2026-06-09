@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.9] — 2026-06-09
+
+
+### Bug Fixes
+
+- `db` use CREATE OR REPLACE VIEW for idempotent migration ([41f4c5b])
+
 ## [1.2.8] — 2026-06-09
 
 
