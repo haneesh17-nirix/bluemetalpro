@@ -10,7 +10,9 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- USERS & ROLES
 -- ============================================================
 
-CREATE TYPE user_role AS ENUM (
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+    CREATE TYPE user_role AS ENUM (
   'admin',
   'sales_operator',
   'report_viewer',
@@ -18,8 +20,10 @@ CREATE TYPE user_role AS ENUM (
   'quarry_operator',
   'accounts'
 );
+  END IF;
+END $$;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(100) NOT NULL,
   email VARCHAR(150) UNIQUE NOT NULL,
@@ -32,7 +36,7 @@ CREATE TABLE users (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE user_sessions (
+CREATE TABLE IF NOT EXISTS user_sessions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL,
@@ -46,7 +50,7 @@ CREATE TABLE user_sessions (
 -- COMPANY / GST CONFIGURATION
 -- ============================================================
 
-CREATE TABLE company_config (
+CREATE TABLE IF NOT EXISTS company_config (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_name VARCHAR(200) NOT NULL,
   gstin VARCHAR(15),
@@ -75,11 +79,15 @@ CREATE TABLE company_config (
 -- PRODUCTS / ITEMS
 -- ============================================================
 
-CREATE TYPE product_category AS ENUM (
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_category') THEN
+    CREATE TYPE product_category AS ENUM (
   'm_sand', 'p_sand', 'aggregates', 'dust', 'gsb', 'boulder', 'other'
 );
+  END IF;
+END $$;
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(100) NOT NULL,
   code VARCHAR(20) UNIQUE,
@@ -112,9 +120,13 @@ INSERT INTO products (name, code, category, unit, hsn_code, gst_rate) VALUES
 -- PARTIES (CUSTOMERS & SUPPLIERS)
 -- ============================================================
 
-CREATE TYPE party_type AS ENUM ('customer', 'supplier', 'both');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'party_type') THEN
+    CREATE TYPE party_type AS ENUM ('customer', 'supplier', 'both');
+  END IF;
+END $$;
 
-CREATE TABLE parties (
+CREATE TABLE IF NOT EXISTS parties (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(200) NOT NULL,
   type party_type NOT NULL DEFAULT 'customer',
@@ -138,9 +150,13 @@ CREATE TABLE parties (
 -- VEHICLES
 -- ============================================================
 
-CREATE TYPE vehicle_status AS ENUM ('active', 'maintenance', 'retired');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'vehicle_status') THEN
+    CREATE TYPE vehicle_status AS ENUM ('active', 'maintenance', 'retired');
+  END IF;
+END $$;
 
-CREATE TABLE vehicles (
+CREATE TABLE IF NOT EXISTS vehicles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   registration_number VARCHAR(20) UNIQUE NOT NULL,
   vehicle_type VARCHAR(50),  -- Tipper, Tractor, JCB, etc.
@@ -158,11 +174,23 @@ CREATE TABLE vehicles (
 -- SALES
 -- ============================================================
 
-CREATE TYPE invoice_type AS ENUM ('tax_invoice', 'delivery_challan', 'bill_of_supply');
-CREATE TYPE payment_mode AS ENUM ('cash', 'upi', 'cheque', 'neft', 'rtgs', 'credit');
-CREATE TYPE sale_status AS ENUM ('draft', 'confirmed', 'cancelled');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'invoice_type') THEN
+    CREATE TYPE invoice_type AS ENUM ('tax_invoice', 'delivery_challan', 'bill_of_supply');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_mode') THEN
+    CREATE TYPE payment_mode AS ENUM ('cash', 'upi', 'cheque', 'neft', 'rtgs', 'credit');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sale_status') THEN
+    CREATE TYPE sale_status AS ENUM ('draft', 'confirmed', 'cancelled');
+  END IF;
+END $$;
 
-CREATE TABLE sales (
+CREATE TABLE IF NOT EXISTS sales (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   invoice_number VARCHAR(30) UNIQUE NOT NULL,
   invoice_type invoice_type DEFAULT 'tax_invoice',
@@ -195,7 +223,7 @@ CREATE TABLE sales (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE sale_items (
+CREATE TABLE IF NOT EXISTS sale_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   sale_id UUID REFERENCES sales(id) ON DELETE CASCADE,
   product_id UUID REFERENCES products(id),
@@ -220,7 +248,7 @@ CREATE TABLE sale_items (
 -- PURCHASES
 -- ============================================================
 
-CREATE TABLE purchases (
+CREATE TABLE IF NOT EXISTS purchases (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   bill_number VARCHAR(50),
   purchase_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -243,7 +271,7 @@ CREATE TABLE purchases (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE purchase_items (
+CREATE TABLE IF NOT EXISTS purchase_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   purchase_id UUID REFERENCES purchases(id) ON DELETE CASCADE,
   product_id UUID REFERENCES products(id),
@@ -263,9 +291,13 @@ CREATE TABLE purchase_items (
 -- PAYMENTS & RECEIPTS
 -- ============================================================
 
-CREATE TYPE txn_type AS ENUM ('receipt', 'payment', 'journal');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'txn_type') THEN
+    CREATE TYPE txn_type AS ENUM ('receipt', 'payment', 'journal');
+  END IF;
+END $$;
 
-CREATE TABLE ledger_transactions (
+CREATE TABLE IF NOT EXISTS ledger_transactions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   txn_type txn_type NOT NULL,
   txn_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -286,7 +318,7 @@ CREATE TABLE ledger_transactions (
 -- RAW MATERIALS STOCK
 -- ============================================================
 
-CREATE TABLE raw_material_stock (
+CREATE TABLE IF NOT EXISTS raw_material_stock (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id),
   date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -303,7 +335,7 @@ CREATE TABLE raw_material_stock (
 -- QUARRY SALES
 -- ============================================================
 
-CREATE TABLE quarry_sales (
+CREATE TABLE IF NOT EXISTS quarry_sales (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   invoice_number VARCHAR(30) UNIQUE NOT NULL,
   sale_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -332,10 +364,18 @@ CREATE TABLE quarry_sales (
 -- MAINTENANCE
 -- ============================================================
 
-CREATE TYPE asset_type AS ENUM ('machinery', 'vehicle');
-CREATE TYPE maintenance_status AS ENUM ('scheduled', 'in_progress', 'completed', 'cancelled');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'asset_type') THEN
+    CREATE TYPE asset_type AS ENUM ('machinery', 'vehicle');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'maintenance_status') THEN
+    CREATE TYPE maintenance_status AS ENUM ('scheduled', 'in_progress', 'completed', 'cancelled');
+  END IF;
+END $$;
 
-CREATE TABLE assets (
+CREATE TABLE IF NOT EXISTS assets (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   asset_type asset_type NOT NULL,
   name VARCHAR(100) NOT NULL,
@@ -349,7 +389,7 @@ CREATE TABLE assets (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE maintenance_records (
+CREATE TABLE IF NOT EXISTS maintenance_records (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   asset_id UUID REFERENCES assets(id),
   asset_type asset_type NOT NULL,
@@ -372,9 +412,13 @@ CREATE TABLE maintenance_records (
 -- WAGES / RESOURCES
 -- ============================================================
 
-CREATE TYPE wage_type AS ENUM ('daily', 'monthly', 'piece_rate', 'hourly');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'wage_type') THEN
+    CREATE TYPE wage_type AS ENUM ('daily', 'monthly', 'piece_rate', 'hourly');
+  END IF;
+END $$;
 
-CREATE TABLE workers (
+CREATE TABLE IF NOT EXISTS workers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(100) NOT NULL,
   phone VARCHAR(15),
@@ -388,9 +432,13 @@ CREATE TABLE workers (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TYPE attendance_status AS ENUM ('present', 'absent', 'half_day', 'leave');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'attendance_status') THEN
+    CREATE TYPE attendance_status AS ENUM ('present', 'absent', 'half_day', 'leave');
+  END IF;
+END $$;
 
-CREATE TABLE attendance (
+CREATE TABLE IF NOT EXISTS attendance (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   worker_id UUID REFERENCES workers(id),
   date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -403,7 +451,7 @@ CREATE TABLE attendance (
   UNIQUE(worker_id, date)
 );
 
-CREATE TABLE wage_payments (
+CREATE TABLE IF NOT EXISTS wage_payments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   worker_id UUID REFERENCES workers(id),
   period_from DATE NOT NULL,
@@ -424,7 +472,7 @@ CREATE TABLE wage_payments (
 -- NOTIFICATIONS LOG
 -- ============================================================
 
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id),
   title VARCHAR(200) NOT NULL,
