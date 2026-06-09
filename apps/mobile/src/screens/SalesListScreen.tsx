@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl, StatusBar } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getSales } from '../lib/api';
 import dayjs from 'dayjs';
-
-const C = '#1a3c5e';
+import { colors, shadows, radius } from '../theme';
 
 export default function SalesListScreen({ navigation }: any) {
   const [from] = useState(dayjs().format('YYYY-MM-01'));
@@ -15,12 +14,30 @@ export default function SalesListScreen({ navigation }: any) {
   const todaySales = (sales as any[]).filter((s: any) => dayjs(s.sale_date).format('YYYY-MM-DD') === today);
   const todayTotal = todaySales.reduce((s: number, i: any) => s + Number(i.grand_total), 0);
 
+  const getStatusStyle = (status: string) => {
+    if (status === 'confirmed' || status === 'paid' || status === 'completed') {
+      return { backgroundColor: colors.gemLight + '22', borderColor: colors.gemLight + '60' };
+    }
+    if (status === 'pending') {
+      return { backgroundColor: colors.goldLight + '22', borderColor: colors.goldLight + '60' };
+    }
+    return { backgroundColor: colors.danger + '22', borderColor: colors.danger + '60' };
+  };
+
+  const getStatusTextColor = (status: string) => {
+    if (status === 'confirmed' || status === 'paid' || status === 'completed') return colors.gemLight;
+    if (status === 'pending') return colors.goldLight;
+    return colors.danger;
+  };
+
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+
       {/* Summary bar */}
       <View style={styles.summaryBar}>
         <View>
-          <Text style={styles.summaryLabel}>Today's Sales</Text>
+          <Text style={styles.summaryLabel}>TODAY'S SALES</Text>
           <Text style={styles.summaryValue}>₹{todayTotal.toLocaleString('en-IN')}</Text>
         </View>
         <Text style={styles.summaryCount}>{todaySales.length} invoices</Text>
@@ -33,29 +50,30 @@ export default function SalesListScreen({ navigation }: any) {
       <FlatList
         data={sales as any[]}
         keyExtractor={(item: any) => item.id}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor={colors.goldLight} />}
         contentContainerStyle={{ padding: 12, paddingTop: 8 }}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
           <View style={styles.saleCard}>
             <View style={styles.saleHeader}>
               <Text style={styles.invoiceNo}>{item.invoice_number}</Text>
-              <View style={[styles.badge, item.status === 'confirmed' ? styles.badgeGreen : styles.badgeRed]}>
-                <Text style={styles.badgeText}>{item.status}</Text>
+              <View style={[styles.badge, getStatusStyle(item.status)]}>
+                <Text style={[styles.badgeText, { color: getStatusTextColor(item.status) }]}>{item.status}</Text>
               </View>
             </View>
             <Text style={styles.partyName}>{item.party_name || 'CASH'}</Text>
             <View style={styles.saleFooter}>
               <View>
-                <Text style={styles.footerLabel}>Date</Text>
+                <Text style={styles.footerLabel}>DATE</Text>
                 <Text style={styles.footerValue}>{dayjs(item.sale_date).format('DD/MM/YYYY')}</Text>
               </View>
               <View>
-                <Text style={styles.footerLabel}>Vehicle</Text>
+                <Text style={styles.footerLabel}>VEHICLE</Text>
                 <Text style={styles.footerValue}>{item.vehicle_number || '-'}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.footerLabel}>Total</Text>
-                <Text style={[styles.footerValue, { color: C, fontWeight: 'bold', fontSize: 15 }]}>
+                <Text style={styles.footerLabel}>TOTAL</Text>
+                <Text style={styles.totalAmount}>
                   ₹{Number(item.grand_total).toLocaleString('en-IN')}
                 </Text>
               </View>
@@ -74,25 +92,61 @@ export default function SalesListScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f0f4f8' },
-  summaryBar: { backgroundColor: C, padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  summaryLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
-  summaryValue: { color: 'white', fontSize: 22, fontWeight: 'bold' },
-  summaryCount: { color: 'rgba(255,255,255,0.8)', fontSize: 13 },
-  fab: { backgroundColor: '#f59e0b', margin: 12, padding: 12, borderRadius: 12, alignItems: 'center' },
-  fabText: { color: 'white', fontWeight: 'bold', fontSize: 15 },
-  saleCard: { backgroundColor: 'white', borderRadius: 14, padding: 14, marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 6, elevation: 2 },
+  container: { flex: 1, backgroundColor: colors.brandDeep },
+  summaryBar: {
+    backgroundColor: colors.surfaceCard,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  summaryLabel: { color: colors.textDim, fontSize: 10, fontWeight: '700', letterSpacing: 0.8 },
+  summaryValue: { color: colors.goldLight, fontSize: 22, fontWeight: 'bold', marginTop: 2 },
+  summaryCount: { color: colors.textMid, fontSize: 13 },
+  fab: {
+    backgroundColor: colors.goldLight,
+    margin: 12,
+    padding: 12,
+    borderRadius: radius.md,
+    alignItems: 'center',
+  },
+  fabText: { color: colors.brand, fontWeight: '700', fontSize: 15 },
+  separator: { height: 1, backgroundColor: colors.border + '60' },
+  saleCard: {
+    backgroundColor: colors.surfaceCard,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 14,
+    marginBottom: 10,
+    ...shadows.card,
+  },
   saleHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  invoiceNo: { fontSize: 14, fontWeight: '700', color: C },
-  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  badgeGreen: { backgroundColor: '#d1fae5' },
-  badgeRed: { backgroundColor: '#fee2e2' },
-  badgeText: { fontSize: 10, fontWeight: '600', color: '#065f46' },
-  partyName: { fontSize: 15, color: '#374151', marginTop: 4, fontWeight: '500' },
-  saleFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderColor: '#f3f4f6' },
-  footerLabel: { fontSize: 10, color: '#9ca3af' },
-  footerValue: { fontSize: 13, color: '#374151', fontWeight: '500' },
-  balanceRow: { marginTop: 8, backgroundColor: '#fef3c7', padding: 6, borderRadius: 6 },
-  balanceDue: { fontSize: 11, color: '#92400e', fontWeight: '600' },
-  empty: { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
+  invoiceNo: { fontSize: 14, fontWeight: '700', color: colors.text },
+  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, borderWidth: 1 },
+  badgeText: { fontSize: 10, fontWeight: '600' },
+  partyName: { fontSize: 15, color: colors.text, marginTop: 4, fontWeight: '500' },
+  saleFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderColor: colors.border + '60',
+  },
+  footerLabel: { fontSize: 10, color: colors.textDim, fontWeight: '700', letterSpacing: 0.8 },
+  footerValue: { fontSize: 13, color: colors.textMid, fontWeight: '500', marginTop: 2 },
+  totalAmount: { fontSize: 15, color: colors.goldLight, fontWeight: '700', marginTop: 2 },
+  balanceRow: {
+    marginTop: 8,
+    backgroundColor: colors.danger + '18',
+    borderWidth: 1,
+    borderColor: colors.danger + '40',
+    padding: 6,
+    borderRadius: 6,
+  },
+  balanceDue: { fontSize: 11, color: colors.danger, fontWeight: '600' },
+  empty: { textAlign: 'center', color: colors.textDim, marginTop: 40 },
 });
