@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1] — 2026-06-09
+
+
+### Bug Fixes
+
+- `mobile` fix EAS build - remove expo-router/victory-native, add App entry ([2b2b8d6])
+
 ## [1.6.0] — 2026-06-09
 
 
