@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -23,6 +24,7 @@ const emptyForm = {
 };
 
 export default function PartiesPage() {
+  useEffect(() => { log.page('Parties'); }, []);
   const qc = useQueryClient();
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [search, setSearch] = useState('');
@@ -44,7 +46,8 @@ export default function PartiesPage() {
 
   const createMutation = useMutation({
     mutationFn: (data: any) => editParty ? api.put(`/parties/${editParty.id}`, data).then(r => r.data) : createParty(data),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      log.action('Party created', { name: data?.name, type: data?.party_type });
       toast.success(editParty ? 'Party updated' : 'Party added');
       qc.invalidateQueries({ queryKey: ['parties'] });
       qc.invalidateQueries({ queryKey: ['party-balances'] });
@@ -52,7 +55,7 @@ export default function PartiesPage() {
       setEditParty(null);
       setForm(emptyForm);
     },
-    onError: () => toast.error('Failed to save party'),
+    onError: () => { log.error('Party creation failed'); toast.error('Failed to save party'); },
   });
 
   const openEdit = (party: any) => {

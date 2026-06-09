@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
   RefreshControl, StatusBar,
 } from 'react-native';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboard, getUpcomingMaintenance } from '../lib/api';
+import { useAuth } from '../hooks/useAuth';
 import { colors, shadows, radius } from '../theme';
 
 const fmt = (v: any) => `₹${Number(v || 0).toLocaleString('en-IN')}`;
@@ -24,6 +26,8 @@ function KpiCard({ label, value, sub, iconName, iconBg }: any) {
 }
 
 export default function DashboardScreen({ navigation }: any) {
+  useEffect(() => { log.screen('Dashboard'); }, []);
+  const { crusher } = useAuth();
   const { data, isLoading, refetch } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard });
   const { data: maintenance = [] } = useQuery({ queryKey: ['upcoming-maintenance'], queryFn: getUpcomingMaintenance });
 
@@ -48,7 +52,8 @@ export default function DashboardScreen({ navigation }: any) {
       <View style={s.header}>
         <View>
           <Text style={s.headerTitle}>Dashboard</Text>
-          <Text style={s.headerSub}>Today's overview</Text>
+          <Text style={s.headerSub}>{crusher?.name || "Today's overview"}</Text>
+          <Text style={s.headerCrusherDetail}>{crusher?.city ? crusher.city + (crusher.state ? ', ' + crusher.state : '') : ''}</Text>
         </View>
         <TouchableOpacity style={s.bellBtn} onPress={() => navigation.navigate('Notifications')}>
           <Ionicons name="notifications-outline" size={20} color={colors.goldLight} />
@@ -156,6 +161,7 @@ const s = StyleSheet.create({
   },
   headerTitle: { color: colors.white, fontSize: 22, fontWeight: '700' },
   headerSub:   { color: colors.textMid, fontSize: 12, marginTop: 1 },
+  headerCrusherDetail: { color: colors.textFaint, fontSize: 10, marginTop: 1 },
   bellBtn: {
     width: 40, height: 40, borderRadius: 12,
     backgroundColor: `${colors.gold}15`, borderWidth: 1, borderColor: `${colors.gold}25`,

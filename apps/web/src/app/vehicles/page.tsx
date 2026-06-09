@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -19,6 +20,7 @@ const statusBadge: Record<VehicleStatus, string> = {
 const emptyForm = { registration_number: '', vehicle_type: '', owner_name: '', owner_phone: '', capacity_mt: '', notes: '' };
 
 export default function VehiclesPage() {
+  useEffect(() => { log.page('Vehicles'); }, []);
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editVehicle, setEditVehicle] = useState<any>(null);
@@ -31,14 +33,15 @@ export default function VehiclesPage() {
       editVehicle
         ? api.put(`/vehicles/${editVehicle.id}`, data).then(r => r.data)
         : createVehicle(data),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      log.action('Vehicle added', { number: data?.vehicle_number });
       toast.success(editVehicle ? 'Vehicle updated' : 'Vehicle added');
       qc.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
       setEditVehicle(null);
       setForm(emptyForm);
     },
-    onError: () => toast.error('Failed to save vehicle'),
+    onError: () => { log.error('Vehicle creation failed'); toast.error('Failed to save vehicle'); },
   });
 
   const openEdit = (v: any) => {

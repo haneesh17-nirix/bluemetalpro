@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getWorkers, getAttendance, submitAttendance } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 const statusOptions = ['present', 'absent', 'half_day', 'leave'];
 
@@ -36,6 +37,7 @@ function getActiveBtnStyle(status: string): { backgroundColor: string; borderCol
 }
 
 export default function WagesScreen() {
+  useEffect(() => { log.screen('Wages'); }, []);
   const qc = useQueryClient();
   const today = dayjs().format('YYYY-MM-DD');
   const [selectedDate, setSelectedDate] = useState(today);
@@ -50,6 +52,7 @@ export default function WagesScreen() {
   const mutation = useMutation({
     mutationFn: submitAttendance,
     onSuccess: () => {
+      log.action('Attendance saved');
       Alert.alert('Saved', 'Attendance saved');
       refetch();
       qc.invalidateQueries({ queryKey: ['attendance'] });

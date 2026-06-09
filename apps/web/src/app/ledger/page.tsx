@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -18,7 +19,8 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
 
   const mutation = useMutation({
     mutationFn: () => createReceipt({ ...form, amount: Number(form.amount) }),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      log.action('Receipt recorded', { amount: data?.amount, mode: data?.payment_mode });
       toast.success('Receipt recorded');
       qc.invalidateQueries({ queryKey: ['ledger-balances'] });
       onClose();
@@ -141,6 +143,7 @@ function PartyLedgerDrawer({ partyId, partyName, onClose }: { partyId: string; p
 }
 
 export default function LedgerPage() {
+  useEffect(() => { log.page('Ledger'); }, []);
   const [showReceipt, setShowReceipt] = useState(false);
   const [selectedParty, setSelectedParty] = useState<{ id: string; name: string } | null>(null);
   const [search, setSearch] = useState('');

@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -46,6 +47,7 @@ const roleConfig: Record<UserRole, { label: string; badge: string; permissions: 
 const emptyForm = { name: '', email: '', phone: '', role: 'sales_operator' as UserRole, password: '', is_active: true };
 
 export default function UsersPage() {
+  useEffect(() => { log.page('Users'); }, []);
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editUser, setEditUser] = useState<any>(null);
@@ -58,14 +60,15 @@ export default function UsersPage() {
   const saveMutation = useMutation({
     mutationFn: (data: any) =>
       editUser ? updateUser(editUser.id, data) : createUser(data),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      log.action('User created', { email: data?.email, role: data?.role });
       toast.success(editUser ? 'User updated' : 'User created');
       qc.invalidateQueries({ queryKey: ['users'] });
       setShowForm(false);
       setEditUser(null);
       setForm(emptyForm);
     },
-    onError: (err: any) => toast.error(err.response?.data?.error || 'Failed to save user'),
+    onError: (err: any) => { log.error('User creation failed'); toast.error(err.response?.data?.error || 'Failed to save user'); },
   });
 
   const toggleActiveMutation = useMutation({

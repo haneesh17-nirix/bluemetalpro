@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { getSales, createSale, getParties, getProducts, getVehicles, downloadInvoice } from '@/lib/api';
@@ -19,6 +20,7 @@ interface SaleItem {
 }
 
 export default function SalesPage() {
+  useEffect(() => { log.page('Sales'); }, []);
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({ from: dayjs().format('YYYY-MM-01'), to: dayjs().format('YYYY-MM-DD') });
@@ -32,8 +34,8 @@ export default function SalesPage() {
 
   const createMutation = useMutation({
     mutationFn: createSale,
-    onSuccess: () => { toast.success('Sale created!'); qc.invalidateQueries({ queryKey: ['sales'] }); setShowForm(false); },
-    onError: () => toast.error('Failed to create sale'),
+    onSuccess: (data: any) => { log.action('Sale created', { invoice: data?.invoice_number, party: form?.party_name }); toast.success('Sale created!'); qc.invalidateQueries({ queryKey: ['sales'] }); setShowForm(false); },
+    onError: () => { log.error('Sale creation failed'); toast.error('Failed to create sale'); },
   });
 
   const handleSubmit = (e: React.FormEvent) => {

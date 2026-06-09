@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl, StatusBar } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getMaintenanceRecords } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 function getStatusChip(status: string) {
   switch (status) {
@@ -21,6 +22,7 @@ function getStatusChip(status: string) {
 }
 
 export default function MaintenanceScreen({ navigation }: any) {
+  useEffect(() => { log.screen('Maintenance'); }, []);
   const [assetType, setAssetType] = useState<string | undefined>();
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ['maintenance', assetType],

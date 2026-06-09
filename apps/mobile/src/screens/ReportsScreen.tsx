@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, RefreshControl, StatusBar } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getItemWiseReport } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 export default function ReportsScreen() {
+  useEffect(() => { log.screen('Reports'); }, []);
   const from = dayjs().format('YYYY-MM-01');
   const to = dayjs().format('YYYY-MM-DD');
   const { data = [], isLoading, refetch } = useQuery({ queryKey: ['item-report', { from, to }], queryFn: () => getItemWiseReport({ from, to }) });

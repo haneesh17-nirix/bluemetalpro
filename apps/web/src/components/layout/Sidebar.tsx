@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Truck, Package, Users, FileText,
   BarChart3, Wrench, DollarSign, Mountain, Settings, LogOut,
-  Scale, Camera, ChevronRight,
+  Scale, Camera, ChevronRight, Factory,
 } from 'lucide-react';
 
 const nav = [
@@ -22,6 +22,7 @@ const nav = [
   { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','vehicle_manager'] },
   { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','accounts'] },
   { href: '/users',       label: 'Users',         icon: Users,           roles: ['admin'] },
+  { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'] },
   { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'] },
 ];
 

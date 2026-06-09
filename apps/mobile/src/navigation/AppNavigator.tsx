@@ -15,6 +15,7 @@ import WagesScreen from '../screens/WagesScreen';
 import VehiclesScreen from '../screens/VehiclesScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import LoginScreen from '../screens/LoginScreen';
+import CrusherSelectScreen from '../screens/CrusherSelectScreen';
 import { useAuth } from '../hooks/useAuth';
 import { colors, radius } from '../theme';
 
@@ -115,13 +116,14 @@ function MainTabs({ user }: { user: any }) {
 }
 
 export default function AppNavigator() {
-  const { user, isLoading } = useAuth();
+  const { user, crusher, isLoading } = useAuth();
   if (isLoading) return null;
   return (
     <NavigationContainer>
-      {user ? <MainTabs user={user} /> : (
+      {user && crusher ? <MainTabs user={user} /> : (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SelectCrusher" component={CrusherSelectScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

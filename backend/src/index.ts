@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+import pinoHttp from 'pino-http';
+import { logger } from './utils/logger';
 import { authRouter } from './routes/auth';
 import { salesRouter } from './routes/sales';
 import { purchasesRouter } from './routes/purchases';
@@ -24,6 +26,7 @@ import { configRouter } from './routes/config';
 import { notificationsRouter } from './routes/notifications';
 import { weighbridgeRouter } from './routes/weighbridge';
 import { camerasRouter } from './routes/cameras';
+import { crushersRouter } from './routes/crushers';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +35,7 @@ app.use(helmet());
 app.use(compression());
 app.use(cors({ origin: process.env.CORS_ORIGINS?.split(',') || '*' }));
 app.use(express.json({ limit: '10mb' }));
+app.use(pinoHttp({ logger, customLogLevel: (_, res) => res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info' }));
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 500 });
 app.use(limiter);
@@ -53,8 +57,9 @@ app.use('/api/invoices', invoicesRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/weighbridge', weighbridgeRouter);
 app.use('/api/cameras', camerasRouter);
+app.use('/api/crushers', crushersRouter);
 
 app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => logger.info({ port: PORT }, `Server running on port ${PORT}`));
 export default app;

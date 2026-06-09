@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -115,6 +116,7 @@ function AddCameraModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function CamerasPage() {
+  useEffect(() => { log.page('Cameras'); }, []);
   const [cols, setCols] = useState<2 | 3 | 4>(3);
   const [fullscreen, setFullscreen] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);

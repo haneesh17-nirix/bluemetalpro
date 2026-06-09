@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -187,6 +188,7 @@ function NewTicketForm({ weighbridges }: { weighbridges: any[] }) {
 }
 
 export default function WeighbridgePage() {
+  useEffect(() => { log.page('Weighbridge'); }, []);
   const { data: weighbridges = [] } = useQuery({ queryKey: ['weighbridges'], queryFn: () => api.get('/weighbridge').then(r => r.data) });
   const { data: tickets = [] } = useQuery({ queryKey: ['wb-tickets'], queryFn: () => api.get('/weighbridge/tickets').then(r => r.data) });
 

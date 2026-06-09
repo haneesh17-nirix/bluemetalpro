@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { log } from '@bluemetal/shared';
 import { getItemWiseReport, getPartyWiseReport, getGstSummary, getMonthlyTrend } from '@/lib/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 import Sidebar from '@/components/layout/Sidebar';
@@ -10,6 +11,7 @@ import dayjs from 'dayjs';
 type ReportTab = 'item-wise' | 'party-wise' | 'gst' | 'trend';
 
 export default function ReportsPage() {
+  useEffect(() => { log.page('Reports'); }, []);
   const [tab, setTab] = useState<ReportTab>('item-wise');
   const [range, setRange] = useState({ from: dayjs().format('YYYY-MM-01'), to: dayjs().format('YYYY-MM-DD') });
 

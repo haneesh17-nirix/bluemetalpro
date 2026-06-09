@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -27,12 +28,13 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
       quantity: Number(form.quantity),
       rate: Number(form.rate),
     }),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      log.action('Quarry sale created', { invoice: data?.invoice_number });
       toast.success('Quarry sale recorded');
       qc.invalidateQueries({ queryKey: ['quarry-sales'] });
       onClose();
     },
-    onError: () => toast.error('Failed to record quarry sale'),
+    onError: () => { log.error('Quarry sale creation failed'); toast.error('Failed to record quarry sale'); },
   });
 
   const handleProductChange = (id: string) => {
@@ -119,6 +121,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function QuarryPage() {
+  useEffect(() => { log.page('Quarry'); }, []);
   const [showNew, setShowNew] = useState(false);
   const [search, setSearch] = useState('');
   const [from, setFrom] = useState(dayjs().subtract(30, 'day').format('YYYY-MM-DD'));

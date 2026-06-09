@@ -1,18 +1,22 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { sendSaleNotification } from '../services/notifications';
 import { generateInvoiceNumber } from '../utils/invoiceNumber';
+import { logger, logAction } from '../utils/logger';
 
 export const salesRouter = Router();
 salesRouter.use(authenticate);
+salesRouter.use(requireCrusher);
 
 // List sales
 salesRouter.get('/', async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const { from, to, party_id, status, page = 1, limit = 20 } = req.query;
   const offset = (Number(page) - 1) * Number(limit);
   let where = 'WHERE 1=1';
   const params: any[] = [];
+  params.push(cid); where += ` AND s.crusher_id = $${params.length}`;
   if (from) { params.push(from); where += ` AND sale_date >= $${params.length}`; }
   if (to) { params.push(to); where += ` AND sale_date <= $${params.length}`; }
   if (party_id) { params.push(party_id); where += ` AND party_id = $${params.length}`; }
@@ -31,7 +35,8 @@ salesRouter.get('/', async (req, res) => {
 
 // Get single sale with items
 salesRouter.get('/:id', async (req, res) => {
-  const sale = await queryOne('SELECT * FROM sales WHERE id = $1', [req.params.id]);
+  const cid = req.user!.crusher_id!;
+  const sale = await queryOne('SELECT * FROM sales WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
   if (!sale) return res.status(404).json({ error: 'Not found' });
   const items = await query('SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY sort_order', [req.params.id]);
   res.json({ ...sale, items });
@@ -39,6 +44,7 @@ salesRouter.get('/:id', async (req, res) => {
 
 // Create sale
 salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const client = await (await import('../config/db')).pool.connect();
   try {
     await client.query('BEGIN');
@@ -49,7 +55,7 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
       notes, is_same_state = true
     } = req.body;
 
-    const invoice_number = await generateInvoiceNumber(client);
+    const invoice_number = await generateInvoiceNumber(client, cid);
 
     let subtotal = 0, total_tax = 0;
     for (const item of items) {
@@ -80,8 +86,8 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
         party_gstin, party_address, vehicle_id, vehicle_number, driver_name, do_number,
         subtotal, discount_amount, taxable_amount, cgst_amount, sgst_amount, igst_amount,
         total_tax, grand_total, amount_received, payment_mode, payment_reference,
-        balance_due, notes, created_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+        balance_due, notes, created_by, crusher_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
        RETURNING *`,
       [invoice_number, invoice_type || 'tax_invoice', sale_date, party_id, party_name,
        party_gstin, party_address, vehicle_id, vehicle_number, driver_name, do_number,
@@ -90,7 +96,7 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
        processedItems.reduce((s: number, i: any) => s + i.sgst_amount, 0),
        processedItems.reduce((s: number, i: any) => s + i.igst_amount, 0),
        total_tax, grand_total, amount_received, payment_mode, payment_reference,
-       balance_due, notes, req.user!.id]
+       balance_due, notes, req.user!.id, cid]
     );
 
     for (let idx = 0; idx < processedItems.length; idx++) {
@@ -115,10 +121,12 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
     // Send push notification async
     sendSaleNotification(created).catch(console.error);
 
+    logAction('sale.created', { invoice: invoice_number, party: party_name, amount: grand_total, items: processedItems.length, by: req.user!.email, crusher_id: cid });
     res.status(201).json({ ...created, items: processedItems });
   } catch (err) {
     await client.query('ROLLBACK');
     console.error(err);
+    logAction('sale.create.failed', { error: String(err), by: req.user!.email, crusher_id: cid }, 'error');
     res.status(500).json({ error: 'Failed to create sale' });
   } finally {
     client.release();
@@ -127,16 +135,19 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
 
 // Cancel sale
 salesRouter.patch('/:id/cancel', authorize('admin', 'accounts'), async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const sale = await queryOne(
-    "UPDATE sales SET status = 'cancelled', updated_at = now() WHERE id = $1 AND status != 'cancelled' RETURNING *",
-    [req.params.id]
+    "UPDATE sales SET status = 'cancelled', updated_at = now() WHERE id = $1 AND crusher_id = $2 AND status != 'cancelled' RETURNING *",
+    [req.params.id, cid]
   );
   if (!sale) return res.status(404).json({ error: 'Not found or already cancelled' });
+  logAction('sale.cancelled', { saleId: req.params.id, by: req.user!.email, crusher_id: cid }, 'warn');
   res.json(sale);
 });
 
 // Dashboard summary
 salesRouter.get('/summary/today', async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const rows = await query(`
     SELECT
       COUNT(*) as invoice_count,
@@ -144,7 +155,7 @@ salesRouter.get('/summary/today', async (req, res) => {
       SUM(amount_received) as total_received,
       SUM(balance_due) as total_pending
     FROM sales
-    WHERE sale_date = CURRENT_DATE AND status = 'confirmed'
-  `);
+    WHERE sale_date = CURRENT_DATE AND status = 'confirmed' AND crusher_id = $1
+  `, [cid]);
   res.json(rows[0]);
 });

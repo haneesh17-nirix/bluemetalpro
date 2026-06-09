@@ -21,8 +21,13 @@ api.interceptors.response.use(r => r, async (err) => {
 
 export default api;
 
+// Returns { temp_token, user, crushers } for multi-crusher accounts
+// or { token, user, crusher } for single-crusher auto-selected accounts
 export const login = (email: string, password: string, fcm_token?: string) =>
   api.post('/auth/login', { email, password, fcm_token }).then(r => r.data);
+
+export const selectCrusher = (crusher_id: string) =>
+  api.post('/auth/select-crusher', { crusher_id }).then(r => r.data);
 
 export const getSales = (params?: any) => api.get('/sales', { params }).then(r => r.data);
 export const createSale = (data: any) => api.post('/sales', data).then(r => r.data);

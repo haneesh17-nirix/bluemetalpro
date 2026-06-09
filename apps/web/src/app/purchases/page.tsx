@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -44,11 +45,12 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
       })),
     }),
     onSuccess: () => {
+      log.action('Purchase created', { party: form?.party_name });
       toast.success('Purchase recorded');
       qc.invalidateQueries({ queryKey: ['purchases'] });
       onClose();
     },
-    onError: () => toast.error('Failed to record purchase'),
+    onError: () => { log.error('Purchase creation failed'); toast.error('Failed to record purchase'); },
   });
 
   return (
@@ -183,6 +185,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function PurchasesPage() {
+  useEffect(() => { log.page('Purchases'); }, []);
   const [showNew, setShowNew] = useState(false);
   const [from, setFrom] = useState(dayjs().format('YYYY-MM-01'));
   const [to, setTo] = useState(dayjs().format('YYYY-MM-DD'));

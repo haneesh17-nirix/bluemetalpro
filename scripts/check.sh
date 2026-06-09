@@ -148,12 +148,14 @@ REQUIRED=(
   database/migrations/001_initial.sql
   database/migrations/002_weighbridge_cameras.sql
   database/migrations/003_test_accounts.sql
+  database/migrations/004_crushers.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
   backend/src/routes/auth.ts
   backend/src/routes/cameras.ts
   backend/src/routes/config.ts
+  backend/src/routes/crushers.ts
   backend/src/routes/invoices.ts
   backend/src/routes/ledger.ts
   backend/src/routes/maintenance.ts
@@ -174,12 +176,14 @@ REQUIRED=(
   packages/shared/src/index.ts
   packages/shared/src/types/camera.ts
   packages/shared/src/types/weighbridge.ts
+  packages/shared/src/utils/clientLogger.ts
   packages/shared/src/utils/parsers.ts
   # Weighbridge agent
   packages/weighbridge-agent/src/index.ts
   packages/weighbridge-agent/.env.example
   # Web pages
   apps/web/src/app/cameras/page.tsx
+  apps/web/src/app/crushers/page.tsx
   apps/web/src/app/dashboard/page.tsx
   apps/web/src/app/ledger/page.tsx
   apps/web/src/app/login/page.tsx
@@ -190,6 +194,7 @@ REQUIRED=(
   apps/web/src/app/quarry/page.tsx
   apps/web/src/app/reports/page.tsx
   apps/web/src/app/sales/page.tsx
+  apps/web/src/app/select-crusher/page.tsx
   apps/web/src/app/settings/page.tsx
   apps/web/src/app/users/page.tsx
   apps/web/src/app/vehicles/page.tsx
@@ -200,6 +205,7 @@ REQUIRED=(
   apps/mobile/index.js
   apps/mobile/app.json
   apps/mobile/eas.json
+  apps/mobile/src/screens/CrusherSelectScreen.tsx
   apps/mobile/src/screens/DashboardScreen.tsx
   apps/mobile/src/screens/LoginScreen.tsx
   apps/mobile/src/screens/MaintenanceScreen.tsx

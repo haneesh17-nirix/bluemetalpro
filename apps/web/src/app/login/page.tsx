@@ -1,13 +1,16 @@
 'use client';
 import { useState } from 'react';
+import { log } from '@bluemetal/shared';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { login } from '@/lib/api';
+import { login, selectCrusher } from '@/lib/api';
+import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { setCrusher } = useCrusher();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
@@ -16,10 +19,22 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.temp_token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/dashboard');
+      if (data.crushers.length === 1) {
+        const sel = await selectCrusher(data.crushers[0].id);
+        localStorage.setItem('token', sel.token);
+        localStorage.setItem('user', JSON.stringify(sel.user));
+        setCrusher(sel.crusher);
+        log.action('Login successful', { role: sel.user?.role, crusher: data.crushers[0].name });
+        router.push('/dashboard');
+      } else {
+        localStorage.setItem('crushers_list', JSON.stringify(data.crushers));
+        log.action('Login — crusher selection required', { count: data.crushers.length });
+        router.push('/select-crusher');
+      }
     } catch {
+      log.error('Login failed');
       toast.error('Invalid email or password');
     } finally {
       setLoading(false);

@@ -1,14 +1,17 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
-import { authenticate } from '../middleware/auth';
+import { authenticate, requireCrusher } from '../middleware/auth';
+import { logger, logAction } from '../utils/logger';
 
 export const notificationsRouter = Router();
 notificationsRouter.use(authenticate);
+notificationsRouter.use(requireCrusher);
 
 notificationsRouter.get('/', async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const rows = await query(
-    `SELECT * FROM notifications WHERE user_id = $1 OR user_id IS NULL ORDER BY sent_at DESC LIMIT 50`,
-    [req.user!.id]
+    `SELECT * FROM notifications WHERE (user_id = $1 OR user_id IS NULL) AND (crusher_id = $2 OR crusher_id IS NULL) ORDER BY sent_at DESC LIMIT 50`,
+    [req.user!.id, cid]
   );
   res.json(rows);
 });
@@ -19,7 +22,9 @@ notificationsRouter.patch('/:id/read', async (req, res) => {
 });
 
 notificationsRouter.post('/mark-all-read', async (req, res) => {
-  await query('UPDATE notifications SET is_read = true WHERE user_id = $1 OR user_id IS NULL', [req.user!.id]);
+  const cid = req.user!.crusher_id!;
+  await query('UPDATE notifications SET is_read = true WHERE (user_id = $1 OR user_id IS NULL) AND (crusher_id = $2 OR crusher_id IS NULL)', [req.user!.id, cid]);
+  logAction('notifications.marked_all_read', { userId: req.user!.id });
   res.json({ ok: true });
 });
 
@@ -32,5 +37,6 @@ notificationsRouter.post('/register-device', async (req, res) => {
      ON CONFLICT DO NOTHING`,
     [req.user!.id, fcm_token?.slice(-20), fcm_token, device_info]
   );
+  logAction('notifications.device_registered', { userId: req.user!.id, device: req.body.device_info });
   res.json({ ok: true });
 });

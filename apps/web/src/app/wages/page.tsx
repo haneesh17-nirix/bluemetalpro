@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -29,6 +30,7 @@ const statusActiveClass: Record<AttendanceStatus, string> = {
 const emptyWorker = { name: '', phone: '', designation: '', wage_type: 'daily' as WageType, wage_rate: '', joining_date: '', aadhaar: '' };
 
 export default function WagesPage() {
+  useEffect(() => { log.page('Wages'); }, []);
   const qc = useQueryClient();
   const [tab, setTab] = useState<'attendance' | 'workers' | 'payroll'>('attendance');
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
@@ -61,7 +63,7 @@ export default function WagesPage() {
 
   const saveMutation = useMutation({
     mutationFn: submitAttendance,
-    onSuccess: () => { toast.success('Attendance saved'); refetchAttendance(); },
+    onSuccess: () => { log.action('Attendance entry saved'); toast.success('Attendance saved'); refetchAttendance(); },
     onError: () => toast.error('Failed to save attendance'),
   });
 

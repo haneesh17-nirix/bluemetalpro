@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getVehicles, createVehicle } from '../lib/api';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 function getStatusChip(status: string) {
   switch (status) {
@@ -28,6 +29,7 @@ function getStatusChip(status: string) {
 }
 
 export default function VehiclesScreen() {
+  useEffect(() => { log.screen('Vehicles'); }, []);
   const qc = useQueryClient();
   const { data: vehicles = [], isLoading, refetch } = useQuery({ queryKey: ['vehicles'], queryFn: getVehicles });
   const [showAdd, setShowAdd] = useState(false);

@@ -1,6 +1,8 @@
 'use client';
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboard, getUpcomingMaintenance } from '@/lib/api';
+import { log } from '@bluemetal/shared';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
@@ -11,6 +13,7 @@ import {
 import Sidebar from '@/components/layout/Sidebar';
 import TopBar from '@/components/layout/TopBar';
 import Link from 'next/link';
+import { useCrusher } from '@/contexts/CrusherContext';
 
 const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
@@ -25,6 +28,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function DashboardPage() {
+  useEffect(() => { log.page('Dashboard'); }, []);
+  const { crusher } = useCrusher();
   const { data, isLoading } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard });
   const { data: maintenance } = useQuery({ queryKey: ['upcoming-maintenance'], queryFn: getUpcomingMaintenance });
 
@@ -74,7 +79,7 @@ export default function DashboardPage() {
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Dashboard" subtitle="Welcome back — here's your business at a glance" />
+        <TopBar title="Dashboard" subtitle={crusher ? (crusher.legal_name || crusher.name) + (crusher.city ? ' · ' + crusher.city : '') : 'Loading...'} />
 
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
 
@@ -96,6 +101,17 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+
+          {/* Crusher info bar */}
+          {crusher && (
+            <div className="card flex items-center gap-4 px-5 py-3 text-sm">
+              <div className="flex-1 flex flex-wrap gap-x-6 gap-y-1">
+                {crusher.gstin && <span className="text-white/50">GSTIN: <span className="text-white/80 font-mono">{crusher.gstin}</span></span>}
+                {crusher.city && <span className="text-white/50">Location: <span className="text-white/80">{[crusher.city, crusher.state].filter(Boolean).join(', ')}</span></span>}
+                {crusher.phone && <span className="text-white/50">Phone: <span className="text-white/80">{crusher.phone}</span></span>}
+              </div>
+            </div>
+          )}
 
           {/* Chart + Maintenance row */}
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">

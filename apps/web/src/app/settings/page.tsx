@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -8,6 +9,7 @@ import { getConfig, updateConfig } from '@/lib/api';
 import { Save, Building2 } from 'lucide-react';
 
 export default function SettingsPage() {
+  useEffect(() => { log.page('Settings'); }, []);
   const qc = useQueryClient();
   const { data: config } = useQuery({ queryKey: ['config'], queryFn: getConfig });
 
@@ -24,7 +26,7 @@ export default function SettingsPage() {
 
   const mutation = useMutation({
     mutationFn: updateConfig,
-    onSuccess: () => { toast.success('Settings saved'); qc.invalidateQueries({ queryKey: ['config'] }); },
+    onSuccess: () => { log.action('Settings saved'); toast.success('Settings saved'); qc.invalidateQueries({ queryKey: ['config'] }); },
     onError: () => toast.error('Failed to save settings'),
   });
 

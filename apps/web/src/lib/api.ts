@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { log } from '@bluemetal/shared';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
@@ -11,12 +12,13 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (r) => r,
+  (r) => { log.debug("API " + (r.config.method || '').toUpperCase() + " " + r.config.url + " -> " + r.status); return r; },
   (err) => {
     if (err.response?.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+    log.error("API " + (err.config?.method || '').toUpperCase() + " " + (err.config?.url || '') + " failed", { status: err.response?.status });
     return Promise.reject(err);
   }
 );
@@ -93,3 +95,14 @@ export const updateConfig = (data: any) => api.put('/config', data).then(r => r.
 
 // Notifications
 export const getNotifications = () => api.get('/notifications').then(r => r.data);
+
+// Crusher selection & management
+export const selectCrusher = (crusher_id: string) =>
+  api.post('/auth/select-crusher', { crusher_id }).then(r => r.data);
+
+export const getCrushers = () => api.get('/crushers').then(r => r.data);
+export const createCrusher = (data: any) => api.post('/crushers', data).then(r => r.data);
+export const updateCrusher = (id: string, data: any) => api.put(`/crushers/${id}`, data).then(r => r.data);
+export const getCrusherUsers = (id: string) => api.get(`/crushers/${id}/users`).then(r => r.data);
+export const grantCrusherAccess = (id: string, data: any) => api.post(`/crushers/${id}/users`, data).then(r => r.data);
+export const revokeCrusherAccess = (id: string, userId: string) => api.delete(`/crushers/${id}/users/${userId}`).then(r => r.data);

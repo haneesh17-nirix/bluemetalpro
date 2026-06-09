@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl, StatusBar } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getSales } from '../lib/api';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 export default function SalesListScreen({ navigation }: any) {
+  useEffect(() => { log.screen('SalesList'); }, []);
   const [from] = useState(dayjs().format('YYYY-MM-01'));
   const [to] = useState(dayjs().format('YYYY-MM-DD'));
   const { data: sales = [], isLoading, refetch } = useQuery({ queryKey: ['sales', { from, to }], queryFn: () => getSales({ from, to }) });

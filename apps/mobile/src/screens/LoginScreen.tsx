@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, ActivityIndicator, KeyboardAvoidingView, Platform,
@@ -6,8 +7,9 @@ import {
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as SecureStore from 'expo-secure-store';
 import { Ionicons } from '@expo/vector-icons';
-import { login } from '../lib/api';
+import { login, selectCrusher } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { colors, shadows, radius } from '../theme';
 
@@ -20,7 +22,7 @@ async function registerForPushNotifications() {
   return token.data;
 }
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }: any) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,8 +35,24 @@ export default function LoginScreen() {
     try {
       const fcmToken = await registerForPushNotifications();
       const data = await login(email.trim().toLowerCase(), password, fcmToken);
-      await signIn(data.token, data.user);
+      if (data.crushers && data.crushers.length === 1) {
+        // Auto-select the only crusher
+        const sel = await selectCrusher(data.crushers[0].id);
+        await SecureStore.setItemAsync('token', sel.token);
+        log.action('Login successful', { role: sel.user?.role, crusher: data.crushers[0].name });
+        await signIn(sel.token, sel.user, sel.crusher);
+      } else if (data.crushers && data.crushers.length > 1) {
+        // Multiple crushers — store temp token and crusher list, navigate to select screen
+        await SecureStore.setItemAsync('token', data.temp_token);
+        await SecureStore.setItemAsync('crushers_list', JSON.stringify(data.crushers));
+        await SecureStore.setItemAsync('user', JSON.stringify(data.user));
+        log.action('Login — crusher selection required', { count: data.crushers.length });
+        navigation.navigate('SelectCrusher', { crushers: data.crushers, user: data.user });
+      } else {
+        throw new Error('No crusher access configured');
+      }
     } catch (err: any) {
+      log.error('Login failed');
       Alert.alert('Login Failed', err.response?.data?.error || 'Invalid credentials');
     } finally {
       setLoading(false);

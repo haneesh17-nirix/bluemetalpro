@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Sidebar from '@/components/layout/Sidebar';
@@ -31,6 +32,7 @@ const emptyAsset = {
 };
 
 export default function MaintenancePage() {
+  useEffect(() => { log.page('Maintenance'); }, []);
   const qc = useQueryClient();
   const [tab, setTab] = useState<'records' | 'assets'>('records');
   const [assetTypeFilter, setAssetTypeFilter] = useState<string>('');
@@ -58,6 +60,7 @@ export default function MaintenancePage() {
         ? api.patch(`/maintenance/records/${editRecord.id}`, data).then(r => r.data)
         : api.post('/maintenance/records', data).then(r => r.data),
     onSuccess: () => {
+      if (editRecord) { log.action('Maintenance record updated'); } else { log.action('Maintenance record created'); }
       toast.success(editRecord ? 'Record updated' : 'Maintenance record added');
       qc.invalidateQueries({ queryKey: ['maintenance'] });
       setShowRecordForm(false);

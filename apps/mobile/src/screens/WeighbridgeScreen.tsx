@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import dayjs from 'dayjs';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   stable:   { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
@@ -82,6 +83,7 @@ function TicketRow({ ticket }: { ticket: any }) {
 }
 
 export default function WeighbridgeScreen() {
+  useEffect(() => { log.screen('Weighbridge'); }, []);
   const { data: weighbridges = [], isLoading: wbLoading, refetch: refetchWb } = useQuery({
     queryKey: ['weighbridges-mobile'],
     queryFn: () => api.get('/weighbridge').then(r => r.data),

@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, ScrollView, StyleSheet, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getQuarrySales, createQuarrySale, getParties, getProducts, getVehicles } from '../lib/api';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import { colors, shadows, radius } from '../theme';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 export default function QuarryScreen() {
+  useEffect(() => { log.screen('Quarry'); }, []);
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<any>({ sale_date: dayjs().format('YYYY-MM-DD'), quantity: '', rate: '', royalty_rate: '0', amount_received: '0', payment_mode: 'cash' });
@@ -18,7 +20,7 @@ export default function QuarryScreen() {
 
   const mutation = useMutation({
     mutationFn: createQuarrySale,
-    onSuccess: () => { Alert.alert('Success', 'Quarry sale added'); qc.invalidateQueries({ queryKey: ['quarry'] }); setShowForm(false); },
+    onSuccess: () => { log.action('Quarry sale submitted'); Alert.alert('Success', 'Quarry sale added'); qc.invalidateQueries({ queryKey: ['quarry'] }); setShowForm(false); },
     onError: () => Alert.alert('Error', 'Failed'),
   });
 

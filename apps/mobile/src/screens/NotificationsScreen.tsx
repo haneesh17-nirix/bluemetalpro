@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getNotifications, markAllRead } from '../lib/api';
 import dayjs from 'dayjs';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 export default function NotificationsScreen() {
+  useEffect(() => { log.screen('Notifications'); }, []);
   const qc = useQueryClient();
   const { data = [], isLoading, refetch } = useQuery({ queryKey: ['notifications'], queryFn: getNotifications });
   const markAllMutation = useMutation({ mutationFn: markAllRead, onSuccess: () => refetch() });

@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createSale, getParties, getProducts, getVehicles } from '../lib/api';
 import { Picker } from '@react-native-picker/picker';
+import { log } from '../../../packages/shared/src/utils/clientLogger';
 
 const C = { primary: '#1a3c5e', bg: '#f0f4f8', accent: '#f59e0b' };
 
 export default function NewSaleScreen({ navigation }: any) {
+  useEffect(() => { log.screen('NewSale'); }, []);
   const qc = useQueryClient();
   const { data: parties = [] } = useQuery({ queryKey: ['parties'], queryFn: () => getParties({ type: 'customer' }) });
   const { data: products = [] } = useQuery({ queryKey: ['products'], queryFn: getProducts });
@@ -18,11 +20,12 @@ export default function NewSaleScreen({ navigation }: any) {
   const mutation = useMutation({
     mutationFn: createSale,
     onSuccess: () => {
+      log.action('Sale submitted');
       Alert.alert('Success', 'Sale invoice created!');
       qc.invalidateQueries({ queryKey: ['sales'] });
       navigation.goBack();
     },
-    onError: () => Alert.alert('Error', 'Failed to create sale'),
+    onError: () => { log.error('Sale submission failed'); Alert.alert('Error', 'Failed to create sale'); },
   });
 
   const addItem = () => setItems(i => [...i, { product_id: '', product_name: '', unit: 'MT', quantity: '', rate: '', gst_rate: 5, hsn_code: '' }]);

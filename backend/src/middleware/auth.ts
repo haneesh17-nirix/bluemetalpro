@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { queryOne } from '../config/db';
 
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
   role: string;
+  crusher_id?: string;
+  crusher_name?: string;
 }
 
 declare global {
@@ -20,7 +21,6 @@ declare global {
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token provided' });
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser;
     req.user = decoded;
@@ -38,4 +38,12 @@ export function authorize(...roles: string[]) {
     }
     next();
   };
+}
+
+// Ensures the request has a crusher selected (token includes crusher_id)
+export function requireCrusher(req: Request, res: Response, next: NextFunction) {
+  if (!req.user?.crusher_id) {
+    return res.status(400).json({ error: 'No crusher selected. Call /auth/select-crusher first.' });
+  }
+  next();
 }
