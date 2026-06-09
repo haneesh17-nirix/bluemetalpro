@@ -1,93 +1,221 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
+import {
+  View, Text, ScrollView, TouchableOpacity, StyleSheet,
+  RefreshControl, StatusBar,
+} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import { Ionicons } from '@expo/vector-icons';
 import { getDashboard, getUpcomingMaintenance } from '../lib/api';
+import { colors, shadows, radius } from '../theme';
 
-const C = { primary: '#1a3c5e', accent: '#f59e0b', bg: '#f0f4f8' };
+const fmt = (v: any) => `₹${Number(v || 0).toLocaleString('en-IN')}`;
 
-function KpiCard({ label, value, sub, color }: any) {
+function KpiCard({ label, value, sub, iconName, iconBg }: any) {
   return (
-    <View style={[styles.kpiCard, { borderLeftColor: color, borderLeftWidth: 4 }]}>
-      <Text style={styles.kpiValue}>{value}</Text>
-      <Text style={styles.kpiLabel}>{label}</Text>
-      {sub ? <Text style={styles.kpiSub}>{sub}</Text> : null}
+    <View style={[kpi.card, shadows.card]}>
+      <View style={[kpi.iconBox, { backgroundColor: iconBg }]}>
+        <Ionicons name={iconName} size={18} color="#fff" />
+      </View>
+      <Text style={kpi.value}>{value}</Text>
+      <Text style={kpi.label}>{label}</Text>
+      {sub ? <Text style={kpi.sub}>{sub}</Text> : null}
     </View>
   );
 }
 
 export default function DashboardScreen({ navigation }: any) {
   const { data, isLoading, refetch } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard });
+  const { data: maintenance = [] } = useQuery({ queryKey: ['upcoming-maintenance'], queryFn: getUpcomingMaintenance });
 
-  const fmt = (v: any) => `₹${Number(v || 0).toLocaleString('en-IN')}`;
+  const kpis = [
+    { label: "Today's Sales",  value: fmt(data?.today_sales?.total),   sub: `${data?.today_sales?.count || 0} invoices`, iconName: 'cart-outline',    iconBg: colors.brandBright },
+    { label: 'Receivables',    value: fmt(data?.total_pending?.total),  sub: 'Outstanding',                               iconName: 'trending-up',     iconBg: colors.goldDark },
+    { label: 'Alerts',         value: String(maintenance?.length || 0), sub: 'Maintenance due',                            iconName: 'warning-outline', iconBg: colors.danger },
+  ];
+
+  const quickActions = [
+    { label: 'New Sale',     screen: 'NewSale',         icon: 'receipt-outline',      color: colors.brandBright },
+    { label: 'Quarry',       screen: 'NewQuarrySale',   icon: 'mountain-outline',     color: colors.gem },
+    { label: 'Attendance',   screen: 'Attendance',      icon: 'people-outline',       color: colors.goldDark },
+    { label: 'Maintenance',  screen: 'Maintenance',     icon: 'construct-outline',    color: '#7c3aed' },
+  ];
 
   return (
-    <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>BlueMetal Pro</Text>
-        <Text style={styles.headerSub}>Today's Overview</Text>
-      </View>
+    <View style={s.root}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.brandDeep} />
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Today</Text>
-        <View style={styles.kpiGrid}>
-          <KpiCard label="Sales" value={fmt(data?.today_sales?.total)} sub={`${data?.today_sales?.count || 0} invoices`} color="#2563a8" />
-          <KpiCard label="Pending" value={fmt(data?.total_pending?.total)} sub="Receivables" color="#f59e0b" />
+      {/* Header */}
+      <View style={s.header}>
+        <View>
+          <Text style={s.headerTitle}>Dashboard</Text>
+          <Text style={s.headerSub}>Today's overview</Text>
         </View>
+        <TouchableOpacity style={s.bellBtn} onPress={() => navigation.navigate('Notifications')}>
+          <Ionicons name="notifications-outline" size={20} color={colors.goldLight} />
+          <View style={s.bellDot} />
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Top Products (30 days)</Text>
-        {(data?.top_products || []).map((p: any, i: number) => (
-          <View key={i} style={styles.productRow}>
-            <View style={styles.productRank}><Text style={styles.productRankText}>{i + 1}</Text></View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.productName}>{p.name}</Text>
-              <Text style={styles.productQty}>{Number(p.qty || 0).toFixed(2)} MT</Text>
-            </View>
-            <Text style={styles.productAmount}>{fmt(p.amount)}</Text>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={s.scroll}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor={colors.gold} />}
+      >
+        {/* KPI row */}
+        <View style={s.kpiRow}>
+          {kpis.map(k => <KpiCard key={k.label} {...k} />)}
+        </View>
+
+        {/* Top Products */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Top Products <Text style={s.sectionMeta}>— last 30 days</Text></Text>
+          <View style={[s.card, shadows.card]}>
+            {(data?.top_products || []).length === 0 && (
+              <Text style={s.empty}>No data yet</Text>
+            )}
+            {(data?.top_products || []).map((p: any, i: number) => (
+              <View key={i} style={[s.productRow, i > 0 && s.productBorder]}>
+                <View style={[s.rankBadge, { backgroundColor: i === 0 ? colors.goldDark : colors.border }]}>
+                  <Text style={s.rankText}>{i + 1}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.productName}>{p.name}</Text>
+                  <Text style={s.productQty}>{Number(p.qty || 0).toFixed(1)} MT</Text>
+                </View>
+                <Text style={[s.productAmt, i === 0 && { color: colors.goldLight }]}>{fmt(p.amount)}</Text>
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.actionGrid}>
-          {[
-            { label: 'New Sale', screen: 'NewSale', color: C.primary },
-            { label: 'New Receipt', screen: 'NewReceipt', color: '#059669' },
-            { label: 'Quarry Sale', screen: 'NewQuarrySale', color: '#7c3aed' },
-            { label: 'Attendance', screen: 'Attendance', color: '#db2777' },
-          ].map(a => (
-            <TouchableOpacity key={a.screen} style={[styles.actionBtn, { backgroundColor: a.color }]}
-              onPress={() => navigation.navigate(a.screen)}>
-              <Text style={styles.actionBtnText}>{a.label}</Text>
-            </TouchableOpacity>
-          ))}
         </View>
-      </View>
-    </ScrollView>
+
+        {/* Upcoming Maintenance */}
+        {maintenance?.length > 0 && (
+          <View style={s.section}>
+            <Text style={s.sectionTitle}>Maintenance Due</Text>
+            {maintenance.slice(0, 3).map((m: any) => (
+              <View key={m.id} style={[s.alertRow, shadows.card]}>
+                <View style={s.alertIcon}>
+                  <Ionicons name="construct-outline" size={16} color={colors.danger} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.alertAsset}>{m.asset_name}</Text>
+                  <Text style={s.alertTitle}>{m.title}</Text>
+                </View>
+                <Text style={s.alertDate}>
+                  {new Date(m.scheduled_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Quick Actions */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Quick Actions</Text>
+          <View style={s.actionGrid}>
+            {quickActions.map(a => (
+              <TouchableOpacity key={a.screen} style={[s.actionBtn, { borderColor: `${a.color}40` }, shadows.card]}
+                onPress={() => navigation.navigate(a.screen)} activeOpacity={0.75}>
+                <View style={[s.actionIcon, { backgroundColor: `${a.color}20` }]}>
+                  <Ionicons name={a.icon as any} size={22} color={a.color} />
+                </View>
+                <Text style={s.actionLabel}>{a.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: C.bg },
-  header: { backgroundColor: C.primary, padding: 20, paddingTop: 50 },
-  headerTitle: { fontSize: 24, fontWeight: 'bold', color: 'white' },
-  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
-  section: { margin: 16, marginBottom: 0 },
-  sectionTitle: { fontSize: 15, fontWeight: '600', color: C.primary, marginBottom: 10 },
-  kpiGrid: { flexDirection: 'row', gap: 12 },
-  kpiCard: { flex: 1, backgroundColor: 'white', borderRadius: 12, padding: 14, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
-  kpiValue: { fontSize: 20, fontWeight: 'bold', color: '#1f2937' },
-  kpiLabel: { fontSize: 12, color: '#6b7280', marginTop: 2 },
-  kpiSub: { fontSize: 11, color: '#9ca3af', marginTop: 1 },
-  productRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 10, padding: 12, marginBottom: 8, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
-  productRank: { width: 28, height: 28, borderRadius: 14, backgroundColor: C.primary, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  productRankText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
-  productName: { fontSize: 13, fontWeight: '600', color: '#1f2937' },
-  productQty: { fontSize: 11, color: '#6b7280', marginTop: 1 },
-  productAmount: { fontSize: 14, fontWeight: 'bold', color: C.primary },
+const kpi = StyleSheet.create({
+  card: {
+    flex: 1, backgroundColor: colors.surfaceCard,
+    borderRadius: radius.lg, padding: 14,
+    borderWidth: 1, borderColor: colors.border,
+    alignItems: 'flex-start',
+  },
+  iconBox: {
+    width: 36, height: 36, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 10,
+  },
+  value: { color: colors.white, fontSize: 18, fontWeight: '700' },
+  label: { color: colors.textMid, fontSize: 11, marginTop: 2 },
+  sub:   { color: colors.textFaint, fontSize: 10, marginTop: 1 },
+});
+
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.brandDeep },
+
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 20, paddingTop: 56, paddingBottom: 16,
+    backgroundColor: colors.brand,
+    borderBottomWidth: 1, borderBottomColor: colors.borderLight,
+  },
+  headerTitle: { color: colors.white, fontSize: 22, fontWeight: '700' },
+  headerSub:   { color: colors.textMid, fontSize: 12, marginTop: 1 },
+  bellBtn: {
+    width: 40, height: 40, borderRadius: 12,
+    backgroundColor: `${colors.gold}15`, borderWidth: 1, borderColor: `${colors.gold}25`,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  bellDot: {
+    position: 'absolute', top: 8, right: 8,
+    width: 8, height: 8, borderRadius: 4,
+    backgroundColor: colors.goldLight,
+    borderWidth: 1.5, borderColor: colors.brand,
+  },
+
+  scroll: { paddingBottom: 32 },
+  kpiRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 18 },
+
+  section: { paddingHorizontal: 16, marginTop: 20 },
+  sectionTitle: { color: colors.white, fontSize: 14, fontWeight: '700', marginBottom: 10 },
+  sectionMeta:  { color: colors.textDim, fontWeight: '400', fontSize: 12 },
+
+  card: {
+    backgroundColor: colors.surfaceCard, borderRadius: radius.lg,
+    borderWidth: 1, borderColor: colors.border, overflow: 'hidden',
+  },
+  empty: { color: colors.textDim, fontSize: 13, textAlign: 'center', paddingVertical: 20 },
+
+  productRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12 },
+  productBorder: { borderTopWidth: 1, borderTopColor: `${colors.border}80` },
+  rankBadge: {
+    width: 26, height: 26, borderRadius: radius.sm,
+    alignItems: 'center', justifyContent: 'center', marginRight: 12,
+  },
+  rankText:    { color: colors.white, fontSize: 11, fontWeight: '700' },
+  productName: { color: colors.text, fontSize: 13, fontWeight: '600' },
+  productQty:  { color: colors.textDim, fontSize: 11, marginTop: 1 },
+  productAmt:  { color: colors.text, fontSize: 13, fontWeight: '700' },
+
+  alertRow: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: `${colors.danger}10`,
+    borderRadius: radius.md, padding: 12, marginBottom: 8,
+    borderWidth: 1, borderColor: `${colors.danger}20`,
+  },
+  alertIcon: {
+    width: 34, height: 34, borderRadius: 10,
+    backgroundColor: `${colors.danger}20`,
+    alignItems: 'center', justifyContent: 'center', marginRight: 12,
+  },
+  alertAsset: { color: colors.text, fontSize: 13, fontWeight: '600' },
+  alertTitle: { color: colors.textMid, fontSize: 11, marginTop: 1 },
+  alertDate:  { color: colors.textDim, fontSize: 11 },
+
   actionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  actionBtn: { flex: 1, minWidth: '45%', padding: 14, borderRadius: 12, alignItems: 'center' },
-  actionBtnText: { color: 'white', fontWeight: '600', fontSize: 14 },
+  actionBtn: {
+    width: '47%', backgroundColor: colors.surfaceCard,
+    borderRadius: radius.lg, padding: 16,
+    borderWidth: 1, alignItems: 'center',
+  },
+  actionIcon: {
+    width: 46, height: 46, borderRadius: 14,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 10,
+  },
+  actionLabel: { color: colors.text, fontSize: 13, fontWeight: '600' },
 });
