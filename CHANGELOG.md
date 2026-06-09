@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6] — 2026-06-09
+
+
+### Bug Fixes
+
+- `db` make migrations idempotent (IF NOT EXISTS on types and tables) ([f2fd6df])
+
 ## [1.2.5] — 2026-06-09
 
 
