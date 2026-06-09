@@ -1,17 +1,19 @@
-# Stone Crusher ERP
+# BlueMetal Pro
 
-Full-stack ERP for stone crusher industry — mobile app (iOS + Android) + web dashboard, hosted on Azure.
+Full-stack ERP for quarry and stone crushing operations — React Native mobile app (iOS + Android) + Next.js web dashboard, hosted on Azure.
 
-## Architecture
+## Tech Stack
 
-```
-Azure App Service (Node.js API)
-Azure PostgreSQL Flexible Server
-Azure Blob Storage (invoices / docs)
-Azure Notification Hubs (push notifications)
-Azure Static Web Apps (Next.js web)
-React Native Expo (mobile)
-```
+| Layer | Technology | Hosting |
+|---|---|---|
+| Web dashboard | Next.js 14 (static export) | Azure Static Web Apps (Free) |
+| Mobile app | React Native, Expo 51 | EAS Build → APK/IPA |
+| Backend API | Node.js + Express | Azure Container Apps (Consumption) |
+| Database | PostgreSQL 15 | Azure Flexible Server B1ms |
+| Storage | Azure Blob Storage | Invoices & documents |
+| Push notifications | Azure Notification Hubs | FCM (Android) + APNs (iOS) |
+
+API: `https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/api`
 
 ## Modules
 
@@ -24,95 +26,93 @@ React Native Expo (mobile)
 | Parties (Customer/Supplier) | — | ✅ |
 | Vehicles | ✅ | ✅ |
 | Ledger / Receipts | — | ✅ |
-| Item-wise Reports | ✅ | ✅ |
-| GST Summary | — | ✅ |
-| Maintenance (Machinery + Vehicle) | ✅ | — |
-| Wages & Attendance | ✅ | — |
-| Push Notifications | ✅ | — |
+| Reports (item-wise, party, GST, trend) | ✅ | ✅ |
+| Maintenance (Machinery + Vehicle) | ✅ | ✅ |
+| Wages & Attendance | ✅ | ✅ |
 | User Management | — | ✅ |
 | Company Config / GST Setup | — | ✅ |
+| Weighbridge Integration | — | ⏳ |
+| CCTV Live Cameras | — | ⏳ |
 
 ## Roles
 
-| Role | Permissions |
+| Role | Access |
 |---|---|
 | `admin` | Full access |
-| `sales_operator` | Create sales, add vehicles, manage parties |
+| `sales_operator` | Sales, vehicles, parties |
 | `accounts` | Sales, purchases, ledger, wages |
 | `report_viewer` | Read-only reports |
 | `vehicle_manager` | Vehicles + maintenance |
 | `quarry_operator` | Quarry sales only |
 
-## Setup
+## Test Accounts
 
-### 1. Deploy Azure Infrastructure
+| Email | Password | Role |
+|---|---|---|
+| admin@bluemetal.local | Admin@123 | admin |
+| sales@bluemetal.local | Sales@123 | sales_operator |
+| accounts@bluemetal.local | Accounts@123 | accounts |
+| reports@bluemetal.local | Reports@123 | report_viewer |
+| vehicle@bluemetal.local | Vehicle@123 | vehicle_manager |
+| quarry@bluemetal.local | Quarry@123 | quarry_operator |
+
+## CI/CD Pipelines
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `web.yml` | Push to `main` | Build Next.js → deploy to Azure Static Web Apps |
+| `backend.yml` | Push to `main` | Build Docker image → push to ACR → deploy to Container Apps → run migrations |
+| `mobile.yml` | Push to `main` / manual | TypeScript check + EAS build (preview APK) |
+| `release.yml` | Push to `main` | Bump version, update CHANGELOG, update arch doc, git tag |
+| `pr-checks.yml` | Pull request | Typecheck all packages, contract tests, commitlint |
+
+## Local Development
 
 ```bash
-# Edit infra/params.json with your values
-az group create --name stone-crusher-rg --location southeastasia
-az deployment group create \
-  --resource-group stone-crusher-rg \
-  --template-file infra/main.bicep \
-  --parameters @infra/params.json
+# Install all dependencies from repo root
+npm install
+
+# Backend
+cp backend/.env.example backend/.env
+# Fill DB connection string + JWT_SECRET
+npm run dev --workspace=backend
+
+# Web dashboard
+echo "NEXT_PUBLIC_API_URL=http://localhost:3001/api" > apps/web/.env.local
+npm run dev --workspace=apps/web
+
+# Mobile
+echo "EXPO_PUBLIC_API_URL=http://localhost:3001/api" > apps/mobile/.env
+npm run start --workspace=apps/mobile
 ```
 
-### 2. Backend
+## Database Migrations
+
+Migrations live in `database/migrations/` and are run automatically by the backend CI pipeline.
+To run manually:
 
 ```bash
 cd backend
-cp .env.example .env
-# Fill in values from Azure portal outputs
-npm install
-npm run migrate   # Run DB migrations
-npm run build
-# Deploy to Azure App Service via zip deploy or GitHub Actions
+npm run migrate
 ```
 
-### 3. Web Dashboard
+All migrations are idempotent — safe to re-run.
 
-```bash
-cd apps/web
-echo "NEXT_PUBLIC_API_URL=https://your-api.azurewebsites.net/api" > .env.local
-npm install
-npm run build
-# Deploy to Azure Static Web Apps via GitHub Actions
-```
+## Versioning
 
-### 4. Mobile App
+Version is managed automatically by the release pipeline using [Conventional Commits](https://www.conventionalcommits.org/):
+- `feat:` → minor bump
+- `fix:` / `perf:` → patch bump
+- `BREAKING CHANGE` → major bump
 
-```bash
-cd apps/mobile
-echo "EXPO_PUBLIC_API_URL=https://your-api.azurewebsites.net/api" > .env
-npm install
-npx expo start
-# Build for production:
-npx eas build --platform all
-```
-
-### 5. Create First Admin User
-
-```sql
--- Run against your PostgreSQL database
-INSERT INTO company_config (company_name, gstin, address, phone, invoice_prefix)
-VALUES ('Your Company Name', 'YOUR_GSTIN', 'Address', 'Phone', 'INV');
-
-INSERT INTO users (name, email, password_hash, role)
-VALUES ('Admin', 'admin@company.com', crypt('YourPassword123', gen_salt('bf')), 'admin');
-```
-
-## Products Pre-loaded
-
-- M-Sand, P-Sand, 20mm Chilli, 40mm, 12mm, 6mm Aggregates
-- Stone Dust, GSB, WMM, Boulder/Bollar
-- All with HSN code 25171010 and 5% GST
+Current version: see [`VERSION`](./VERSION) file.
 
 ## Invoice Format
 
 Financial year-based auto-numbering: `INV/2526/0001`
+Supports Tax Invoice (CGST+SGST / IGST), Delivery Challan, Bill of Supply.
+PDFs generated server-side via PDFKit, stored in Azure Blob Storage.
 
-Supports:
-- Tax Invoice (CGST + SGST intra-state, IGST inter-state)
-- Delivery Challan
-- Bill of Supply
+## Architecture
 
-PDF generated server-side, stored in Azure Blob Storage.
+See [`docs/architecture.md`](./docs/architecture.md) for the full component diagram and integration details.

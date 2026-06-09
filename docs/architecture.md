@@ -7,11 +7,22 @@ BlueMetal Pro is a monorepo containing:
 
 | Package | Path | Runtime |
 |---------|------|---------|
-| Web dashboard | `apps/web` | Next.js 14, Azure Static Web Apps |
+| Web dashboard | `apps/web` | Next.js 14, Azure Static Web Apps (Free tier) |
 | Mobile app | `apps/mobile` | React Native (Expo 51), iOS + Android |
-| Backend API | `backend` | Node.js + Express, Azure App Service |
+| Backend API | `backend` | Node.js + Express, Azure Container Apps (Consumption) |
 | Shared types | `packages/shared` | Pure TypeScript, zero runtime deps |
 | Edge agent | `packages/weighbridge-agent` | Node.js Windows Service |
+
+## Deployment
+
+| Service | Azure Resource | Tier | Notes |
+|---------|---------------|------|-------|
+| Web dashboard | Static Web Apps | Free | Next.js static export (`output: 'export'`); `NEXT_PUBLIC_` vars baked at build time |
+| Backend API | Container Apps | Consumption (min=0, max=3) | Scales to zero when idle; ~2–3s cold start |
+| Database | PostgreSQL Flexible Server | Burstable B1ms | 1 vCore, 2 GB RAM; suitable for <10 concurrent users |
+| Container images | Azure Container Registry | Basic | Auto-pushed by `backend.yml` workflow |
+
+API base URL: `https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/api`
 
 ## Component Diagram
 
@@ -21,15 +32,15 @@ BlueMetal Pro is a monorepo containing:
    │                                                          │
    │  ┌──────────────┐   ┌───────────────┐   ┌────────────┐ │
    │  │  Next.js     │   │  Express API  │   │  MediaMTX  │ │
-   │  │  Static Web  │──▶│  App Service  │   │  Container │ │
-   │  │  Apps        │   │  (Node 20)    │   │  App       │ │
+   │  │  Static Web  │──▶│  Container    │   │  Container │ │
+   │  │  Apps (Free) │   │  Apps (Node)  │   │  App       │ │
    │  └──────────────┘   └──────┬────────┘   └──────┬─────┘ │
    │                            │  PostgreSQL         │ HLS  │
    │                            ▼                     │      │
    │                    ┌───────────────┐             │      │
    │                    │  PostgreSQL   │             │      │
    │                    │  Flexible     │             │      │
-   │                    │  Server       │             │      │
+   │                    │  B1ms         │             │      │
    │                    └───────────────┘             │      │
    └──────────────────────────────────────────────────┼──────┘
                                                        │
