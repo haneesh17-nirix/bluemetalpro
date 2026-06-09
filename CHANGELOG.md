@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ci` upgrade az CLI before postgres firewall steps ([89a2460])
+
 ## [1.2.4] — 2026-06-09
 
 
