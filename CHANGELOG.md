@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.2] — 2026-06-09
+
+
+### Bug Fixes
+
+- `auth` handle legacy API response + force backend redeploy ([e7d67b2])
+
 ## [1.8.1] — 2026-06-09
 
 
