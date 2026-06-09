@@ -40,7 +40,6 @@
     "@types/multer": "^1.4.11",
     "@types/pdfkit": "^0.13.3",
     "typescript": "^5.3.2",
-    "ts-node-dev": "^2.0.0",
-    "@types/pino-http": "^5.8.5"
+    "ts-node-dev": "^2.0.0"
   }
 }
