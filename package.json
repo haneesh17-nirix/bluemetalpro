@@ -1,0 +1,19 @@
+{
+  "name": "stone-crusher-app",
+  "private": true,
+  "workspaces": ["apps/*", "backend", "packages/*"],
+  "scripts": {
+    "dev:backend": "yarn workspace backend dev",
+    "dev:web": "yarn workspace web dev",
+    "dev:mobile": "yarn workspace mobile start",
+    "build:web": "yarn workspace web build",
+    "build:backend": "yarn workspace backend build",
+    "db:migrate": "yarn workspace backend migrate",
+    "infra:deploy": "az deployment group create --template-file infra/main.bicep --parameters @infra/params.json",
+    "check": "bash scripts/check.sh",
+    "check:types": "yarn workspaces run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

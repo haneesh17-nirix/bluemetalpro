@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "BlueMetal Pro",
+    "slug": "bluemetal-pro",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a3c5e"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a3c5e"
+      },
+      "package": "com.bluemetal.pro",
+      "googleServicesFile": "./google-services.json"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bluemetal.pro",
+      "googleServicesFile": "./GoogleService-Info.plist"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1a3c5e"
+        }
+      ]
+    ],
+    "scheme": "bluemetalpro",
+    "extra": {
+      "router": { "origin": false },
+      "eas": { "projectId": "YOUR_EAS_PROJECT_ID" }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+name: Infrastructure — Bicep Validate & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**'
+      - '.github/workflows/infra.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Validate Bicep template
+        uses: azure/arm-deploy@v2
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          template: infra/main.bicep
+          parameters: >
+            env=prod
+            dbAdminUser=${{ secrets.DB_USER }}
+            dbAdminPassword=${{ secrets.DB_PASSWORD }}
+            jwtSecret=${{ secrets.JWT_SECRET }}
+          deploymentMode: Validate
+
+      - name: What-if analysis
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az deployment group what-if \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --template-file infra/main.bicep \
+              --parameters \
+                env=prod \
+                dbAdminUser=${{ secrets.DB_USER }} \
+                dbAdminPassword=${{ secrets.DB_PASSWORD }} \
+                jwtSecret=${{ secrets.JWT_SECRET }}
+
+  deploy:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    environment:
+      name: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep
+        uses: azure/arm-deploy@v2
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          template: infra/main.bicep
+          parameters: >
+            env=prod
+            dbAdminUser=${{ secrets.DB_USER }}
+            dbAdminPassword=${{ secrets.DB_PASSWORD }}
+            jwtSecret=${{ secrets.JWT_SECRET }}
+          deploymentName: stone-crusher-${{ github.run_number }}

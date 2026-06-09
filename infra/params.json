@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "env": { "value": "prod" },
+    "dbAdminUser": { "value": "scadmin" },
+    "dbAdminPassword": { "value": "REPLACE_ME_STRONG_PASSWORD" },
+    "jwtSecret": { "value": "REPLACE_ME_JWT_SECRET_MIN_32_CHARS" }
+  }
+}
