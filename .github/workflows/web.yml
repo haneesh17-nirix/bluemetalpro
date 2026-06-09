@@ -10,13 +10,14 @@ on:
     branches: [main]
     paths:
       - 'apps/web/**'
+  workflow_dispatch:   # allow manual trigger from GitHub UI
 
 env:
   NODE_VERSION: '20'
 
 jobs:
   # ─────────────────────────────────────────
-  # 1. Build
+  # 1. Build Next.js static export
   # ─────────────────────────────────────────
   build:
     name: Build Next.js
@@ -38,71 +39,61 @@ jobs:
         run: npm ci
 
       - name: Type-check
-        run: npx tsc --noEmit
+        run: ./node_modules/.bin/tsc --noEmit
 
-      - name: Build
+      - name: Build (static export → out/)
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: npm run build
+        # next.config.js output:'export' writes to apps/web/out/
 
-      - name: Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: web-build
-          path: apps/web/.next
+          name: web-out
+          path: apps/web/out
           retention-days: 1
 
   # ─────────────────────────────────────────
-  # 2. Deploy to Azure Static Web Apps
+  # 2. Deploy to Azure Static Web Apps (main only)
   # ─────────────────────────────────────────
   deploy:
-    name: Deploy Web
+    name: Deploy to Azure SWA
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
       name: production
-      url: ${{ steps.deploy.outputs.static_web_app_url }}
+      url: https://happy-beach-0dd66180f.7.azurestaticapps.net
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/download-artifact@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: apps/web/package-lock.json
-
-      - name: Install dependencies
-        working-directory: apps/web
-        run: npm ci
-
-      - name: Build for deployment
-        working-directory: apps/web
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-        run: npm run build
+          name: web-out
+          path: apps/web/out
 
       - name: Deploy to Azure Static Web Apps
-        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: apps/web
-          output_location: .next
-          skip_app_build: true   # already built above
+          app_location: apps/web/out      # pre-built static files
+          output_location: ''             # already the final output
+          skip_app_build: true
 
   # ─────────────────────────────────────────
-  # Preview deployments for PRs
+  # 3. PR preview deployments
   # ─────────────────────────────────────────
   preview:
     name: PR Preview
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    environment:
-      name: preview
+    defaults:
+      run:
+        working-directory: apps/web
 
     steps:
       - uses: actions/checkout@v4
@@ -114,19 +105,18 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
 
       - name: Install & build
-        working-directory: apps/web
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL_STAGING }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: npm ci && npm run build
 
-      - name: Deploy preview
+      - name: Deploy PR preview
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: apps/web
-          output_location: .next
+          app_location: apps/web/out
+          output_location: ''
           skip_app_build: true
 
   # Close PR preview environment

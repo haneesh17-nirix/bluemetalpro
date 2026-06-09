@@ -1,7 +1,11 @@
 {
   "name": "stone-crusher-app",
   "private": true,
-  "workspaces": ["apps/*", "backend", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "backend",
+    "packages/*"
+  ],
   "scripts": {
     "dev:backend": "yarn workspace backend dev",
     "dev:web": "yarn workspace web dev",
@@ -15,5 +19,6 @@
   },
   "devDependencies": {
     "turbo": "^2.0.0"
-  }
+  },
+  "version": "1.1.0"
 }

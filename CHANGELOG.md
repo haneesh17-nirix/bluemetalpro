@@ -5,6 +5,9 @@ All notable changes to **BlueMetal Pro** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+> Entries from v1.2.0 onward are **auto-generated** by `.github/workflows/release.yml`
+> on every merge to `main` via `scripts/update_changelog.py`.
+
 ---
 
 ## [Unreleased]
