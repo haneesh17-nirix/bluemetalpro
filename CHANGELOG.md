@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ui` fix scattered layout + text visibility across web app ([447f150])
+
 ## [1.8.0] — 2026-06-09
 
 
