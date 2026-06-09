@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ci` run npm ci from repo root (workspace lockfile) ([d482503])
+
 ## [1.2.0] — 2026-06-09
 
 
