@@ -109,13 +109,23 @@ jobs:
         if: steps.guard.outputs.skip == 'false'
         run: python3 scripts/update_arch_doc.py "${{ steps.version.outputs.new }}"
 
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip == 'false'
+        with:
+          node-version: 20
+
+      - name: Regenerate lockfile after version bump
+        if: steps.guard.outputs.skip == 'false'
+        run: npm install --ignore-scripts
+
       - name: Commit release artifacts
         if: steps.guard.outputs.skip == 'false'
         run: |
           git add VERSION CHANGELOG.md docs/architecture.md \
               package.json backend/package.json apps/web/package.json \
               apps/mobile/package.json packages/shared/package.json \
-              packages/weighbridge-agent/package.json
+              packages/weighbridge-agent/package.json \
+              package-lock.json
           NEW="${{ steps.version.outputs.new }}"
           BUMP="${{ steps.bump.outputs.type }}"
           git commit -m "chore(release): v${NEW} [skip ci]" \
