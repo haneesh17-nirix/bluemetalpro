@@ -488,16 +488,16 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- INDEXES
 -- ============================================================
 
-CREATE INDEX idx_sales_date ON sales(sale_date);
-CREATE INDEX idx_sales_party ON sales(party_id);
-CREATE INDEX idx_sales_vehicle ON sales(vehicle_id);
-CREATE INDEX idx_sale_items_product ON sale_items(product_id);
-CREATE INDEX idx_purchases_date ON purchases(purchase_date);
-CREATE INDEX idx_ledger_party ON ledger_transactions(party_id);
-CREATE INDEX idx_ledger_date ON ledger_transactions(txn_date);
-CREATE INDEX idx_attendance_worker_date ON attendance(worker_id, date);
-CREATE INDEX idx_quarry_date ON quarry_sales(sale_date);
-CREATE INDEX idx_notifications_user ON notifications(user_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_sales_date ON sales(sale_date);
+CREATE INDEX IF NOT EXISTS idx_sales_party ON sales(party_id);
+CREATE INDEX IF NOT EXISTS idx_sales_vehicle ON sales(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_sale_items_product ON sale_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_purchases_date ON purchases(purchase_date);
+CREATE INDEX IF NOT EXISTS idx_ledger_party ON ledger_transactions(party_id);
+CREATE INDEX IF NOT EXISTS idx_ledger_date ON ledger_transactions(txn_date);
+CREATE INDEX IF NOT EXISTS idx_attendance_worker_date ON attendance(worker_id, date);
+CREATE INDEX IF NOT EXISTS idx_quarry_date ON quarry_sales(sale_date);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read);
 
 -- ============================================================
 -- VIEWS
