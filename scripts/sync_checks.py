@@ -107,6 +107,7 @@ def build_required_block(files):
         'Weighbridge agent':[f for f in files if f.startswith('packages/weighbridge-agent/')],
         'Web pages':        [f for f in files if f.startswith('apps/web/')],
         'Mobile':           [f for f in files if f.startswith('apps/mobile/')],
+        'Infra':            [f for f in files if f.startswith('infra/')],
         'CI workflows':     [f for f in files if f.startswith('.github/')],
     }
     for group, items in groups.items():

@@ -211,6 +211,8 @@ REQUIRED=(
   apps/mobile/src/screens/VehiclesScreen.tsx
   apps/mobile/src/screens/WagesScreen.tsx
   apps/mobile/src/screens/WeighbridgeScreen.tsx
+  # Infra
+  infra/main.bicep
   # CI workflows
   .github/workflows/backend.yml
   .github/workflows/infra.yml
