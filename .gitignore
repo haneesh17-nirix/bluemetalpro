@@ -67,3 +67,8 @@ packages/weighbridge-agent/dist/
 # Coverage
 coverage/
 .nyc_output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
