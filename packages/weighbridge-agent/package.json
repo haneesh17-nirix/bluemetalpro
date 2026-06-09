@@ -1,6 +1,6 @@
 {
   "name": "@bluemetal/weighbridge-agent",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "On-site edge agent \u2014 reads serial/USB weighbridge and pushes to BlueMetal Pro cloud",
   "main": "dist/index.js",
   "bin": {

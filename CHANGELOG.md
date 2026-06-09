@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.4] — 2026-06-09
+
+
+### Bug Fixes
+
+- `ts` resolve three TypeScript errors blocking CI ([8ee0df2])
+
 ## [1.7.3] — 2026-06-09
 
 
