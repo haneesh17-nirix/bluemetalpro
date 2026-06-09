@@ -59,7 +59,7 @@ app.use('/api/weighbridge', weighbridgeRouter);
 app.use('/api/cameras', camerasRouter);
 app.use('/api/crushers', crushersRouter);
 
-app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
+app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString(), version: process.env.npm_package_version || 'unknown' }));
 
 app.listen(PORT, () => logger.info({ port: PORT }, `Server running on port ${PORT}`));
 export default app;

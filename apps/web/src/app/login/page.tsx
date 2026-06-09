@@ -26,24 +26,38 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
-      localStorage.setItem('token', data.temp_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
 
-      if (data.crushers.length === 1) {
-        const sel = await selectCrusher(data.crushers[0].id);
-        localStorage.setItem('token', sel.token);
-        localStorage.setItem('user', JSON.stringify(sel.user));
-        setCrusher(sel.crusher);
-        log.action('Login successful', { role: sel.user?.role, crusher: data.crushers[0].name });
+      // ── New two-step flow: { temp_token, user, crushers[] } ──
+      if (data.temp_token && Array.isArray(data.crushers)) {
+        localStorage.setItem('token', data.temp_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        if (data.crushers.length === 1) {
+          const sel = await selectCrusher(data.crushers[0].id);
+          localStorage.setItem('token', sel.token);
+          localStorage.setItem('user', JSON.stringify(sel.user));
+          setCrusher(sel.crusher);
+          log.action('Login successful', { role: sel.user?.role, crusher: data.crushers[0].name });
+          router.push('/dashboard');
+        } else {
+          localStorage.setItem('crushers_list', JSON.stringify(data.crushers));
+          log.action('Login — crusher selection required', { count: data.crushers.length });
+          router.push('/select-crusher');
+        }
+
+      // ── Legacy single-step flow: { token, user } ──
+      } else if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        log.action('Login successful (legacy)', { role: data.user?.role });
         router.push('/dashboard');
+
       } else {
-        localStorage.setItem('crushers_list', JSON.stringify(data.crushers));
-        log.action('Login — crusher selection required', { count: data.crushers.length });
-        router.push('/select-crusher');
+        throw new Error('Unexpected login response');
       }
-    } catch {
-      log.error('Login failed');
-      toast.error('Invalid email or password');
+    } catch (err: any) {
+      log.error('Login failed', { message: err?.message });
+      toast.error(err?.response?.data?.error || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
