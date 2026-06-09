@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2] — 2026-06-09
+
+
+### Bug Fixes
+
+- `mobile` add missing assets and fix app.json for EAS build ([ecc06de])
+
 ## [1.5.1] — 2026-06-09
 
 
