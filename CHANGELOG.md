@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.3] — 2026-06-09
+
+
+### Bug Fixes
+
+- `deps` update lockfile with pino + pino-http + pino-pretty ([843222f])
+
 ## [1.7.2] — 2026-06-09
 
 
