@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7] — 2026-06-09
+
+
+### Bug Fixes
+
+- `db` use ON CONFLICT DO NOTHING for seed data inserts ([3fffa69])
+
 ## [1.2.6] — 2026-06-09
 
 
