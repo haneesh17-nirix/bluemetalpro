@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0] — 2026-06-09
+
+
+### Features
+
+- `mobile` apply BlueMetal Pro brand theme to React Native app ([f4fce41])
+
 ## [1.4.0] — 2026-06-09
 
 
