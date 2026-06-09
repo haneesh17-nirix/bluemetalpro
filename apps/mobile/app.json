@@ -5,40 +5,34 @@
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1a3c5e"
+      "backgroundColor": "#071530"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1a3c5e"
+        "backgroundColor": "#0e2544"
       },
-      "package": "com.bluemetal.pro",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.bluemetal.pro"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.bluemetal.pro",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.bluemetal.pro"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#1a3c5e"
+          "color": "#0e2544"
         }
       ]
     ],
     "scheme": "bluemetalpro",
     "extra": {
-      "router": {
-        "origin": false
-      },
       "eas": {
         "projectId": "f67a61fa-c0b8-48f8-b4f7-b90fa3fb3233"
       }
