@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0] — 2026-06-09
+
+
+### Features
+
+- test accounts, mobile EAS, commitlint, branch protection ([d1df81b])
+
 ## [1.2.9] — 2026-06-09
 
 
