@@ -141,51 +141,83 @@ REQUIRED=(
   README.md
   .editorconfig
   .gitignore
-  # DB
+  VERSION
+  docs/architecture.md
+  docs/hardware-setup.md
+  # Database
   database/migrations/001_initial.sql
   database/migrations/002_weighbridge_cameras.sql
-  # Backend routes
+  database/migrations/003_test_accounts.sql
+  # Backend
   backend/src/index.ts
+  backend/.env.example
   backend/src/routes/auth.ts
-  backend/src/routes/sales.ts
-  backend/src/routes/weighbridge.ts
   backend/src/routes/cameras.ts
+  backend/src/routes/config.ts
+  backend/src/routes/invoices.ts
+  backend/src/routes/ledger.ts
+  backend/src/routes/maintenance.ts
+  backend/src/routes/notifications.ts
+  backend/src/routes/parties.ts
+  backend/src/routes/products.ts
+  backend/src/routes/purchases.ts
+  backend/src/routes/quarry.ts
+  backend/src/routes/reports.ts
+  backend/src/routes/sales.ts
+  backend/src/routes/users.ts
+  backend/src/routes/vehicles.ts
+  backend/src/routes/wages.ts
+  backend/src/routes/weighbridge.ts
   backend/src/services/pdfGenerator.ts
   backend/src/services/notifications.ts
-  # Shared
+  # Shared package
   packages/shared/src/index.ts
-  packages/shared/src/types/weighbridge.ts
   packages/shared/src/types/camera.ts
+  packages/shared/src/types/weighbridge.ts
   packages/shared/src/utils/parsers.ts
-  # Edge agent
+  # Weighbridge agent
   packages/weighbridge-agent/src/index.ts
   packages/weighbridge-agent/.env.example
   # Web pages
-  apps/web/src/app/login/page.tsx
-  apps/web/src/app/dashboard/page.tsx
-  apps/web/src/app/sales/page.tsx
-  apps/web/src/app/reports/page.tsx
-  apps/web/src/app/parties/page.tsx
-  apps/web/src/app/maintenance/page.tsx
-  apps/web/src/app/wages/page.tsx
-  apps/web/src/app/users/page.tsx
-  apps/web/src/app/weighbridge/page.tsx
   apps/web/src/app/cameras/page.tsx
-  # Mobile screens
-  apps/mobile/src/screens/LoginScreen.tsx
+  apps/web/src/app/dashboard/page.tsx
+  apps/web/src/app/ledger/page.tsx
+  apps/web/src/app/login/page.tsx
+  apps/web/src/app/maintenance/page.tsx
+  apps/web/src/app/page.tsx
+  apps/web/src/app/parties/page.tsx
+  apps/web/src/app/purchases/page.tsx
+  apps/web/src/app/quarry/page.tsx
+  apps/web/src/app/reports/page.tsx
+  apps/web/src/app/sales/page.tsx
+  apps/web/src/app/settings/page.tsx
+  apps/web/src/app/users/page.tsx
+  apps/web/src/app/vehicles/page.tsx
+  apps/web/src/app/wages/page.tsx
+  apps/web/src/app/weighbridge/page.tsx
+  # Mobile
+  apps/mobile/App.tsx
+  apps/mobile/index.js
+  apps/mobile/app.json
+  apps/mobile/eas.json
   apps/mobile/src/screens/DashboardScreen.tsx
+  apps/mobile/src/screens/LoginScreen.tsx
+  apps/mobile/src/screens/MaintenanceScreen.tsx
+  apps/mobile/src/screens/NewSaleScreen.tsx
+  apps/mobile/src/screens/NotificationsScreen.tsx
+  apps/mobile/src/screens/QuarryScreen.tsx
+  apps/mobile/src/screens/ReportsScreen.tsx
+  apps/mobile/src/screens/SalesListScreen.tsx
+  apps/mobile/src/screens/VehiclesScreen.tsx
+  apps/mobile/src/screens/WagesScreen.tsx
   apps/mobile/src/screens/WeighbridgeScreen.tsx
-  apps/mobile/src/components/CameraFeed.tsx
-  # Infra & CI
-  infra/main.bicep
+  # CI workflows
   .github/workflows/backend.yml
-  .github/workflows/web.yml
-  .github/workflows/mobile.yml
   .github/workflows/infra.yml
+  .github/workflows/mobile.yml
   .github/workflows/pr-checks.yml
-  # Docs
-  docs/architecture.md
-  docs/hardware-setup.md
+  .github/workflows/release.yml
+  .github/workflows/web.yml
 )
 
 for f in "${REQUIRED[@]}"; do

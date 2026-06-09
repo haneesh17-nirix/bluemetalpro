@@ -8,7 +8,7 @@ on:
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────
-  # TypeScript checks — one job per package so failures are isolated
+  # TypeScript checks — one job per package, isolated failures
   # ─────────────────────────────────────────────────────────────────────────
   typecheck:
     name: TypeScript — ${{ matrix.package }}
@@ -46,7 +46,6 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────────────────
   # Conventional commit lint — PRs only
-  # Ensures commit messages follow feat/fix/chore/etc. so auto-release works
   # ─────────────────────────────────────────────────────────────────────────
   commit-lint:
     name: Conventional commits
@@ -57,329 +56,226 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Lint PR commit messages
+      - name: Lint commit messages
         run: |
           python3 - <<'EOF'
           import subprocess, sys, re
 
-          # Get commits on this PR branch that aren't on main
           result = subprocess.run(
             ['git', 'log', 'origin/main..HEAD', '--pretty=format:%s'],
             capture_output=True, text=True
           )
           commits = [l.strip() for l in result.stdout.splitlines() if l.strip()]
-
           if not commits:
-              print("No commits to check (already merged?)")
-              sys.exit(0)
+              print("No commits to check"); sys.exit(0)
 
-          VALID = re.compile(
-            r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)'
-            r'(\([^)]+\))?(!)?:\s.+'
-          )
-          SKIP = re.compile(r'^(Merge |chore\(release\):)')
+          VALID = re.compile(r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?(!)?:\s.+')
+          SKIP  = re.compile(r'^(Merge |chore\(release\):)')
 
           failed = []
           for msg in commits:
-              if SKIP.match(msg):
-                  print(f"SKIP  {msg[:72]}")
-                  continue
-              if VALID.match(msg):
-                  print(f"PASS  {msg[:72]}")
+              if SKIP.match(msg):   print(f"SKIP  {msg[:72]}")
+              elif VALID.match(msg): print(f"PASS  {msg[:72]}")
               else:
-                  print(f"FAIL  {msg[:72]}")
-                  failed.append(msg)
+                  print(f"FAIL  {msg[:72]}"); failed.append(msg)
 
           if failed:
-              print(f"\n{len(failed)} commit(s) do not follow conventional commit format.")
-              print("Expected: feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert: description")
-              print("Examples:  feat(sales): add bulk invoice export")
-              print("           fix: correct GST rounding on zero-rated items")
+              print(f"\n{len(failed)} commit(s) violate conventional commit format.")
+              print("Format: feat|fix|docs|refactor|perf|test|ci|chore: description")
               sys.exit(1)
-          print(f"\nAll {len(commits)} commit(s) are valid.")
+          print(f"\nAll {len(commits)} commit(s) valid.")
           EOF
 
       - name: Lint PR title
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
           python3 - <<EOF
           import sys, re
-          title = """$PR_TITLE"""
-          VALID = re.compile(
-            r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)'
-            r'(\([^)]+\))?(!)?:\s.+'
-          )
+          title = """${{ github.event.pull_request.title }}"""
+          VALID = re.compile(r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?(!)?:\s.+')
           if VALID.match(title.strip()):
-              print(f"PASS  PR title: {title[:72]}")
+              print(f"PASS  {title[:72]}")
           else:
-              print(f"FAIL  PR title must follow conventional commit format.")
-              print(f"      Got: {title}")
+              print(f"FAIL  PR title must follow conventional commit format.\n      Got: {title}")
               sys.exit(1)
           EOF
 
   # ─────────────────────────────────────────────────────────────────────────
-  # SQL migration syntax check
+  # SQL migration syntax
   # ─────────────────────────────────────────────────────────────────────────
   sql-check:
     name: SQL migrations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check SQL with Python (always available)
+      - name: Validate SQL
         run: |
           python3 - <<'EOF'
-          import sys, re, glob, os
+          import sys, re, glob
 
           files = sorted(glob.glob("database/migrations/*.sql"))
           if not files:
-              print("No SQL migration files found — check path")
-              sys.exit(1)
+              print("No SQL migration files found"); sys.exit(1)
 
           failed = []
           for path in files:
-              with open(path) as f:
-                  content = f.read()
-
+              content = open(path).read()
               errors = []
-
-              # Must contain at least one DDL/DML statement
               if not re.search(r'\b(CREATE|ALTER|INSERT|UPDATE|DROP|SELECT)\b', content, re.I):
                   errors.append("No SQL statements found")
-
-              # Balanced $$ dollar-quoting
               if content.count('$$') % 2 != 0:
-                  errors.append(f"Unmatched $$ dollar-quoting ({content.count('$$')} occurrences)")
-
-              # Every CREATE TABLE should have a closing );
-              creates = re.findall(r'CREATE TABLE\b', content, re.I)
-              closings = re.findall(r'^\);', content, re.MULTILINE)
-              if len(creates) > len(closings):
-                  errors.append(f"Possible unclosed CREATE TABLE ({len(creates)} creates, {len(closings)} closing parentheses)")
-
+                  errors.append(f"Unmatched $$ ({content.count('$$')} occurrences)")
+              creates  = len(re.findall(r'CREATE TABLE\b', content, re.I))
+              closings = len(re.findall(r'^\);', content, re.MULTILINE))
+              if creates > closings:
+                  errors.append(f"Possible unclosed CREATE TABLE ({creates} creates, {closings} closings)")
               if errors:
-                  print(f"FAIL {path}:")
-                  for e in errors:
-                      print(f"  - {e}")
-                  failed.append(path)
+                  print(f"FAIL {path}:"); [print(f"  - {e}") for e in errors]; failed.append(path)
               else:
                   print(f"PASS {path}")
 
-          if failed:
-              sys.exit(1)
-          print(f"\n{len(files)} migration(s) checked — all OK")
+          if failed: sys.exit(1)
+          print(f"\n{len(files)} migration(s) OK")
           EOF
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Required files presence check
+  # Required files — auto-synced via scripts/sync_checks.py
   # ─────────────────────────────────────────────────────────────────────────
   files-check:
-    name: Required files
+    name: Required files (auto-synced)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Verify all required files exist
+      - name: Verify required file list is up to date
+        run: python3 scripts/sync_checks.py --verify
+      - name: Check all required files exist
         run: |
           python3 - <<'EOF'
-          import sys, os
+          import sys, os, re
 
-          REQUIRED = [
-              # Root docs
-              "CHANGELOG.md",
-              "VERSIONING.md",
-              "README.md",
-              ".editorconfig",
-              ".gitignore",
-              # Database
-              "database/migrations/001_initial.sql",
-              "database/migrations/002_weighbridge_cameras.sql",
-              "database/migrations/003_test_accounts.sql",
-              # Backend
-              "backend/src/index.ts",
-              "backend/src/routes/auth.ts",
-              "backend/src/routes/sales.ts",
-              "backend/src/routes/purchases.ts",
-              "backend/src/routes/parties.ts",
-              "backend/src/routes/products.ts",
-              "backend/src/routes/vehicles.ts",
-              "backend/src/routes/ledger.ts",
-              "backend/src/routes/quarry.ts",
-              "backend/src/routes/maintenance.ts",
-              "backend/src/routes/wages.ts",
-              "backend/src/routes/reports.ts",
-              "backend/src/routes/invoices.ts",
-              "backend/src/routes/users.ts",
-              "backend/src/routes/weighbridge.ts",
-              "backend/src/routes/cameras.ts",
-              "backend/src/services/pdfGenerator.ts",
-              "backend/src/services/notifications.ts",
-              "backend/src/services/azureStorage.ts",
-              # Shared package
-              "packages/shared/src/index.ts",
-              "packages/shared/src/types/weighbridge.ts",
-              "packages/shared/src/types/camera.ts",
-              "packages/shared/src/utils/parsers.ts",
-              # Edge agent
-              "packages/weighbridge-agent/src/index.ts",
-              "packages/weighbridge-agent/.env.example",
-              # Web pages
-              "apps/web/src/app/login/page.tsx",
-              "apps/web/src/app/dashboard/page.tsx",
-              "apps/web/src/app/sales/page.tsx",
-              "apps/web/src/app/reports/page.tsx",
-              "apps/web/src/app/parties/page.tsx",
-              "apps/web/src/app/maintenance/page.tsx",
-              "apps/web/src/app/wages/page.tsx",
-              "apps/web/src/app/users/page.tsx",
-              "apps/web/src/app/weighbridge/page.tsx",
-              "apps/web/src/app/cameras/page.tsx",
-              # Mobile
-              "apps/mobile/app.json",
-              "apps/mobile/eas.json",
-              "apps/mobile/src/screens/LoginScreen.tsx",
-              "apps/mobile/src/screens/DashboardScreen.tsx",
-              "apps/mobile/src/screens/WeighbridgeScreen.tsx",
-              "apps/mobile/src/components/CameraFeed.tsx",
-              # Infra
-              "infra/main.bicep",
-              # CI workflows
-              ".github/workflows/backend.yml",
-              ".github/workflows/web.yml",
-              ".github/workflows/mobile.yml",
-              ".github/workflows/infra.yml",
-              ".github/workflows/pr-checks.yml",
-              # Docs
-              "docs/architecture.md",
-              "docs/hardware-setup.md",
-          ]
+          text = open("scripts/check.sh").read()
+          m = re.search(r'REQUIRED=\((.*?)\)', text, re.DOTALL)
+          if not m: print("Could not parse REQUIRED list"); sys.exit(1)
 
-          missing = [f for f in REQUIRED if not os.path.isfile(f)]
+          required = re.findall(r'^\s+([^\s#][^\s]+)\s*$', m.group(1), re.MULTILINE)
+          missing  = [f for f in required if not os.path.isfile(f)]
+
           if missing:
               print(f"Missing {len(missing)} required file(s):")
-              for f in missing:
-                  print(f"  ✗  {f}")
+              [print(f"  ✗  {f}") for f in missing]
               sys.exit(1)
-          else:
-              print(f"All {len(REQUIRED)} required files present.")
+          print(f"All {len(required)} required files present.")
           EOF
 
   # ─────────────────────────────────────────────────────────────────────────
-  # JSON validity check
+  # JSON validity
   # ─────────────────────────────────────────────────────────────────────────
   json-check:
     name: JSON validity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Validate JSON files
         run: |
           python3 - <<'EOF'
           import sys, json, glob
 
-          patterns = [
-              "package.json",
-              "apps/*/package.json",
-              "apps/*/app.json",
-              "backend/package.json",
-              "packages/*/package.json",
-              "infra/params.json",
-          ]
-          import glob as g
           files = []
-          for p in patterns:
-              files.extend(g.glob(p))
+          for p in ["package.json","apps/*/package.json","apps/*/app.json","backend/package.json","packages/*/package.json"]:
+              files.extend(glob.glob(p))
 
           failed = []
           for f in sorted(set(files)):
-              try:
-                  json.load(open(f))
-                  print(f"PASS {f}")
-              except json.JSONDecodeError as e:
-                  print(f"FAIL {f}: {e}")
-                  failed.append(f)
+              try:    json.load(open(f)); print(f"PASS {f}")
+              except json.JSONDecodeError as e: print(f"FAIL {f}: {e}"); failed.append(f)
 
-          if failed:
-              sys.exit(1)
-          print(f"\n{len(files)} JSON file(s) validated.")
+          if failed: sys.exit(1)
+          print(f"\n{len(files)} JSON file(s) valid.")
           EOF
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Secrets scan — ensure nothing sensitive was accidentally committed
+  # Secrets scan
   # ─────────────────────────────────────────────────────────────────────────
   secrets-scan:
     name: Secrets scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Scan for hardcoded secrets
         run: |
           FAIL=0
-
-          # Azure connection strings
           if grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
                --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.next \
                "DefaultEndpointsProtocol=https;AccountName" .; then
-            echo "ERROR: Azure connection string hardcoded in source"
-            FAIL=1
+            echo "ERROR: Azure connection string hardcoded"; FAIL=1
           fi
-
-          # Private keys / secrets longer than 20 chars assigned to a variable
-          if grep -rn --include="*.ts" --include="*.tsx" --include="*.env" \
-               --exclude-dir=node_modules --exclude-dir=dist \
-               --exclude="*.example" \
+          if grep -rn --include="*.ts" --include="*.tsx" \
+               --exclude-dir=node_modules --exclude-dir=dist --exclude="*.example" \
                -E "(secret|password|apikey|api_key)\s*=\s*['\"][a-zA-Z0-9+/]{20,}" .; then
-            echo "ERROR: Possible hardcoded secret found"
-            FAIL=1
+            echo "ERROR: Possible hardcoded secret"; FAIL=1
           fi
-
-          # .env files (should never be committed)
-          if find . -name ".env" -not -name ".env.example" \
-               -not -path "*/node_modules/*" | grep -q .; then
-            echo "ERROR: .env file found in repo (should be in .gitignore)"
-            FAIL=1
+          if find . -name ".env" -not -name ".env.example" -not -path "*/node_modules/*" | grep -q .; then
+            echo "ERROR: .env file committed"; FAIL=1
           fi
-
-          if [ $FAIL -eq 0 ]; then
-            echo "No secrets detected."
-          fi
+          [ $FAIL -eq 0 ] && echo "No secrets detected."
           exit $FAIL
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Bicep syntax check (on infra changes only)
+  # Bicep syntax
   # ─────────────────────────────────────────────────────────────────────────
   bicep-check:
     name: Bicep syntax
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Azure CLI + Bicep
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-          az bicep install
-
-      - name: Build Bicep (syntax check)
+        run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && az bicep install
+      - name: Build Bicep
         run: az bicep build --file infra/main.bicep --stdout > /dev/null
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Cross-layer contract tests
-  # Validates frontend ↔ backend ↔ database consistency statically.
+  # Cross-layer contract tests (frontend ↔ backend ↔ DB)
   # ─────────────────────────────────────────────────────────────────────────
   contract-tests:
     name: Cross-layer contract tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Run contract_test.py
         run: python3 scripts/contract_test.py
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Summary gate — required by branch protection rules
-  # All jobs must pass for a PR to merge.
+  # Auto-sync docs + version on merge to main
+  # Runs sync_checks.py to update REQUIRED list, then commits if changed
+  # ─────────────────────────────────────────────────────────────────────────
+  sync-docs:
+    name: Sync checks & docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Sync required file list
+        run: python3 scripts/sync_checks.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes to commit."
+          else
+            git add scripts/check.sh
+            git commit -m "chore(checks): auto-sync required file list [skip ci]"
+            git push
+          fi
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Gate — all required checks must pass before merge
   # ─────────────────────────────────────────────────────────────────────────
   all-checks-pass:
     name: All checks passed
@@ -398,7 +294,7 @@ jobs:
       - name: Gate
         run: |
           if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
-            echo "One or more checks failed."
+            echo "One or more checks failed — merge blocked."
             exit 1
           fi
           echo "All checks passed."

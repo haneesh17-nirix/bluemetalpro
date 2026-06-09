@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# BlueMetal Pro — pre-push hook
+# Runs fast local checks before any push to catch issues before CI.
+# Install: cp scripts/hooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT"
+
+echo ""
+echo "▶ BlueMetal Pro pre-push checks"
+echo "─────────────────────────────────"
+
+FAIL=0
+
+# 1. Contract tests (pure Python, fast ~1s)
+echo ""
+echo "▶ Cross-layer contract tests..."
+if python3 scripts/contract_test.py; then
+  echo ""
+else
+  echo ""
+  echo "✗ Contract tests failed. Fix before pushing."
+  FAIL=1
+fi
+
+# 2. Required file list in sync
+echo "▶ Required file list..."
+if python3 scripts/sync_checks.py --verify; then
+  :
+else
+  echo "  Run: python3 scripts/sync_checks.py"
+  FAIL=1
+fi
+
+# 3. JSON validity (fast)
+echo ""
+echo "▶ JSON validity..."
+python3 - <<'EOF'
+import json, glob, sys
+files = []
+for p in ["package.json","apps/*/package.json","apps/*/app.json","backend/package.json","packages/*/package.json"]:
+    files.extend(glob.glob(p))
+failed = []
+for f in sorted(set(files)):
+    try: json.load(open(f))
+    except json.JSONDecodeError as e: print(f"  ✗  {f}: {e}"); failed.append(f)
+if failed: sys.exit(1)
+print(f"  ✓  {len(files)} JSON files valid")
+EOF
+JSON_EXIT=$?
+[ $JSON_EXIT -ne 0 ] && FAIL=1
+
+echo ""
+echo "─────────────────────────────────"
+if [ $FAIL -ne 0 ]; then
+  echo "✗ Pre-push checks failed. Push blocked."
+  echo "  Run 'bash scripts/check.sh' for the full report."
+  echo ""
+  exit 1
+fi
+echo "✓ All pre-push checks passed."
+echo ""
