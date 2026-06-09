@@ -121,22 +121,26 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Update az CLI extensions
+        run: az extension add --name rdbms-connect --allow-preview true || az extension update --name rdbms-connect || true
+
       - name: Add runner IP to firewall
         run: |
           RUNNER_IP=$(curl -s https://api.ipify.org)
+          PG_SERVER="bluemetal-prod-postgres"
+          RG="${{ env.RESOURCE_GROUP }}"
           az postgres flexible-server firewall-rule create \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --server-name bluemetal-prod-postgres \
-            --name AllowGitHubRunner \
+            -g "$RG" -s "$PG_SERVER" \
+            -n AllowGitHubRunner \
             --start-ip-address "$RUNNER_IP" \
             --end-ip-address "$RUNNER_IP"
 
       - name: Enable required extensions
         run: |
           az postgres flexible-server parameter set \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --server-name bluemetal-prod-postgres \
-            --name azure.extensions \
+            -g "${{ env.RESOURCE_GROUP }}" \
+            -s bluemetal-prod-postgres \
+            -n azure.extensions \
             --value uuid-ossp,pgcrypto
 
       - name: Run migrations
@@ -151,9 +155,9 @@ jobs:
         if: always()
         run: |
           az postgres flexible-server firewall-rule delete \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --server-name bluemetal-prod-postgres \
-            --name AllowGitHubRunner --yes || true
+            -g "${{ env.RESOURCE_GROUP }}" \
+            -s bluemetal-prod-postgres \
+            -n AllowGitHubRunner --yes || true
 
   # ─────────────────────────────────────────
   # 4. Deploy to Azure Container Apps
