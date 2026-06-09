@@ -27,12 +27,12 @@ const nav = [
 ];
 
 const ROLE_LABELS: Record<string, string> = {
-  admin: 'Administrator',
-  sales_operator: 'Sales Operator',
-  accounts: 'Accounts',
-  report_viewer: 'Report Viewer',
-  vehicle_manager: 'Vehicle Manager',
-  quarry_operator: 'Quarry Operator',
+  admin:            'Administrator',
+  sales_operator:   'Sales Operator',
+  accounts:         'Accounts',
+  report_viewer:    'Report Viewer',
+  vehicle_manager:  'Vehicle Manager',
+  quarry_operator:  'Quarry Operator',
 };
 
 export default function Sidebar() {
@@ -42,75 +42,134 @@ export default function Sidebar() {
   const filtered = nav.filter(item => !user || item.roles.includes(user.role));
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    ['token', 'user', 'crusher', 'crushers_list'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/login';
   };
 
-  // Initials for avatar fallback
   const initials = user?.name
     ? user.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
     : 'BM';
 
   return (
-    <aside className="w-64 flex flex-col h-screen sticky top-0 flex-shrink-0"
-      style={{ background: 'linear-gradient(180deg, #0a1e3d 0%, #0e2544 100%)', borderRight: '1px solid #1e4270' }}>
-
-      {/* ── Logo ── */}
-      <div className="px-5 py-5 flex items-center gap-3" style={{ borderBottom: '1px solid #1e4270' }}>
-        <Image src="/logo-icon.png" alt="BlueMetal Pro" width={40} height={40}
-          className="rounded-xl flex-shrink-0" unoptimized />
+    <aside
+      className="w-64 flex flex-col h-screen sticky top-0 flex-shrink-0 overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, #060f20 0%, #091628 50%, #0c1f3d 100%)',
+        borderRight: '1px solid #1f3659',
+      }}
+    >
+      {/* ── Logo ──────────────────────────────────── */}
+      <div
+        className="px-5 py-5 flex items-center gap-3 flex-shrink-0"
+        style={{ borderBottom: '1px solid #1f3659' }}
+      >
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-lg"
+          style={{
+            background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
+            color: '#0c1f3d',
+            boxShadow: '0 4px 12px rgba(201,168,76,0.3)',
+          }}
+        >
+          B
+        </div>
         <div className="min-w-0">
-          <p className="font-bold text-sm text-white truncate">BlueMetal Pro</p>
-          <p className="text-[10px] font-medium mt-0.5 truncate"
-            style={{ background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Quarry ERP
+          <p className="font-bold text-sm text-white leading-tight">BlueMetal Pro</p>
+          <p
+            className="text-[10px] font-semibold mt-0.5 tracking-wide"
+            style={{
+              background: 'linear-gradient(135deg, #c9a84c, #f0d878)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            QUARRY ERP
           </p>
         </div>
       </div>
 
-      {/* ── Navigation ── */}
-      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
+      {/* ── Navigation ────────────────────────────── */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-0.5">
         {filtered.map(item => {
-          const active = pathname.startsWith(item.href);
+          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group relative
-                ${active
-                  ? 'text-white font-medium'
-                  : 'text-white/55 hover:text-white hover:bg-white/6'
-                }`}
-              style={active ? {
-                background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.06))',
-                border: '1px solid rgba(201,168,76,0.2)',
-              } : {}}>
-              {/* Active indicator */}
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group relative select-none"
+              style={
+                active
+                  ? {
+                      background: 'linear-gradient(135deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.07) 100%)',
+                      border: '1px solid rgba(201,168,76,0.25)',
+                      color: '#f0d878',
+                    }
+                  : {
+                      border: '1px solid transparent',
+                      color: 'rgba(200,212,232,0.65)',
+                    }
+              }
+            >
+              {/* Active left accent */}
               {active && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-r-full"
-                  style={{ background: 'linear-gradient(180deg, #e8c96a, #c9a84c)' }} />
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
+                  style={{ background: 'linear-gradient(180deg, #f0d878, #c9a84c)' }}
+                />
               )}
-              <item.icon size={17} className={active ? 'text-gold-light' : 'text-white/40 group-hover:text-white/70'} />
-              <span className="flex-1 truncate">{item.label}</span>
-              {active && <ChevronRight size={13} className="text-gold/60" />}
+
+              <item.icon
+                size={16}
+                style={{ color: active ? '#e8c96a' : 'rgba(200,212,232,0.5)', flexShrink: 0 }}
+                className="transition-colors group-hover:!text-white/80"
+              />
+              <span className="flex-1 truncate font-medium group-hover:text-white transition-colors">
+                {item.label}
+              </span>
+              {active && (
+                <ChevronRight size={12} style={{ color: 'rgba(201,168,76,0.6)', flexShrink: 0 }} />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* ── User profile ── */}
-      <div className="p-3" style={{ borderTop: '1px solid #1e4270' }}>
-        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/4 mb-2">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm text-brand"
-            style={{ background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)' }}>
+      {/* ── User profile ──────────────────────────── */}
+      <div className="p-3 flex-shrink-0" style={{ borderTop: '1px solid #1f3659' }}>
+        <div
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1.5"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
+            style={{
+              background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
+              color: '#0c1f3d',
+            }}
+          >
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
-            <p className="text-[10px] text-white/40 truncate">{ROLE_LABELS[user?.role] || user?.role}</p>
+            <p className="text-sm font-semibold text-white truncate">{user?.name || 'User'}</p>
+            <p className="text-[10px] mt-0.5 truncate" style={{ color: 'rgba(200,212,232,0.5)' }}>
+              {ROLE_LABELS[user?.role] || user?.role || 'Unknown role'}
+            </p>
           </div>
         </div>
-        <button onClick={logout}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm text-white/50 hover:text-red-400 hover:bg-red-500/8 transition-all duration-150">
+
+        <button
+          onClick={logout}
+          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm transition-all duration-150"
+          style={{ color: 'rgba(200,212,232,0.5)' }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.color = '#fca5a5';
+            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.color = 'rgba(200,212,232,0.5)';
+            (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+          }}
+        >
           <LogOut size={15} />
           <span>Sign out</span>
         </button>
