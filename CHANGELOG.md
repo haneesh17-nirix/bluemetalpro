@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.31] — 2026-06-10
+
+
+### Other Changes
+
+- Align role permissions and labels to business reality ([5a04453])
+
 ## [1.21.30] — 2026-06-10
 
 
