@@ -107,6 +107,10 @@ export const getCrusherUsers = (id: string) => api.get(`/crushers/${id}/users`).
 export const grantCrusherAccess = (id: string, data: any) => api.post(`/crushers/${id}/users`, data).then(r => r.data);
 export const revokeCrusherAccess = (id: string, userId: string) => api.delete(`/crushers/${id}/users/${userId}`).then(r => r.data);
 
+// Reports
+export const getPlReport = (params: { from: string; to: string }) =>
+  api.get('/reports/pl', { params }).then(r => r.data);
+
 // Platform admin
 export const getPlatformOverview = () => api.get('/platform/overview').then(r => r.data);
 export const getPlatformUsers = () => api.get('/platform/users').then(r => r.data);
