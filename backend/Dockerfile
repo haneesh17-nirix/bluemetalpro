@@ -1,7 +1,7 @@
 FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
+COPY package.json ./
+RUN npm install --omit=dev --ignore-scripts
 COPY dist ./dist
 EXPOSE 3001
 # rootDir is repo root (cross-package imports), so tsc outputs to dist/backend/src/
