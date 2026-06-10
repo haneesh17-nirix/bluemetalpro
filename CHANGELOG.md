@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0] — 2026-06-10
+
+
+### Features
+
+- `brand` new shield logo + charcoal theme + stone-mosaic panel texture ([f04edc4])
+
 ## [1.18.0] — 2026-06-10
 
 
