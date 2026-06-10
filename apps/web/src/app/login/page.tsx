@@ -88,19 +88,19 @@ export default function LoginPage() {
   const inputStyle = (field: string, hasRightIcon = false): React.CSSProperties => ({
     width: '100%',
     background: focusedField === field
-      ? 'rgba(2, 8, 28, 0.92)'
-      : 'rgba(3, 9, 24, 0.80)',
+      ? 'rgba(129,132,142,0.92)'
+      : 'rgba(129,132,140,0.80)',
     border: focusedField === field
-      ? '1px solid rgba(180,138,32,0.6)'
-      : '1px solid rgba(90,120,180,0.18)',
+      ? '1px solid rgba(218,197,144,0.6)'
+      : '1px solid rgba(173,188,218,0.18)',
     borderRadius: 10,
     padding: `9px ${hasRightIcon ? '40px' : '14px'} 9px 40px`,
     fontSize: 14,
-    color: '#dde6f4',
+    color: '#eef3fa',
     outline: 'none',
     boxShadow: focusedField === field
-      ? '0 0 0 2px rgba(140,100,20,0.12), 0 0 14px rgba(120,85,12,0.18), inset 0 0 18px rgba(10,30,80,0.3)'
-      : 'inset 0 0 12px rgba(5,18,55,0.4)',
+      ? '0 0 0 2px rgba(198,178,138,0.12), 0 0 14px rgba(188,170,134,0.18), inset 0 0 18px rgba(133,143,168,0.3)'
+      : 'inset 0 0 12px rgba(130,137,155,0.4)',
     transition: 'border-color 0.18s, box-shadow 0.18s, background 0.18s',
   });
 
@@ -109,7 +109,7 @@ export default function LoginPage() {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'row',
-      background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
+      background: 'linear-gradient(175deg, #888a8c 0%, #8b8e92 50%, #888a8c 100%)',
     }}>
       <style>{`
         @media (max-width: 767px) {
@@ -119,7 +119,7 @@ export default function LoginPage() {
                                justify-content: flex-start !important; align-items: center !important; }
           .login-blobs       { display: none !important; }
           .login-branding    { gap: 12px !important; }
-          .login-branding-logo { filter: drop-shadow(0 6px 18px rgba(160,112,20,0.5)) !important; }
+          .login-branding-logo { filter: drop-shadow(0 6px 18px rgba(208,184,138,0.5)) !important; }
           .login-features    { display: none !important; }
           .login-stats       { display: none !important; }
           .login-right       { padding: 12px 16px 32px !important; align-items: flex-start !important; }
@@ -138,18 +138,18 @@ export default function LoginPage() {
         padding: '48px', position: 'relative', overflow: 'hidden', flexShrink: 0,
       }}>
         <div className="login-blobs" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', width: 560, height: 560, borderRadius: '50%', top: -80, left: -160, background: 'radial-gradient(circle, rgba(37,99,168,0.22) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', width: 440, height: 440, borderRadius: '50%', bottom: -60, right: -80, background: 'radial-gradient(circle, rgba(184,149,62,0.14) 0%, transparent 65%)' }} />
+          <div style={{ position: 'absolute', width: 560, height: 560, borderRadius: '50%', top: -80, left: -160, background: 'radial-gradient(circle, rgba(146,177,212,0.22) 0%, transparent 65%)' }} />
+          <div style={{ position: 'absolute', width: 440, height: 440, borderRadius: '50%', bottom: -60, right: -80, background: 'radial-gradient(circle, rgba(220,202,159,0.14) 0%, transparent 65%)' }} />
         </div>
 
         {/* Logo + branding */}
         <div className="login-branding" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-          <div className="login-branding-logo" style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
+          <div className="login-branding-logo" style={{ filter: 'drop-shadow(0 8px 28px rgba(208,184,138,0.55))' }}>
             <LogoIcon size={148} />
           </div>
           <div style={{ textAlign: 'center' }}>
-            <p className="login-title" style={{ fontWeight: 900, fontSize: 34, color: '#fff', lineHeight: 1, margin: 0, letterSpacing: '-0.02em' }}>BlueMetal Pro</p>
-            <p className="login-subtitle" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8, background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUSINESS INTELLIGENCE</p>
+            <p className="login-title" style={{ fontWeight: 900, fontSize: 34, color: '#ffffff', lineHeight: 1, margin: 0, letterSpacing: '-0.02em' }}>BlueMetal Pro</p>
+            <p className="login-subtitle" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8, background: 'linear-gradient(135deg, #dcca9f, #ead5a9, #dcca9f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUSINESS INTELLIGENCE</p>
           </div>
         </div>
 
@@ -158,16 +158,16 @@ export default function LoginPage() {
           <div className="login-features" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', alignSelf: 'center' }}>
             {features.map(f => (
               <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <CheckCircle size={13} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(220,230,245,0.92)' }}>{f}</span>
+                <CheckCircle size={13} style={{ color: '#e4d4a6', flexShrink: 0 }} />
+                <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(238,243,250,0.92)' }}>{f}</span>
               </div>
             ))}
           </div>
           <div className="login-stats" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
             {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
               <div key={s.label} style={{ textAlign: 'center', padding: '14px 12px', borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
-                <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{s.label}</p>
+                <p style={{ fontSize: 20, fontWeight: 800, color: '#e4d4a6' }}>{s.value}</p>
+                <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(228,234,244,0.5)' }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -180,35 +180,35 @@ export default function LoginPage() {
           <div style={{
             borderRadius: 16,
             padding: '22px 22px',
-            background: 'linear-gradient(175deg, #0d1f3c 0%, #091628 55%, #060e1c 100%)',
+            background: 'linear-gradient(175deg, #868f9e 0%, #848b94 55%, #83878e 100%)',
             border: '2px solid transparent',
             backgroundClip: 'padding-box',
             outline: '2px solid transparent',
             boxShadow: [
               /* matte gold ring — same gradient tones as logo ring */
-              '0 0 0 1.5px #7a5010',
-              '0 0 0 2px #4a2e06',
-              '0 0 0 2.8px #a07020',
-              '0 0 0 3.5px #6a4008',
+              '0 0 0 1.5px #bda888',
+              '0 0 0 2px #a59783',
+              '0 0 0 2.8px #d0b890',
+              '0 0 0 3.5px #b5a084',
               /* ambient glow */
-              '0 0 18px rgba(130,90,15,0.3)',
-              '0 28px 60px rgba(0,0,0,0.65)',
-              'inset 0 1px 0 rgba(80,130,220,0.07)',
-              'inset 0 -1px 0 rgba(0,0,20,0.5)',
+              '0 0 18px rgba(193,173,135,0.3)',
+              '0 28px 60px rgba(128,128,128,0.65)',
+              'inset 0 1px 0 rgba(168,193,238,0.07)',
+              'inset 0 -1px 0 rgba(128,128,138,0.5)',
             ].join(', '),
           }}>
 
             <div style={{ marginBottom: 18 }}>
-              <h2 style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em', color: '#e8edf8', margin: 0 }}>Welcome back</h2>
-              <p style={{ fontSize: 11, marginTop: 4, color: 'rgba(180,200,230,0.45)', fontWeight: 500 }}>Sign in to your workspace</p>
+              <h2 style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em', color: '#f4f6fc', margin: 0 }}>Welcome back</h2>
+              <p style={{ fontSize: 11, marginTop: 4, color: 'rgba(218,228,243,0.45)', fontWeight: 500 }}>Sign in to your workspace</p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Email address</label>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(213,223,238,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Email address</label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'email' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
+                  <Mail size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'email' ? 'rgba(218,194,142,0.7)' : 'rgba(203,213,233,0.32)', transition: 'color 0.18s' }} />
                   <input type="email" required value={form.email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)}
@@ -217,15 +217,15 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Password</label>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(213,223,238,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Password</label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'password' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
+                  <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'password' ? 'rgba(218,194,142,0.7)' : 'rgba(203,213,233,0.32)', transition: 'color 0.18s' }} />
                   <input type={showPassword ? 'text' : 'password'} required value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                     onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)}
                     style={inputStyle('password', true)} placeholder="••••••••" autoComplete="current-password" />
                   <button type="button" onClick={() => setShowPassword(v => !v)}
-                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: showPassword ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s', display: 'flex', alignItems: 'center' }}>
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: showPassword ? 'rgba(218,197,144,0.7)' : 'rgba(203,213,233,0.32)', transition: 'color 0.18s', display: 'flex', alignItems: 'center' }}>
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
@@ -235,18 +235,18 @@ export default function LoginPage() {
                 <button type="submit" disabled={loading}
                   style={{
                     width: '100%', padding: '10px 20px', borderRadius: 10,
-                    border: '1px solid rgba(100,70,10,0.7)',
+                    border: '1px solid rgba(178,163,133,0.7)',
                     background: loading
-                      ? 'linear-gradient(160deg, #4a3008, #5a3a0a)'
-                      : 'linear-gradient(160deg, #6a4808 0%, #8a5e12 35%, #7a5010 65%, #5a3808 100%)',
-                    color: loading ? 'rgba(180,132,28,0.5)' : '#d4a838',
+                      ? 'linear-gradient(160deg, #a59884, #ad9d85)'
+                      : 'linear-gradient(160deg, #b5a484 0%, #c5af89 35%, #bda888 65%, #ad9c84 100%)',
+                    color: loading ? 'rgba(218,194,142,0.5)' : '#ead49c',
                     fontSize: 14, fontWeight: 700, letterSpacing: '0.05em',
                     cursor: loading ? 'not-allowed' : 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     boxShadow: !loading ? [
-                      'inset 0 1px 0 rgba(180,130,30,0.22)',
-                      'inset 0 -1px 0 rgba(0,0,0,0.4)',
-                      '0 2px 8px rgba(0,0,0,0.35)',
+                      'inset 0 1px 0 rgba(218,193,143,0.22)',
+                      'inset 0 -1px 0 rgba(128,128,128,0.4)',
+                      '0 2px 8px rgba(128,128,128,0.35)',
                     ].join(', ') : 'none',
                     transition: 'all 0.2s',
                   }}>
@@ -257,8 +257,8 @@ export default function LoginPage() {
               </div>
             </form>
 
-            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(100,70,10,0.22)', textAlign: 'center' }}>
-              <p style={{ fontSize: 11, color: 'rgba(150,170,210,0.28)' }}>
+            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(178,163,133,0.22)', textAlign: 'center' }}>
+              <p style={{ fontSize: 11, color: 'rgba(203,213,233,0.28)' }}>
                 BlueMetal Pro · Quarry & Stone Crushing ERP
               </p>
             </div>

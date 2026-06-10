@@ -10,7 +10,7 @@ import {
 import {
   TrendingUp, TrendingDown, ShoppingCart, AlertTriangle,
   IndianRupee, Package, Truck, Wrench, ArrowUpRight,
-  FileText, Minus,
+  FileText, Minus, ClipboardList, Send,
 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import Link from 'next/link';
@@ -161,6 +161,112 @@ export default function DashboardPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* ── Assigned to Me + My Submissions ──────── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+            {/* Assigned to Me */}
+            <div className="card" style={{ overflow: 'hidden' }}>
+              <div className="panel-header" style={{
+                background: 'linear-gradient(135deg, rgba(251,146,60,0.14) 0%, rgba(234,88,12,0.06) 100%)',
+                borderBottom: '1px solid rgba(251,146,60,0.22)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fb923c', flexShrink: 0,
+                    boxShadow: '0 0 8px rgba(251,146,60,0.7), 0 0 2px rgba(251,146,60,0.9)' }} />
+                  <div>
+                    <h2 className="panel-title" style={{ color: '#fb923c' }}>Assigned to me</h2>
+                    <p style={{ fontSize: 11, color: 'rgba(251,146,60,0.5)', marginTop: 2 }}>Pending maintenance tasks</p>
+                  </div>
+                </div>
+                <Link href="/maintenance" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12, color: 'rgba(251,146,60,0.7)' }}>
+                  View all <ArrowUpRight size={12} />
+                </Link>
+              </div>
+              <div className="panel-body">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {isLoading ? (
+                    [...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 44, width: '100%' }} />)
+                  ) : maintenance?.length ? maintenance.slice(0, 4).map((m: any) => (
+                    <div key={m.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 12px', borderRadius: 10,
+                      background: 'rgba(251,146,60,0.06)',
+                      border: '1px solid rgba(251,146,60,0.12)',
+                    }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(251,146,60,0.12)' }}>
+                        <Wrench size={14} style={{ color: '#fb923c' }} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <p className="text-sm font-medium text-white truncate">{m.asset_name}</p>
+                        <p className="text-xs truncate" style={{ color: 'rgba(251,146,60,0.6)' }}>{m.title} · {dayjs(m.scheduled_date).format('DD MMM')}</p>
+                      </div>
+                      <span className={m.asset_type === 'vehicle' ? 'badge-blue' : 'badge-gray'}>{m.asset_type}</span>
+                    </div>
+                  )) : (
+                    <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <ClipboardList size={28} style={{ color: 'rgba(251,146,60,0.2)' }} />
+                      <p className="text-sm" style={{ color: 'rgba(251,146,60,0.35)' }}>Nothing assigned right now</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* My Submissions */}
+            <div className="card" style={{ overflow: 'hidden' }}>
+              <div className="panel-header" style={{
+                background: 'linear-gradient(135deg, rgba(52,211,153,0.12) 0%, rgba(16,185,129,0.05) 100%)',
+                borderBottom: '1px solid rgba(52,211,153,0.2)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399', flexShrink: 0,
+                    boxShadow: '0 0 8px rgba(52,211,153,0.7), 0 0 2px rgba(52,211,153,0.9)' }} />
+                  <div>
+                    <h2 className="panel-title" style={{ color: '#34d399' }}>My submissions</h2>
+                    <p style={{ fontSize: 11, color: 'rgba(52,211,153,0.45)', marginTop: 2 }}>Recent invoices raised</p>
+                  </div>
+                </div>
+                <Link href="/sales" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12, color: 'rgba(52,211,153,0.7)' }}>
+                  View all <ArrowUpRight size={12} />
+                </Link>
+              </div>
+              <div className="panel-body">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {isLoading ? (
+                    [...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 44, width: '100%' }} />)
+                  ) : data?.recent_sales?.length ? (data.recent_sales as any[]).slice(0, 4).map((s: any) => (
+                    <div key={s.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 12px', borderRadius: 10,
+                      background: 'rgba(52,211,153,0.05)',
+                      border: '1px solid rgba(52,211,153,0.1)',
+                    }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(52,211,153,0.1)' }}>
+                        <Send size={13} style={{ color: '#34d399' }} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <p className="text-sm font-medium text-white truncate">{s.party_name}</p>
+                        <p className="text-xs" style={{ color: 'rgba(52,211,153,0.55)' }}>
+                          <span className="font-mono">{s.invoice_number}</span> · {dayjs(s.sale_date).format('DD MMM')}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <p className="text-sm font-semibold" style={{ color: '#34d399' }}>{inr(Number(s.grand_total))}</p>
+                        <PayBadge mode={s.payment_mode || 'credit'} />
+                      </div>
+                    </div>
+                  )) : (
+                    <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <Send size={28} style={{ color: 'rgba(52,211,153,0.2)' }} />
+                      <p className="text-sm" style={{ color: 'rgba(52,211,153,0.35)' }}>No submissions yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </div>
 
           {/* ── Crusher info strip ────────────────────── */}

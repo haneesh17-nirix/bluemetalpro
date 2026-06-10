@@ -13,7 +13,7 @@ export default function LogoIcon({ size = 52 }: LogoIconProps) {
       {/* Inner backlight — warm amber glow from behind the logo */}
       <div style={{
         position: 'absolute', inset: 0, borderRadius: '50%',
-        background: 'radial-gradient(circle at 50% 55%, rgba(210,155,20,0.55) 0%, rgba(190,130,10,0.28) 45%, transparent 72%)',
+        background: 'radial-gradient(circle at 50% 55%, rgba(233,205,138,0.55) 0%, rgba(223,193,133,0.28) 45%, transparent 72%)',
         zIndex: 0,
       }} />
       <img
@@ -44,20 +44,20 @@ export default function LogoIcon({ size = 52 }: LogoIconProps) {
         <defs>
           {/* Matte gold — warm ochre tones, subtle variation, no bright flash */}
           <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#a07020" />
-            <stop offset="30%"  stopColor="#7a5010" />
-            <stop offset="55%"  stopColor="#b88828" />
-            <stop offset="75%"  stopColor="#6a4008" />
-            <stop offset="100%" stopColor="#9a7018" />
+            <stop offset="0%"   stopColor="#d0b890" />
+            <stop offset="30%"  stopColor="#bda888" />
+            <stop offset="55%"  stopColor="#dcc494" />
+            <stop offset="75%"  stopColor="#b5a084" />
+            <stop offset="100%" stopColor="#cdb88c" />
           </linearGradient>
         </defs>
 
         {/* Dark groove behind ring for depth */}
-        <circle cx={cx} cy={cx} r={r} fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={ring + 2} />
+        <circle cx={cx} cy={cx} r={r} fill="none" stroke="rgba(128,128,128,0.6)" strokeWidth={ring + 2} />
         {/* Matte gold ring */}
         <circle cx={cx} cy={cx} r={r} fill="none" stroke={`url(#${id})`} strokeWidth={ring} />
         {/* Very faint inner edge line */}
-        <circle cx={cx} cy={cx} r={r - ring / 2 + 0.5} fill="none" stroke="rgba(200,160,60,0.2)" strokeWidth={0.7} />
+        <circle cx={cx} cy={cx} r={r - ring / 2 + 0.5} fill="none" stroke="rgba(228,208,158,0.2)" strokeWidth={0.7} />
       </svg>
     </div>
   );
