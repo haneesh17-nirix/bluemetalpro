@@ -128,21 +128,21 @@ export default function LoginPage() {
           position: relative; z-index: 1;
           width: 48%; min-width: 440px; flex-shrink: 0;
           display: flex; flex-direction: column;
-          justify-content: space-between;
+          justify-content: center; align-items: center;
           padding: 56px 52px;
           border-right: 1px solid rgba(184,149,62,0.08);
         }
-        .lp-brand { display: flex; flex-direction: column; gap: 28px; }
+        .lp-brand { display: flex; flex-direction: column; align-items: center; gap: 32px; }
         .lp-logo-wrap {
-          display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
+          display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
         .lp-wordmark { display: flex; flex-direction: column; gap: 4px; }
         .lp-wordmark-name {
           font-size: 40px; font-weight: 900; color: #fff;
-          letter-spacing: -0.03em; line-height: 1;
+          letter-spacing: -0.03em; line-height: 1; text-align: center;
         }
         .lp-wordmark-tag {
-          font-size: 13px; font-weight: 700; letter-spacing: 0.22em;
+          font-size: 13px; font-weight: 700; letter-spacing: 0.22em; text-align: center;
           background: linear-gradient(135deg, #b8953e, #d4aa52);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -193,9 +193,13 @@ export default function LoginPage() {
           background: rgba(255,255,255,0.03);
           backdrop-filter: blur(24px);
           -webkit-backdrop-filter: blur(24px);
-          border: 1px solid rgba(255,255,255,0.07);
+          border: 2px solid transparent;
           box-shadow:
-            0 0 0 0.5px rgba(184,149,62,0.12),
+            0 0 0 1px #7a5010,
+            0 0 0 2px #4a2e06,
+            0 0 0 3px #a07020,
+            0 0 0 4px #6a4008,
+            0 0 20px rgba(130,90,15,0.28),
             0 32px 80px rgba(0,0,0,0.6),
             inset 0 1px 0 rgba(255,255,255,0.05);
           padding: 36px 32px;
@@ -328,7 +332,6 @@ export default function LoginPage() {
             ))}
           </div>
 
-          <p className="lp-footer">BlueMetal Pro · Quarry & Stone Crushing ERP</p>
         </div>
 
         {/* ── Right form panel ── */}
