@@ -3,7 +3,7 @@ interface LogoIconProps {
 }
 
 export default function LogoIcon({ size = 52 }: LogoIconProps) {
-  const ring = Math.round(size * 0.07);
+  const ring = Math.round(size * 0.035);
   const r = (size - ring) / 2;
   const cx = size / 2;
   const id = `gr${size}`;

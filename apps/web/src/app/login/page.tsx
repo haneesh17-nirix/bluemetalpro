@@ -52,7 +52,8 @@ export default function LoginPage() {
           log.action('Login successful', { role: sel.user?.role });
           router.push('/dashboard');
         } else {
-          localStorage.setItem('crushers_list', JSON.stringify(data.crushers));
+          const unique = data.crushers.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i);
+          localStorage.setItem('crushers_list', JSON.stringify(unique));
           router.push('/select-crusher');
         }
       } else if (data.token) {
@@ -61,11 +62,12 @@ export default function LoginPage() {
         try {
           const crushers = await getCrushers();
           if (Array.isArray(crushers) && crushers.length > 0) {
-            if (crushers.length === 1) {
-              setCrusher(crushers[0]);
-              localStorage.setItem('crusher', JSON.stringify(crushers[0]));
+            const unique = crushers.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i);
+            if (unique.length === 1) {
+              setCrusher(unique[0]);
+              localStorage.setItem('crusher', JSON.stringify(unique[0]));
             } else {
-              localStorage.setItem('crushers_list', JSON.stringify(crushers));
+              localStorage.setItem('crushers_list', JSON.stringify(unique));
               router.push('/select-crusher');
               return;
             }
@@ -178,20 +180,20 @@ export default function LoginPage() {
           <div style={{
             borderRadius: 20,
             padding: '32px 28px',
-            background: 'linear-gradient(175deg, #050f28 0%, #03091c 55%, #020814 100%)',
+            background: 'linear-gradient(175deg, #0d1f3c 0%, #091628 55%, #060e1c 100%)',
             border: '2px solid transparent',
             backgroundClip: 'padding-box',
             outline: '2px solid transparent',
             boxShadow: [
-              /* rugged matte gold outer ring — half thickness */
-              '0 0 0 1.5px #6a4808',
-              '0 0 0 2px #3e2604',
-              '0 0 0 2.8px #8a5e12',
-              '0 0 0 3.5px #4a3008',
+              /* matte gold ring — same gradient tones as logo ring */
+              '0 0 0 1.5px #7a5010',
+              '0 0 0 2px #4a2e06',
+              '0 0 0 2.8px #a07020',
+              '0 0 0 3.5px #6a4008',
               /* ambient glow */
-              '0 0 16px rgba(100,68,10,0.35)',
-              '0 28px 60px rgba(0,0,0,0.6)',
-              'inset 0 1px 0 rgba(80,120,200,0.08)',
+              '0 0 18px rgba(130,90,15,0.3)',
+              '0 28px 60px rgba(0,0,0,0.65)',
+              'inset 0 1px 0 rgba(80,130,220,0.07)',
               'inset 0 -1px 0 rgba(0,0,20,0.5)',
             ].join(', '),
           }}>
