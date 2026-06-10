@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.5] — 2026-06-10
+
+
+### Bug Fixes
+
+- vehicle maintenance_records must reference assets.id not vehicles.id ([52f8bae])
+
 ## [1.14.4] — 2026-06-10
 
 
