@@ -10,8 +10,8 @@ import {
 const nav = [
   { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','operations','report_viewer'], admin: false },
   { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','operations'], admin: false },
-  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','operations'], admin: false },
+  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','operations','report_viewer'], admin: false },
+  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','operations','report_viewer'], admin: false },
   { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['admin','operations'], admin: false },
   { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['admin','operations'], admin: false },
   { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','operations'], admin: false },

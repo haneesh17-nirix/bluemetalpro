@@ -7,9 +7,8 @@ import { logger, logAction } from '../utils/logger';
 export const purchasesRouter = Router();
 purchasesRouter.use(authenticate);
 purchasesRouter.use(requireCrusher);
-purchasesRouter.use(authorize('admin', 'operations'));
 
-purchasesRouter.get('/', async (req, res) => {
+purchasesRouter.get('/', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to, party_id, page = 1, limit = 20 } = req.query;
   const offset = (Number(page) - 1) * Number(limit);
@@ -73,7 +72,7 @@ purchasesRouter.post('/', async (req, res) => {
   }
 });
 
-purchasesRouter.get('/:id', async (req, res) => {
+purchasesRouter.get('/:id', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const purchase = await queryOne('SELECT * FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
   if (!purchase) return res.status(404).json({ error: 'Not found' });

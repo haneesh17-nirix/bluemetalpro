@@ -8,9 +8,7 @@ import { logger, logAction } from '../utils/logger';
 export const quarryRouter = Router();
 quarryRouter.use(authenticate);
 quarryRouter.use(requireCrusher);
-quarryRouter.use(authorize('admin', 'operations'));
-
-quarryRouter.get('/', async (req, res) => {
+quarryRouter.get('/', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to, page = 1, limit = 20 } = req.query;
   const offset = (Number(page) - 1) * Number(limit);
@@ -68,7 +66,7 @@ quarryRouter.post('/', async (req, res) => {
   }
 });
 
-quarryRouter.get('/summary', async (req, res) => {
+quarryRouter.get('/summary', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to } = req.query;
   const rows = await query(
