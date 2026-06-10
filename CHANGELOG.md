@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.21] — 2026-06-10
+
+
+### Other Changes
+
+- compact form — reduced padding, gaps and heading size ([dc77947])
+
 ## [1.21.20] — 2026-06-10
 
 
