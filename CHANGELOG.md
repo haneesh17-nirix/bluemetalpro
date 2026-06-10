@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.8] — 2026-06-10
+
+
+### Other Changes
+
+- Login page: remove headline, rename QUARRY ERP to BUSINESS INTELLIGENCE, features below branding ([e7e4d94])
+
 ## [1.21.7] — 2026-06-10
 
 
