@@ -94,7 +94,7 @@ export default function LoginPage() {
       ? '1px solid rgba(180,138,32,0.6)'
       : '1px solid rgba(90,120,180,0.18)',
     borderRadius: 10,
-    padding: `11px ${hasRightIcon ? '40px' : '14px'} 11px 40px`,
+    padding: `9px ${hasRightIcon ? '40px' : '14px'} 9px 40px`,
     fontSize: 14,
     color: '#dde6f4',
     outline: 'none',
@@ -178,8 +178,8 @@ export default function LoginPage() {
       <div className="login-right" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <div style={{
-            borderRadius: 20,
-            padding: '32px 28px',
+            borderRadius: 16,
+            padding: '22px 22px',
             background: 'linear-gradient(175deg, #0d1f3c 0%, #091628 55%, #060e1c 100%)',
             border: '2px solid transparent',
             backgroundClip: 'padding-box',
@@ -198,15 +198,15 @@ export default function LoginPage() {
             ].join(', '),
           }}>
 
-            <div style={{ marginBottom: 28 }}>
-              <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: '#e8edf8', margin: 0 }}>Welcome back</h2>
-              <p style={{ fontSize: 12, marginTop: 6, color: 'rgba(180,200,230,0.45)', fontWeight: 500 }}>Sign in to your workspace</p>
+            <div style={{ marginBottom: 18 }}>
+              <h2 style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em', color: '#e8edf8', margin: 0 }}>Welcome back</h2>
+              <p style={{ fontSize: 11, marginTop: 4, color: 'rgba(180,200,230,0.45)', fontWeight: 500 }}>Sign in to your workspace</p>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 7, textTransform: 'uppercase' }}>Email address</label>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Email address</label>
                 <div style={{ position: 'relative' }}>
                   <Mail size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'email' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
                   <input type="email" required value={form.email}
@@ -217,7 +217,7 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 7, textTransform: 'uppercase' }}>Password</label>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Password</label>
                 <div style={{ position: 'relative' }}>
                   <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'password' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
                   <input type={showPassword ? 'text' : 'password'} required value={form.password}
@@ -231,10 +231,10 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div style={{ marginTop: 4 }}>
+              <div>
                 <button type="submit" disabled={loading}
                   style={{
-                    width: '100%', padding: '12px 20px', borderRadius: 10,
+                    width: '100%', padding: '10px 20px', borderRadius: 10,
                     border: '1px solid rgba(100,70,10,0.7)',
                     background: loading
                       ? 'linear-gradient(160deg, #4a3008, #5a3a0a)'
@@ -257,7 +257,7 @@ export default function LoginPage() {
               </div>
             </form>
 
-            <div style={{ marginTop: 26, paddingTop: 18, borderTop: '1px solid rgba(100,70,10,0.22)', textAlign: 'center' }}>
+            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(100,70,10,0.22)', textAlign: 'center' }}>
               <p style={{ fontSize: 11, color: 'rgba(150,170,210,0.28)' }}>
                 BlueMetal Pro · Quarry & Stone Crushing ERP
               </p>
