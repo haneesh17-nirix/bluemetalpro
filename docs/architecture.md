@@ -67,7 +67,7 @@ API base URL: `https://api.bluemetalpro.in`
 ## Authentication & Authorization
 
 - Custom JWT (HS256), signed with `JWT_SECRET` env var
-- 6 roles: `admin`, `sales_operator`, `accounts`, `report_viewer`, `vehicle_manager`, `quarry_operator`
+- 4 roles: `platform_admin`, `admin`, `operations`, `report_viewer`
 - Edge agent uses a per-weighbridge `api_key` (UUID stored in `weighbridges.api_key`)
 - Sessions stored in `user_sessions` table; logout revokes server-side
 

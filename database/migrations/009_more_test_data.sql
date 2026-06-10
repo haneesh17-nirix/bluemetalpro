@@ -78,9 +78,9 @@ BEGIN
   -- ────────────────────────────────────────────────────────────────
   INSERT INTO users (name, email, password_hash, role, is_active) VALUES
     ('Rajesh Kumar',    'manager@bluemetal.local',    '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'report_viewer',   true),
-    ('Senthil Murugan', 'operator1@bluemetal.local',  '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'sales_operator',  true),
-    ('Kavitha Devi',    'operator2@bluemetal.local',  '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'quarry_operator', true),
-    ('Prakash Raj',     'maintenance@bluemetal.local','$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'vehicle_manager', true)
+    ('Senthil Murugan', 'operator1@bluemetal.local',  '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'operations', true),
+    ('Kavitha Devi',    'operator2@bluemetal.local',  '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'operations', true),
+    ('Prakash Raj',     'maintenance@bluemetal.local','$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy', 'operations', true)
   ON CONFLICT (email) DO NOTHING;
 
   SELECT id INTO u_mgr   FROM users WHERE email = 'manager@bluemetal.local'     LIMIT 1;
@@ -92,9 +92,9 @@ BEGIN
   IF c1 IS NOT NULL AND c2 IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role) VALUES
       (u_mgr,   c1, 'report_viewer'),   (u_mgr,   c2, 'report_viewer'),
-      (u_op1,   c1, 'sales_operator'),  (u_op1,   c2, 'sales_operator'),
-      (u_op2,   c1, 'quarry_operator'), (u_op2,   c2, 'quarry_operator'),
-      (u_maint, c1, 'vehicle_manager'), (u_maint, c2, 'vehicle_manager')
+      (u_op1,   c1, 'operations'), (u_op1,   c2, 'operations'),
+      (u_op2,   c1, 'operations'), (u_op2,   c2, 'operations'),
+      (u_maint, c1, 'operations'), (u_maint, c2, 'operations')
     ON CONFLICT (user_id, crusher_id) DO NOTHING;
   END IF;
 

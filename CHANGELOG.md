@@ -478,4 +478,4 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Secure token storage (expo-secure-store)
 - **CI/CD** — 5 GitHub Actions workflows (backend, web, mobile, infra, pr-checks)
 - Pre-loaded product catalog (M-Sand, P-Sand, 20mm Chilli, Dust, GSB, WMM, Bollar)
-- 6 user roles: admin, sales_operator, accounts, report_viewer, vehicle_manager, quarry_operator
+- 4 user roles: platform_admin, admin, operations, report_viewer

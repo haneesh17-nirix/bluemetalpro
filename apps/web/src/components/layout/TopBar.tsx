@@ -16,10 +16,10 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 const ROLE_LABELS: Record<string, string> = {
-  admin: 'Administrator', sales_operator: 'Sales Operator',
-  accounts: 'Accounts', report_viewer: 'Report Viewer',
-  vehicle_manager: 'Vehicle Manager', quarry_operator: 'Quarry Operator',
-  partner: 'Partner',
+  platform_admin: 'Platform Admin',
+  admin: 'Administrator',
+  operations: 'Operations',
+  report_viewer: 'Report Viewer',
 };
 
 interface TopBarProps {

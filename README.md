@@ -43,23 +43,24 @@ API: `https://api.bluemetalpro.in`
 |---|---|
 | `platform_admin` | Cross-crusher platform management — `/platform` dashboard |
 | `admin` | Full access to a crusher |
-| `sales_operator` | Sales, vehicles, parties |
-| `accounts` | Sales, purchases, ledger, wages |
-| `report_viewer` | Read-only reports |
-| `vehicle_manager` | Vehicles + maintenance |
-| `quarry_operator` | Quarry sales only |
+| `operations` | Sales, purchases, quarry, vehicles, maintenance, ledger, wages |
+| `report_viewer` | Read-only reports, sales & ledger |
 
 ## Test Accounts
 
-| Email | Password | Role | Notes |
-|---|---|---|---|
-| platform@bluemetal.local | Platform@123 | platform_admin | Super admin — lands on `/platform`, no crusher selection |
-| admin@bluemetal.local | Admin@123 | admin | Access to both demo units |
-| sales@bluemetal.local | Sales@123 | sales_operator | Access to both demo units |
-| accounts@bluemetal.local | Accounts@123 | accounts | Access to both demo units |
-| reports@bluemetal.local | Reports@123 | report_viewer | |
-| vehicle@bluemetal.local | Vehicle@123 | vehicle_manager | |
-| quarry@bluemetal.local | Quarry@123 | quarry_operator | |
+All passwords: `Test@1234`
+
+| Email | Role | Notes |
+|---|---|---|
+| platform@bluemetal.local | platform_admin | Super admin — lands on `/platform`, no crusher selection |
+| admin@bluemetal.local | admin | Access to both demo units |
+| sales@bluemetal.local | operations | Access to both demo units |
+| accounts@bluemetal.local | operations | Access to both demo units |
+| manager@bluemetal.local | operations | Access to both demo units |
+| operator1@bluemetal.local | operations | Access to both demo units |
+| operator2@bluemetal.local | operations | Access to both demo units |
+| maintenance@bluemetal.local | operations | Access to both demo units |
+| reports@bluemetal.local | report_viewer | Access to both demo units |
 
 ## Demo Data
 

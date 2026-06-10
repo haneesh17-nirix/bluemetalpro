@@ -275,7 +275,7 @@ All API paths in `apps/web/src/lib/api.ts` and `apps/mobile/src/lib/api.ts` are 
 ### `users`
 `id` · `name` · `email` · `phone` · `password_hash` · `role` · `is_active` · `created_at` · `updated_at`
 
-**`role` enum:** `admin` · `sales_operator` · `accounts` · `report_viewer` · `vehicle_manager` · `quarry_operator`
+**`role` enum:** `platform_admin` · `admin` · `operations` · `report_viewer`
 
 ### `user_sessions`
 `id` · `user_id` · `token_hash` · `fcm_token` · `expires_at` · `created_at`
@@ -372,17 +372,17 @@ All routes are in `apps/web/src/components/layout/Sidebar.tsx`.
 | href | Page file | Roles |
 |------|-----------|-------|
 | `/dashboard` | `app/dashboard/page.tsx` | all |
-| `/sales` | `app/sales/page.tsx` | admin, sales_operator, accounts |
-| `/purchases` | `app/purchases/page.tsx` | admin, accounts |
-| `/quarry` | `app/quarry/page.tsx` | admin, quarry_operator, accounts |
-| `/weighbridge` | `app/weighbridge/page.tsx` | admin, sales_operator, accounts, quarry_operator |
-| `/parties` | `app/parties/page.tsx` | admin, sales_operator, accounts |
-| `/vehicles` | `app/vehicles/page.tsx` | admin, vehicle_manager, sales_operator |
-| `/ledger` | `app/ledger/page.tsx` | admin, accounts |
-| `/reports` | `app/reports/page.tsx` | admin, report_viewer, accounts |
-| `/cameras` | `app/cameras/page.tsx` | admin, vehicle_manager |
-| `/maintenance` | `app/maintenance/page.tsx` | admin, vehicle_manager |
-| `/wages` | `app/wages/page.tsx` | admin, accounts |
+| `/sales` | `app/sales/page.tsx` | admin, operations, report_viewer |
+| `/purchases` | `app/purchases/page.tsx` | admin, operations |
+| `/quarry` | `app/quarry/page.tsx` | admin, operations |
+| `/weighbridge` | `app/weighbridge/page.tsx` | admin, operations |
+| `/parties` | `app/parties/page.tsx` | admin, operations |
+| `/vehicles` | `app/vehicles/page.tsx` | admin, operations |
+| `/ledger` | `app/ledger/page.tsx` | admin, operations, report_viewer |
+| `/reports` | `app/reports/page.tsx` | admin, operations, report_viewer |
+| `/cameras` | `app/cameras/page.tsx` | admin, operations |
+| `/maintenance` | `app/maintenance/page.tsx` | admin, operations |
+| `/wages` | `app/wages/page.tsx` | admin, operations |
 | `/users` | `app/users/page.tsx` | admin |
 | `/settings` | `app/settings/page.tsx` | admin |
 
