@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.10.0] — 2026-06-10
+
+
+### Features
+
+- `notifications` real-time SSE pipeline — fan-out on all business events ([54052e0])
+
+### Bug Fixes
+
+- `topbar` use default api import and type unread-count response ([2bddb8d])
+- `wages` remove orphaned main/div closing tags causing TS error ([4bcbecb])
+
+### Chores
+
+- sync check.sh required-files list to include migration 006 ([1f92eb8])
+
 ## [1.9.0] — 2026-06-10
 
 
