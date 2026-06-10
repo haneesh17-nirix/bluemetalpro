@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.27] — 2026-06-10
+
+
+### Other Changes
+
+- Move notifications to top-right: remove from sidebar, add View all link in bell dropdown ([af1a7c1])
+
 ## [1.21.26] — 2026-06-10
 
 
