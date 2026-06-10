@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.5] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` sidebar width as inline style, migrate remaining pages to AppLayout ([82cbd86])
+
 ## [1.10.4] — 2026-06-10
 
 
