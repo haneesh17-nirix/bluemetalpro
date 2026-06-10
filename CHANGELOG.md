@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0] — 2026-06-10
+
+
+### Features
+
+- `logo` use exact provided PNG — BlueMetalPro Logo.png ([82aa26c])
+
 ## [1.20.0] — 2026-06-10
 
 
