@@ -174,7 +174,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: production
-      url: https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io
+      url: https://api.bluemetalpro.in
 
     steps:
       - name: Login to Azure
@@ -192,5 +192,5 @@ jobs:
       - name: Smoke test
         run: |
           sleep 20
-          curl -f https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/health || \
-          curl -f https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/ || true
+          curl -f https://api.bluemetalpro.in/health || \
+          curl -f https://api.bluemetalpro.in/ || true

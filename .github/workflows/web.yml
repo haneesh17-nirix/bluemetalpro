@@ -65,7 +65,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
       name: production
-      url: https://happy-beach-0dd66180f.7.azurestaticapps.net
+      url: https://bluemetalpro.in
 
     steps:
       - uses: actions/checkout@v4

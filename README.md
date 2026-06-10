@@ -1,19 +1,22 @@
 # BlueMetal Pro
 
-Full-stack ERP for quarry and stone crushing operations — React Native mobile app (iOS + Android) + Next.js web dashboard, hosted on Azure.
+Full-stack ERP for quarry and stone crushing operations — React Native mobile app (iOS + Android) + Next.js web dashboard.
+
+**Production:** [https://bluemetalpro.in](https://bluemetalpro.in)
 
 ## Tech Stack
 
 | Layer | Technology | Hosting |
 |---|---|---|
-| Web dashboard | Next.js 14 (static export) | Azure Static Web Apps (Free) |
+| Web dashboard | Next.js 14 (static export) | Azure Static Web Apps → [bluemetalpro.in](https://bluemetalpro.in) |
 | Mobile app | React Native, Expo 51 | EAS Build → APK/IPA |
 | Backend API | Node.js + Express | Azure Container Apps (Consumption) |
 | Database | PostgreSQL 15 | Azure Flexible Server B1ms |
 | Storage | Azure Blob Storage | Invoices & documents |
 | Push notifications | Azure Notification Hubs | FCM (Android) + APNs (iOS) |
 
-API: `https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/api`
+Web: `https://bluemetalpro.in`
+API: `https://api.bluemetalpro.in`
 
 ## Modules
 

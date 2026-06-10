@@ -148,7 +148,7 @@ chmod +x .git/hooks/pre-push
 | Environment | Trigger | URL |
 |-------------|---------|-----|
 | Web (production) | Merge to `main` | Azure Static Web Apps |
-| Backend (production) | Merge to `main` | `https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io` |
+| Backend (production) | Merge to `main` | `https://api.bluemetalpro.in` |
 | Mobile (preview APK) | Merge to `main` or manual dispatch | [expo.dev/accounts/haneesh17/projects/bluemetal-pro](https://expo.dev/accounts/haneesh17/projects/bluemetal-pro) |
 
 PR preview deployments are created automatically for every open PR (web only, via Azure Static Web Apps).

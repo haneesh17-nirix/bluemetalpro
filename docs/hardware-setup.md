@@ -24,7 +24,7 @@
    | `WEIGHBRIDGE_ID` | UUID from the `weighbridges` table in your DB |
    | `COM_PORT` | e.g. `COM3`, `COM4` |
    | `BAUD_RATE` | Usually `9600` or `19200` |
-   | `API_URL` | Your Azure API URL, e.g. `https://bluemetal-prod-api.azurewebsites.net` |
+   | `API_URL` | Your Azure API URL, e.g. `https://api.bluemetalpro.in` |
    | `WEIGHBRIDGE_API_KEY` | The `api_key` value from `weighbridges` table |
    | `WS_PORT` | Local WebSocket port (default `8765`) |
    | `HTTP_PORT` | Local HTTP port (default `8766`) |
