@@ -97,6 +97,7 @@ export default function LoginPage() {
         minWidth: '420px',
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'space-between',
         padding: '48px',
         position: 'relative',
         overflow: 'hidden',
@@ -105,63 +106,70 @@ export default function LoginPage() {
         {/* Background blobs */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           <div style={{
-            position: 'absolute', width: 500, height: 500, borderRadius: '50%',
-            top: -100, left: -150,
-            background: 'radial-gradient(circle, rgba(37,99,168,0.2) 0%, transparent 65%)',
+            position: 'absolute', width: 560, height: 560, borderRadius: '50%',
+            top: -80, left: -160,
+            background: 'radial-gradient(circle, rgba(37,99,168,0.22) 0%, transparent 65%)',
           }} />
           <div style={{
-            position: 'absolute', width: 400, height: 400, borderRadius: '50%',
-            bottom: -80, right: -100,
-            background: 'radial-gradient(circle, rgba(184,149,62,0.12) 0%, transparent 65%)',
+            position: 'absolute', width: 440, height: 440, borderRadius: '50%',
+            bottom: -60, right: -80,
+            background: 'radial-gradient(circle, rgba(184,149,62,0.14) 0%, transparent 65%)',
           }} />
         </div>
 
-        {/* Logo */}
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: 16, marginBottom: 64 }}>
-          <div style={{ flexShrink: 0, filter: 'drop-shadow(0 6px 20px rgba(180,140,20,0.45))' }}>
-            <LogoIcon size={88} />
-          </div>
-          <div>
-            <p style={{ fontWeight: 700, fontSize: 20, color: '#fff', lineHeight: 1 }}>BlueMetal Pro</p>
-            <p style={{
-              fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', marginTop: 4,
-              background: 'linear-gradient(135deg, #c9a84c, #d4aa52)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>QUARRY ERP</p>
-          </div>
-        </div>
-
-        {/* Headline */}
-        <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ fontSize: 36, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 16, letterSpacing: '-0.02em' }}>
+        {/* ── TOP: Headline + features ── */}
+        <div style={{ position: 'relative', zIndex: 10 }}>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 14, letterSpacing: '-0.02em' }}>
             Stone Crushing<br />
             <span style={{
               background: 'linear-gradient(135deg, #c9a84c 0%, #d4aa52 50%, #c9a84c 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>Business Intelligence</span>
           </h2>
-          <p style={{ fontSize: 15, marginBottom: 40, lineHeight: 1.6, color: 'rgba(200,212,232,0.65)', maxWidth: 340 }}>
+          <p style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6, color: 'rgba(200,212,232,0.6)', maxWidth: 340 }}>
             Complete ERP built for quarry operations — from weighbridge to GST filing.
           </p>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {features.map(f => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <CheckCircle size={16} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
+                <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Stats */}
-        <div style={{ position: 'relative', zIndex: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 48 }}>
+        {/* ── CENTRE: Logo + branding (vertically centred in the panel) ── */}
+        <div style={{
+          position: 'relative', zIndex: 10,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          gap: 20, padding: '32px 0',
+        }}>
+          <div style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
+            <LogoIcon size={148} />
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{
+              fontWeight: 900, fontSize: 34, color: '#fff',
+              lineHeight: 1, margin: 0, letterSpacing: '-0.02em',
+            }}>BlueMetal Pro</p>
+            <p style={{
+              fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8,
+              background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>QUARRY ERP</p>
+          </div>
+        </div>
+
+        {/* ── BOTTOM: Stats ── */}
+        <div style={{ position: 'relative', zIndex: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
           {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
             <div key={s.label} style={{
-              textAlign: 'center', padding: '16px 12px', borderRadius: 16,
-              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              textAlign: 'center', padding: '14px 12px', borderRadius: 16,
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
             }}>
               <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
-              <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.55)' }}>{s.label}</p>
+              <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{s.label}</p>
             </div>
           ))}
         </div>
