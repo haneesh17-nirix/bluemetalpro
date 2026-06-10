@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { selectCrusher } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { log } from '@bluemetal/shared';
-import { Factory, MapPin, ChevronRight, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
 export default function SelectCrusherPage() {
@@ -12,6 +12,7 @@ export default function SelectCrusherPage() {
   const { setCrusher } = useCrusher();
   const [crushers, setCrushers] = useState<any[]>([]);
   const [selecting, setSelecting] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
     log.page('SelectCrusher');
@@ -36,51 +37,115 @@ export default function SelectCrusherPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6"
-      style={{ background: 'linear-gradient(160deg, #111418 0%, #161c24 50%, #111418 100%)' }}>
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center mb-4"
-            style={{ filter: 'drop-shadow(0 6px 18px rgba(180,140,20,0.5))' }}>
-            <LogoIcon size={100} />
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      background: 'linear-gradient(160deg, #111418 0%, #161c24 50%, #111418 100%)',
+    }}>
+      <style>{`
+        @keyframes tileIn {
+          from { opacity: 0; transform: translateY(10px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+      `}</style>
+
+      <div style={{ width: '100%', maxWidth: 480 }}>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: 16,
+            filter: 'drop-shadow(0 6px 20px rgba(160,112,20,0.5))' }}>
+            <LogoIcon size={80} />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Select Your Plant</h1>
-          <p className="text-white/50 text-sm">Choose the crushing plant you want to manage</p>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+            Select Plant
+          </h1>
+          <p style={{ fontSize: 12, color: 'rgba(180,200,230,0.45)', margin: 0 }}>
+            Choose the crushing plant to manage
+          </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {crushers.map((c) => (
-            <button key={c.id} onClick={() => handleSelect(c)} disabled={!!selecting}
-              className="w-full card-gold flex items-center gap-4 p-5 text-left transition-all hover:scale-[1.01] disabled:opacity-50">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)' }}>
-                {c.logo_url
-                  ? <img src={c.logo_url} alt={c.name} className="w-10 h-10 object-contain rounded-lg" />
-                  : <span className="text-gold text-lg font-bold">{c.name.charAt(0)}</span>
-                }
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-base truncate">{c.name}</p>
-                {(c.city || c.state) && (
-                  <p className="text-white/50 text-xs flex items-center gap-1 mt-0.5">
-                    <MapPin size={11} /> {[c.city, c.state].filter(Boolean).join(', ')}
-                  </p>
+        {/* Crusher tiles grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: crushers.length <= 2 ? `repeat(${crushers.length}, 1fr)` : 'repeat(3, 1fr)',
+          gap: 10,
+        }}>
+          {crushers.map((c, i) => {
+            const isSelecting = selecting === c.id;
+            const isHovered = hovered === c.id;
+            const isDisabled = !!selecting;
+            return (
+              <button
+                key={c.id}
+                onClick={() => handleSelect(c)}
+                disabled={isDisabled}
+                onMouseEnter={() => setHovered(c.id)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  padding: '14px 10px',
+                  borderRadius: 14,
+                  border: isHovered && !isDisabled
+                    ? '1px solid rgba(160,118,24,0.65)'
+                    : '1px solid rgba(100,72,12,0.4)',
+                  background: isHovered && !isDisabled
+                    ? 'linear-gradient(160deg, #122040 0%, #0e1a34 100%)'
+                    : 'linear-gradient(160deg, #0d1830 0%, #0a1428 100%)',
+                  boxShadow: isHovered && !isDisabled
+                    ? '0 0 0 1px rgba(140,100,18,0.2), 0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(160,118,24,0.1)'
+                    : '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)',
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                  opacity: isDisabled && !isSelecting ? 0.5 : 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  transition: 'all 0.18s ease',
+                  animation: `tileIn 0.3s ease ${i * 60}ms both`,
+                  minHeight: 80,
+                }}
+              >
+                {isSelecting ? (
+                  <Loader2 size={18} style={{ color: '#c9a84c', animation: 'spin 0.8s linear infinite' }} />
+                ) : (
+                  <div style={{
+                    width: 34, height: 34, borderRadius: 10,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    background: isHovered
+                      ? 'rgba(180,135,28,0.18)'
+                      : 'rgba(140,100,18,0.12)',
+                    border: isHovered
+                      ? '1px solid rgba(160,118,24,0.4)'
+                      : '1px solid rgba(120,86,14,0.25)',
+                    transition: 'all 0.18s ease',
+                  }}>
+                    {c.logo_url
+                      ? <img src={c.logo_url} alt="" style={{ width: 24, height: 24, objectFit: 'contain', borderRadius: 6 }} />
+                      : <span style={{ fontSize: 14, fontWeight: 800, color: '#c9a84c', lineHeight: 1 }}>
+                          {c.name.charAt(0).toUpperCase()}
+                        </span>
+                    }
+                  </div>
                 )}
-                {c.gstin && <p className="text-white/30 text-xs mt-0.5">GSTIN: {c.gstin}</p>}
-                <span className="inline-block text-xs px-2 py-0.5 rounded-full mt-1.5"
-                  style={{ background: 'rgba(37,99,168,0.2)', color: '#93c5fd' }}>
-                  {c.role || 'member'}
+                <span style={{
+                  fontSize: 12, fontWeight: 600,
+                  color: isHovered ? '#e8d898' : 'rgba(210,220,240,0.85)',
+                  textAlign: 'center',
+                  lineHeight: 1.3,
+                  wordBreak: 'break-word',
+                  transition: 'color 0.18s ease',
+                }}>
+                  {c.name}
                 </span>
-              </div>
-              <div className="flex-shrink-0">
-                {selecting === c.id
-                  ? <Loader2 size={18} className="animate-spin text-gold" />
-                  : <ChevronRight size={18} className="text-white/30" />
-                }
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
+
       </div>
     </div>
   );
