@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.4] — 2026-06-10
+
+
+### Bug Fixes
+
+- `docker` use npm install --omit=dev — workspace lockfile incompatible with standalone npm ci ([c6b5d4a])
+
 ## [1.10.3] — 2026-06-10
 
 
