@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0] — 2026-06-10
+
+
+### Features
+
+- simplify roles to admin/operations/report_viewer + reset-password ([14fa032])
+
 ## [1.13.0] — 2026-06-10
 
 
