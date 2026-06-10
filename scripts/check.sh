@@ -150,6 +150,7 @@ REQUIRED=(
   database/migrations/003_test_accounts.sql
   database/migrations/004_crushers.sql
   database/migrations/005_seed_crusher_access.sql
+  database/migrations/006_notifications_v2.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
