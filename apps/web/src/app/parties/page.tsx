@@ -111,7 +111,8 @@ export default function PartiesPage() {
             <button
               key={v}
               onClick={() => setTypeFilter(v)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === v ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-white/50 hover:text-white/80'}`}
+              className="text-sm font-medium transition-colors"
+              style={{ padding: '6px 12px', borderRadius: 6, ...(typeFilter === v ? { background: '#1e3a5f', color: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.3)' } : { color: 'rgba(255,255,255,0.5)' }) }}
             >
               {l}
             </button>
@@ -122,7 +123,7 @@ export default function PartiesPage() {
       {/* Table */}
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
-          <table className="w-full text-sm">
+          <table className="text-sm" style={{ width: '100%' }}>
             <thead>
               <tr>
                 {['Name', 'Type', 'Phone', 'GSTIN', 'City', 'Balance', ''].map(h => (
@@ -150,12 +151,12 @@ export default function PartiesPage() {
                       </div>
                     </td>
                     <td>
-                      <span className={`${typeBadge[p.type as PartyType]} capitalize`}>{p.type}</span>
+                      <span className={typeBadge[p.type as PartyType]} style={{ textTransform: 'capitalize' }}>{p.type}</span>
                     </td>
                     <td style={{ color: 'rgba(200,212,232,0.7)' }}>{p.phone || '—'}</td>
                     <td>
                       {p.gstin ? (
-                        <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(200,212,232,0.7)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <span className="font-mono text-xs" style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.06)', color: 'rgba(200,212,232,0.7)', border: '1px solid rgba(255,255,255,0.1)' }}>
                           {p.gstin}
                         </span>
                       ) : <span style={{ color: 'rgba(200,212,232,0.3)' }}>—</span>}
@@ -171,7 +172,7 @@ export default function PartiesPage() {
                       )}
                     </td>
                     <td>
-                      <button onClick={() => openEdit(p)} className="btn-ghost text-xs px-2 py-1">Edit</button>
+                      <button onClick={() => openEdit(p)} className="btn-ghost text-xs" style={{ padding: '4px 8px' }}>Edit</button>
                     </td>
                   </tr>
                 );
@@ -179,18 +180,18 @@ export default function PartiesPage() {
             </tbody>
           </table>
           {!(parties as any[]).length && (
-            <p className="text-center text-white/30 py-10">No parties found</p>
+            <p className="text-center" style={{ color: 'rgba(255,255,255,0.3)', padding: '40px 0' }}>No parties found</p>
           )}
         </div>
       </div>
 
       {/* Add/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 672, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <h2 className="text-xl font-bold text-white">{editParty ? 'Edit Party' : 'New Party'}</h2>
-              <button onClick={() => setShowForm(false)} className="btn-ghost p-2"><X size={18} /></button>
+              <h2 className="font-bold text-white" style={{ fontSize: '1.25rem' }}>{editParty ? 'Edit Party' : 'New Party'}</h2>
+              <button onClick={() => setShowForm(false)} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>

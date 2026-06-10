@@ -49,8 +49,11 @@ function Delta({ now, prev }: { now: number; prev: number }) {
   const Icon = pct === 0 ? Minus : up ? TrendingUp : TrendingDown;
   return (
     <span
-      className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full"
+      className="text-[11px] font-medium"
       style={{
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2,
+        borderRadius: 9999,
         background: pct === 0 ? 'rgba(255,255,255,0.06)' : up ? 'rgba(52,211,153,0.12)' : 'rgba(239,68,68,0.12)',
         color: pct === 0 ? 'rgba(255,255,255,0.4)' : up ? '#34d399' : '#f87171',
       }}
@@ -147,7 +150,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ minWidth: 0, flex: 1 }}>
                   {isLoading
-                    ? <div className="skeleton h-6 w-24 mb-1" />
+                    ? <div className="skeleton" style={{ height: 24, width: 96, marginBottom: 4 }} />
                     : <p className="text-xl font-bold text-white leading-none">{k.value}</p>
                   }
                   <p className="text-xs font-medium text-white/70 mt-1">{k.label}</p>
@@ -186,7 +189,7 @@ export default function DashboardPage() {
                   </span>
                 )}
               </div>
-              <Link href="/settings" className="btn-ghost text-xs py-1 px-3 flex-shrink-0">
+              <Link href="/settings" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12, flexShrink: 0 }}>
                 Settings <ArrowUpRight size={12} />
               </Link>
             </div>
@@ -202,11 +205,11 @@ export default function DashboardPage() {
                   <h2 className="panel-title">Monthly Revenue</h2>
                   <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>Last 12 months · confirmed sales</p>
                 </div>
-                <Link href="/reports" className="btn-ghost text-xs py-1 px-3">Full report <ArrowUpRight size={12} /></Link>
+                <Link href="/reports" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12 }}>Full report <ArrowUpRight size={12} /></Link>
               </div>
               <div className="panel-body">
               {isLoading ? (
-                <div className="skeleton h-48 w-full" />
+                <div className="skeleton" style={{ height: 192, width: '100%' }} />
               ) : (
                 <ResponsiveContainer width="100%" height={200}>
                   <AreaChart data={trend as any[]} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
@@ -233,7 +236,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Top Products bar — right panel */}
-            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Top Products</h2>
@@ -242,7 +245,7 @@ export default function DashboardPage() {
               </div>
               <div className="panel-body" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               {isLoading ? (
-                <div className="skeleton flex-1 w-full" />
+                <div className="skeleton" style={{ flex: 1, width: '100%' }} />
               ) : (data?.top_products?.length ? (
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={data.top_products} layout="vertical" margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
@@ -276,24 +279,24 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Recent sales */}
-            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Recent Sales</h2>
                   <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>Last 6 confirmed invoices</p>
                 </div>
-                <Link href="/sales" className="btn-ghost text-xs py-1 px-3">All sales <ArrowUpRight size={12} /></Link>
+                <Link href="/sales" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12 }}>All sales <ArrowUpRight size={12} /></Link>
               </div>
               <div className="panel-body" style={{ flex: 1 }}>
               {isLoading ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-12 w-full" />)}
+                  {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 48, width: '100%' }} />)}
                 </div>
               ) : data?.recent_sales?.length ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="text-sm" style={{ width: '100%' }}>
                     <thead>
-                      <tr className="text-left text-xs text-white/40 border-b border-white/8">
+                      <tr className="text-xs text-white/40" style={{ textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                         <th className="pb-2 font-medium pr-4">Invoice</th>
                         <th className="pb-2 font-medium pr-4">Party</th>
                         <th className="pb-2 font-medium pr-4">Date</th>
@@ -332,13 +335,13 @@ export default function DashboardPage() {
             </div>
 
             {/* Upcoming Maintenance */}
-            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Maintenance Due</h2>
                   <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>This week</p>
                 </div>
-                <Link href="/maintenance" className="btn-ghost text-xs py-1 px-3">All <ArrowUpRight size={12} /></Link>
+                <Link href="/maintenance" className="btn-ghost text-xs" style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12 }}>All <ArrowUpRight size={12} /></Link>
               </div>
               <div className="panel-body" style={{ flex: 1 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto' }}>
@@ -379,12 +382,13 @@ export default function DashboardPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {quickActions.map(a => (
                 <Link key={a.href} href={a.href}
-                  className="flex items-center gap-3 p-4 rounded-xl border border-surface-border hover:border-gold/30 hover:bg-surface-hover transition-all duration-150 group">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${a.color}25`, border: `1px solid ${a.color}40` }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none', transition: 'border-color 150ms, background 150ms' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,168,76,0.3)'; (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLElement).style.background = ''; }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${a.color}25`, border: `1px solid ${a.color}40` }}>
                     <a.icon size={16} style={{ color: a.color }} />
                   </div>
-                  <span className="text-sm text-white/70 group-hover:text-white font-medium transition-colors">{a.label}</span>
+                  <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>{a.label}</span>
                 </Link>
               ))}
             </div>

@@ -29,11 +29,11 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="card-gold w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="card-gold" style={{ width: '100%', maxWidth: 448, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">Record Receipt</h2>
-          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
@@ -102,14 +102,14 @@ function PartyLedgerDrawer({ partyId, partyName, onClose }: { partyId: string; p
   });
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <div className="w-full max-w-lg bg-[#0e2544] border-l border-[#263d5e] h-full shadow-2xl" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 40, display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{ width: '100%', maxWidth: 512, background: '#0e2544', borderLeft: '1px solid #263d5e', height: '100%', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 20, borderBottom: '1px solid #263d5e' }}>
           <div>
             <h2 className="font-bold text-white text-lg">{partyName}</h2>
             <p className="text-sm text-white/50">Transaction history</p>
           </div>
-          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
         </div>
         <div style={{ display: 'flex', gap: 12, padding: 16, borderBottom: '1px solid #263d5e' }}>
           <div>
@@ -121,9 +121,9 @@ function PartyLedgerDrawer({ partyId, partyName, onClose }: { partyId: string; p
             <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input" style={{ width: 144 }} />
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
           {!(txns as any[]).length ? (
-            <p className="text-center text-white/30 py-10 text-sm">No transactions in this period</p>
+            <p className="text-center text-white/30 text-sm" style={{ paddingTop: 40, paddingBottom: 40 }}>No transactions in this period</p>
           ) : (txns as any[]).map((t: any) => (
             <div key={t.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
               <div>
@@ -187,14 +187,15 @@ export default function LedgerPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search party…"
-          className="input w-full max-w-sm"
+          className="input"
+          style={{ width: '100%', maxWidth: 384 }}
         />
       </div>
 
       {/* Party balances table */}
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
-          <table className="w-full text-sm">
+          <table style={{ width: '100%' }} className="text-sm">
             <thead>
               <tr>
                 {['Party', 'Type', 'Total Sales', 'Total Received', 'Balance', ''].map(h => (
@@ -204,11 +205,11 @@ export default function LedgerPage() {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={6} className="text-center py-12 text-white/30">Loading…</td></tr>
+                <tr><td colSpan={6} className="text-center text-white/30" style={{ paddingTop: 48, paddingBottom: 48 }}>Loading…</td></tr>
               ) : !filtered.length ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-14 text-white/20">
-                    <DollarSign size={36} className="mx-auto mb-2 opacity-30" />
+                  <td colSpan={6} className="text-center text-white/20" style={{ paddingTop: 56, paddingBottom: 56 }}>
+                    <DollarSign size={36} style={{ margin: '0 auto', marginBottom: 8, opacity: 0.3 }} />
                     <p className="text-sm">No party balances yet</p>
                   </td>
                 </tr>

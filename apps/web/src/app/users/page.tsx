@@ -121,7 +121,7 @@ export default function UsersPage() {
         {/* Users table */}
         <div className="card" style={{ overflow: 'hidden' }}>
           <div className="table-wrapper">
-            <table className="w-full text-sm">
+            <table className="text-sm" style={{ width: '100%' }}>
               <thead>
                 <tr>
                   {['Name', 'Email', 'Phone', 'Role', 'Status', 'Created', ''].map(h => (
@@ -143,7 +143,8 @@ export default function UsersPage() {
                     <td>
                       <button
                         onClick={() => toggleActiveMutation.mutate({ id: u.id, is_active: !u.is_active })}
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${u.is_active ? 'badge-gem' : 'badge-red'}`}
+                        className={`text-xs font-medium transition-colors ${u.is_active ? 'badge-gem' : 'badge-red'}`}
+                        style={{ padding: '2px 8px', borderRadius: 9999 }}
                       >
                         {u.is_active ? 'Active' : 'Inactive'}
                       </button>
@@ -192,8 +193,8 @@ export default function UsersPage() {
 
       {/* Add/Edit User modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-lg p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 512, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editUser ? 'Edit User' : 'Add User'}</h2>
               <button onClick={() => setShowForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
@@ -219,18 +220,18 @@ export default function UsersPage() {
                   <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as UserRole }))} className="select">
                     {roleGroups.map(([r, cfg]) => <option key={r} value={r}>{cfg.label}</option>)}
                   </select>
-                  <p className="text-xs text-white/30 mt-1">
+                  <p className="text-xs text-white/30" style={{ marginTop: 4 }}>
                     {roleConfig[form.role]?.permissions.slice(0, 2).join(' · ')}
                   </p>
                 </div>
                 {!editUser && (
                   <div>
                     <label className="label">Password *</label>
-                    <div className="relative">
+                    <div style={{ position: 'relative' }}>
                       <input required type={showPassword ? 'text' : 'password'} value={form.password}
                         onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                        className="input pr-10" minLength={8} placeholder="Min 8 characters" />
-                      <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70" onClick={() => setShowPassword(s => !s)}>
+                        className="input" style={{ paddingRight: 40 }} minLength={8} placeholder="Min 8 characters" />
+                      <button type="button" className="text-white/40 hover:text-white/70" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPassword(s => !s)}>
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
@@ -238,7 +239,7 @@ export default function UsersPage() {
                 )}
                 {editUser && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <input type="checkbox" id="is_active" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))} className="rounded" />
+                    <input type="checkbox" id="is_active" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))} style={{ borderRadius: 4 }} />
                     <label htmlFor="is_active" className="text-sm text-white/70">Active (can log in)</label>
                   </div>
                 )}
@@ -256,15 +257,15 @@ export default function UsersPage() {
 
       {/* Reset password modal */}
       {resetModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-sm p-6">
-            <h2 className="text-lg font-bold text-white mb-1">Reset Password</h2>
-            <p className="text-sm text-white/50 mb-4">Set a new password for <strong className="text-white">{resetModal.user.name}</strong></p>
-            <div className="relative mb-4">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 384, padding: 24 }}>
+            <h2 className="text-lg font-bold text-white" style={{ marginBottom: 4 }}>Reset Password</h2>
+            <p className="text-sm text-white/50" style={{ marginBottom: 16 }}>Set a new password for <strong className="text-white">{resetModal.user.name}</strong></p>
+            <div style={{ position: 'relative', marginBottom: 16 }}>
               <input type={showPassword ? 'text' : 'password'} value={resetModal.password}
                 onChange={e => setResetModal(m => m ? { ...m, password: e.target.value } : m)}
-                className="input pr-10" minLength={8} placeholder="New password (min 8 chars)" />
-              <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70" onClick={() => setShowPassword(s => !s)}>
+                className="input" style={{ paddingRight: 40 }} minLength={8} placeholder="New password (min 8 chars)" />
+              <button type="button" className="text-white/40 hover:text-white/70" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPassword(s => !s)}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>

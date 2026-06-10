@@ -54,11 +54,11 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="card-gold" style={{ width: '100%', maxWidth: 672, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">New Purchase Bill</h2>
-          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
@@ -99,7 +99,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <p className="text-sm font-semibold text-white">Items</p>
               <button type="button" onClick={() => setItems(p => [...p, emptyItem()])}
-                className="btn-ghost text-xs px-3 py-1.5">+ Add item</button>
+                className="btn-ghost text-xs" style={{ paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6 }}>+ Add item</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {items.map((item, i) => (
@@ -137,7 +137,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
                   </div>
                   <div style={{ gridColumn: 'span 1', display: 'flex', justifyContent: 'flex-end', paddingBottom: 4 }}>
                     {items.length > 1 && (
-                      <button type="button" onClick={() => setItems(p => p.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300">
+                      <button type="button" onClick={() => setItems(p => p.filter((_, j) => j !== i))} style={{ color: '#f87171' }}>
                         <X size={14} />
                       </button>
                     )}
@@ -235,7 +235,7 @@ export default function PurchasesPage() {
       {/* Table */}
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
-          <table className="w-full text-sm">
+          <table className="text-sm" style={{ width: '100%' }}>
             <thead>
               <tr>
                 {['Bill No.', 'Date', 'Supplier', 'Vehicle', 'Grand Total', 'Paid', 'Balance', 'Mode'].map(h => (
@@ -245,12 +245,12 @@ export default function PurchasesPage() {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={8} className="text-center py-12 text-white/40">Loading…</td></tr>
+                <tr><td colSpan={8} className="text-center" style={{ paddingTop: 48, paddingBottom: 48, color: 'rgba(255,255,255,0.4)' }}>Loading…</td></tr>
               ) : !(purchases as any[]).length ? (
                 <tr>
                   <td colSpan={8}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 64, paddingBottom: 64, color: 'rgba(255,255,255,0.3)' }}>
-                      <Package size={40} className="mb-2" />
+                      <Package size={40} style={{ marginBottom: 8 }} />
                       <p className="text-sm">No purchases in this period</p>
                     </div>
                   </td>

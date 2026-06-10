@@ -151,7 +151,8 @@ export default function MaintenancePage() {
         <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 8, background: '#111e35', border: '1px solid #1f3659' }}>
           {[['', 'All'], ['machinery', 'Machinery'], ['vehicle', 'Vehicle']].map(([v, l]) => (
             <button key={v} onClick={() => setAssetTypeFilter(v)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${assetTypeFilter === v ? 'bg-[#162c52] text-[#e8c96a]' : 'text-white/50 hover:text-white'}`}>
+              className="text-sm font-medium transition-all"
+              style={{ padding: '6px 12px', borderRadius: 6, background: assetTypeFilter === v ? '#162c52' : 'transparent', color: assetTypeFilter === v ? '#e8c96a' : 'rgba(255,255,255,0.5)' }}>
               {l}
             </button>
           ))}
@@ -171,7 +172,7 @@ export default function MaintenancePage() {
           {/* Records table */}
           {tab === 'records' && (
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     {['Asset', 'Type', 'Title', 'Scheduled', 'Cost', 'Vendor', 'Status', ''].map(h => (
@@ -194,7 +195,7 @@ export default function MaintenancePage() {
                       <td className="capitalize text-white/60">{r.asset_type}</td>
                       <td>
                         <p className="font-medium text-white">{r.title}</p>
-                        {r.description && <p className="text-xs text-white/40 truncate max-w-32">{r.description}</p>}
+                        {r.description && <p className="text-xs text-white/40 truncate" style={{ maxWidth: 128 }}>{r.description}</p>}
                       </td>
                       <td className="text-white/60">
                         {r.scheduled_date ? dayjs(r.scheduled_date).format('DD/MM/YYYY') : '—'}
@@ -222,14 +223,14 @@ export default function MaintenancePage() {
                   ))}
                 </tbody>
               </table>
-              {!(records as any[]).length && <p className="text-center text-white/30 py-10">No maintenance records</p>}
+              {!(records as any[]).length && <p className="text-center text-white/30" style={{ paddingTop: 40, paddingBottom: 40 }}>No maintenance records</p>}
             </div>
           )}
 
           {/* Assets table */}
           {tab === 'assets' && (
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     {['Asset Name', 'Type', 'Model', 'Serial No.', 'Purchase Date', 'Purchase Cost'].map(h => (
@@ -257,14 +258,14 @@ export default function MaintenancePage() {
                   ))}
                 </tbody>
               </table>
-              {!(assets as any[]).length && <p className="text-center text-white/30 py-10">No assets found</p>}
+              {!(assets as any[]).length && <p className="text-center text-white/30" style={{ paddingTop: 40, paddingBottom: 40 }}>No assets found</p>}
             </div>
           )}
 
       {/* Add Record modal */}
       {showRecordForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 576, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editRecord ? 'Update Record' : 'New Maintenance Record'}</h2>
               <button onClick={() => setShowRecordForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
@@ -334,8 +335,8 @@ export default function MaintenancePage() {
 
       {/* Add Asset modal */}
       {showAssetForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 512, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">Add Asset</h2>
               <button onClick={() => setShowAssetForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>

@@ -52,11 +52,11 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
   const amount = Number(form.quantity) * Number(form.rate);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+      <div className="card-gold" style={{ width: '100%', maxWidth: 672, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">New Quarry Entry</h2>
-          <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
@@ -96,7 +96,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
           {amount > 0 && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm font-medium text-amber-300">
+            <div className="text-sm font-medium" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: 12, color: '#fcd34d' }}>
               Total: ₹{amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
             </div>
           )}
@@ -110,7 +110,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
           </div>
           <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="btn-primary disabled:opacity-60">
+            <button type="submit" disabled={mutation.isPending} className="btn-primary" style={mutation.isPending ? { opacity: 0.6 } : undefined}>
               {mutation.isPending ? 'Saving…' : 'Record Sale'}
             </button>
           </div>
@@ -179,7 +179,7 @@ export default function QuarryPage() {
           {/* Table */}
           <div className="card" style={{ overflow: 'hidden' }}>
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     {['Date', 'Material', 'Vehicle', 'Quantity', 'Rate', 'Amount', 'Mode'].map(h => (
@@ -189,11 +189,11 @@ export default function QuarryPage() {
                 </thead>
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={7} className="text-center py-12 text-white/40">Loading…</td></tr>
+                    <tr><td colSpan={7} className="text-center" style={{ padding: '48px 0', color: 'rgba(255,255,255,0.4)' }}>Loading…</td></tr>
                   ) : !filtered.length ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-14 text-white/30">
-                        <Mountain size={36} className="mx-auto mb-2 opacity-30" />
+                      <td colSpan={7} className="text-center" style={{ padding: '56px 0', color: 'rgba(255,255,255,0.3)' }}>
+                        <Mountain size={36} style={{ display: 'block', margin: '0 auto 8px', opacity: 0.3 }} />
                         <p className="text-sm">No quarry sales in this period</p>
                       </td>
                     </tr>

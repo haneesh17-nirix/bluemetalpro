@@ -183,14 +183,14 @@ export default function WagesPage() {
               {/* Summary badges */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                 {Object.entries(summary).map(([s, n]) => (
-                  <span key={s} className={`px-3 py-1 rounded-full border text-xs capitalize font-medium ${statusActiveClass[s as AttendanceStatus]}`}>
+                  <span key={s} className={`text-xs capitalize font-medium ${statusActiveClass[s as AttendanceStatus]}`} style={{ padding: '4px 12px', borderRadius: 9999, border: '1px solid', display: 'inline-block' }}>
                     {n} {s.replace('_', ' ')}
                   </span>
                 ))}
               </div>
 
               <div className="table-wrapper">
-                <table className="w-full text-sm">
+                <table className="text-sm" style={{ width: '100%' }}>
                   <thead>
                     <tr>
                       {['Worker', 'Designation', 'Wage', 'Status', 'Advance (₹)'].map(h => (
@@ -210,7 +210,8 @@ export default function WagesPage() {
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                               {(['present', 'absent', 'half_day', 'leave'] as AttendanceStatus[]).map(s => (
                                 <button key={s} onClick={() => setLocalStatus(ls => ({ ...ls, [w.id]: s }))}
-                                  className={`px-2 py-1 rounded text-xs font-medium border transition-all capitalize ${status === s ? statusActiveClass[s] : 'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'}`}>
+                                  className={`text-xs font-medium transition-all capitalize ${status === s ? statusActiveClass[s] : 'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'}`}
+                                  style={{ padding: '4px 8px', borderRadius: 4, border: '1px solid' }}>
                                   {s === 'half_day' ? 'Half' : s}
                                 </button>
                               ))}
@@ -219,14 +220,14 @@ export default function WagesPage() {
                           <td>
                             <input type="number" value={localAdvance[w.id] || ''}
                               onChange={e => setLocalAdvance(la => ({ ...la, [w.id]: e.target.value }))}
-                              className="input w-24 text-sm" min="0" placeholder="0" />
+                              className="input text-sm" style={{ width: 96 }} min="0" placeholder="0" />
                           </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-                {!(workers as any[]).length && <p className="text-center text-white/30 py-8">No workers found. Add workers first.</p>}
+                {!(workers as any[]).length && <p className="text-center text-white/30" style={{ paddingTop: 32, paddingBottom: 32 }}>No workers found. Add workers first.</p>}
               </div>
             </>
           )}
@@ -234,7 +235,7 @@ export default function WagesPage() {
           {/* WORKERS TAB */}
           {tab === 'workers' && (
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     {['Name', 'Designation', 'Wage Type', 'Wage Rate', 'Phone', 'Joined', ''].map(h => (
@@ -259,7 +260,7 @@ export default function WagesPage() {
                   ))}
                 </tbody>
               </table>
-              {!(workers as any[]).length && <p className="text-center text-white/30 py-10">No workers added yet</p>}
+              {!(workers as any[]).length && <p className="text-center text-white/30" style={{ paddingTop: 40, paddingBottom: 40 }}>No workers added yet</p>}
             </div>
           )}
 
@@ -267,7 +268,7 @@ export default function WagesPage() {
           {tab === 'payroll' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
               <div className="card" style={{ padding: 24 }}>
-                <h2 className="font-semibold text-white mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h2 className="font-semibold text-white" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                   <Calculator size={18} className="text-[#c9a84c]" /> Calculate Wages
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -288,7 +289,7 @@ export default function WagesPage() {
                       <input type="date" value={payPeriod.to} onChange={e => setPayPeriod(p => ({ ...p, to: e.target.value }))} className="input" />
                     </div>
                   </div>
-                  <button onClick={calculatePayroll} className="btn-primary w-full py-2.5">
+                  <button onClick={calculatePayroll} className="btn-primary" style={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}>
                     Calculate
                   </button>
                 </div>
@@ -296,8 +297,8 @@ export default function WagesPage() {
 
               {payrollResult && (
                 <div className="card-gold" style={{ padding: 24 }}>
-                  <h2 className="font-semibold text-white mb-4">Payroll Summary — {payrollResult.worker?.name}</h2>
-                  <div className="space-y-1 text-sm">
+                  <h2 className="font-semibold text-white" style={{ marginBottom: 16 }}>Payroll Summary — {payrollResult.worker?.name}</h2>
+                  <div className="text-sm" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {[
                       ['Wage Type', payrollResult.worker?.wage_type],
                       ['Wage Rate', `₹${Number(payrollResult.worker?.wage_rate).toLocaleString('en-IN')}`],
@@ -316,7 +317,7 @@ export default function WagesPage() {
                       <span className="font-bold text-lg text-[#c9a84c]">₹{Number(payrollResult.net_wages).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
-                  <button onClick={processPayment} className="btn-primary w-full mt-4 py-2.5">
+                  <button onClick={processPayment} className="btn-primary" style={{ width: '100%', marginTop: 16, paddingTop: 10, paddingBottom: 10 }}>
                     Process Payment
                   </button>
                 </div>
@@ -326,8 +327,8 @@ export default function WagesPage() {
 
       {/* Add/Edit Worker modal */}
       {showWorkerForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 512, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editWorker ? 'Edit Worker' : 'Add Worker'}</h2>
               <button onClick={() => setShowWorkerForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>

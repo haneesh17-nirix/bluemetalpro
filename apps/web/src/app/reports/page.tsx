@@ -59,7 +59,7 @@ export default function ReportsPage() {
           {/* Item-wise */}
           {tab === 'item-wise' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <div className="card p-6">
+              <div className="card" style={{ padding: 24 }}>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={itemWise as any[]}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
@@ -81,7 +81,7 @@ export default function ReportsPage() {
                 </ResponsiveContainer>
               </div>
               <div className="table-wrapper">
-                <table className="w-full text-sm">
+                <table className="text-sm" style={{ width: '100%' }}>
                   <thead>
                     <tr>{['Product', 'HSN', 'Unit', 'Qty', 'Amount', 'CGST', 'SGST', 'IGST', 'Total (with GST)', 'Invoices'].map(h => (
                       <th key={h}>{h}</th>
@@ -98,12 +98,12 @@ export default function ReportsPage() {
                         <td>{fmt(r.total_cgst)}</td>
                         <td>{fmt(r.total_sgst)}</td>
                         <td>{fmt(r.total_igst)}</td>
-                        <td className="font-semibold text-[#c9a84c]">{fmt(r.total_with_gst)}</td>
+                        <td className="font-semibold" style={{ color: '#c9a84c' }}>{fmt(r.total_with_gst)}</td>
                         <td>{r.num_invoices}</td>
                       </tr>
                     ))}
                     {(itemWise as any[]).length > 0 && (
-                      <tr className="bg-[#c9a84c]/10 font-bold text-[#c9a84c]">
+                      <tr className="font-bold" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
                         <td colSpan={4}>TOTAL</td>
                         <td>{fmt((itemWise as any[]).reduce((s: number, r: any) => s + Number(r.total_amount), 0))}</td>
                         <td>{fmt((itemWise as any[]).reduce((s: number, r: any) => s + Number(r.total_cgst), 0))}</td>
@@ -122,7 +122,7 @@ export default function ReportsPage() {
           {/* Party-wise */}
           {tab === 'party-wise' && (
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>{['Party', 'GSTIN', 'Invoices', 'Total Sales', 'Received', 'Pending'].map(h => (
                     <th key={h}>{h}</th>
@@ -135,8 +135,8 @@ export default function ReportsPage() {
                       <td className="text-white/50">{r.gstin || '-'}</td>
                       <td>{r.invoice_count}</td>
                       <td>{fmt(r.total_sales)}</td>
-                      <td className="text-emerald-400">{fmt(r.total_received)}</td>
-                      <td className="text-red-400">{fmt(r.total_pending)}</td>
+                      <td style={{ color: '#34d399' }}>{fmt(r.total_received)}</td>
+                      <td style={{ color: '#f87171' }}>{fmt(r.total_pending)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -147,7 +147,7 @@ export default function ReportsPage() {
           {/* GST Summary */}
           {tab === 'gst' && (
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>{['Month', 'Type', 'Invoices', 'Taxable', 'CGST', 'SGST', 'IGST', 'Total Tax', 'Grand Total'].map(h => (
                     <th key={h}>{h}</th>
@@ -164,7 +164,7 @@ export default function ReportsPage() {
                       <td>{fmt(r.sgst)}</td>
                       <td>{fmt(r.igst)}</td>
                       <td className="font-medium">{fmt(r.total_tax)}</td>
-                      <td className="font-bold text-[#c9a84c]">{fmt(r.grand_total)}</td>
+                      <td className="font-bold" style={{ color: '#c9a84c' }}>{fmt(r.grand_total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -174,8 +174,8 @@ export default function ReportsPage() {
 
           {/* Trend */}
           {tab === 'trend' && (
-            <div className="card p-6">
-              <h2 className="font-semibold text-white mb-5">Monthly Sales Trend</h2>
+            <div className="card" style={{ padding: 24 }}>
+              <h2 className="font-semibold text-white" style={{ marginBottom: 20 }}>Monthly Sales Trend</h2>
               <ResponsiveContainer width="100%" height={350}>
                 <LineChart data={trend as any[]}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />

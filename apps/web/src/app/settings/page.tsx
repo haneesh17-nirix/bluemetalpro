@@ -59,7 +59,7 @@ export default function SettingsPage() {
       <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* Company Info */}
-        <div className="card p-6">
+        <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ width: 36, height: 36, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.25)' }}>
               <Building2 size={16} style={{ color: '#e8c96a' }} />
@@ -83,7 +83,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Bank Details */}
-        <div className="card p-6">
+        <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ width: 36, height: 36, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.25)' }}>
               <CreditCard size={16} style={{ color: '#60a5fa' }} />
@@ -102,7 +102,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Invoice Config */}
-        <div className="card p-6">
+        <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ width: 36, height: 36, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
               <FileText size={16} style={{ color: '#34d399' }} />
@@ -115,14 +115,14 @@ export default function SettingsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             <div>
               <F label="Invoice Prefix" name="invoice_prefix" placeholder="INV" maxLength={10} />
-              <p className="text-xs mt-1" style={{ color: 'rgba(200,212,232,0.3)' }}>e.g. INV → INV/2526/0001</p>
+              <p className="text-xs" style={{ marginTop: 4, color: 'rgba(200,212,232,0.3)' }}>e.g. INV → INV/2526/0001</p>
             </div>
             <div>
               <F label="Quarry Invoice Prefix" name="quarry_invoice_prefix" placeholder="QRY" maxLength={10} />
-              <p className="text-xs mt-1" style={{ color: 'rgba(200,212,232,0.3)' }}>e.g. QRY → QRY/2526/0001</p>
+              <p className="text-xs" style={{ marginTop: 4, color: 'rgba(200,212,232,0.3)' }}>e.g. QRY → QRY/2526/0001</p>
             </div>
           </div>
-          <div className="mt-4">
+          <div style={{ marginTop: 16 }}>
             <label className="label">Terms &amp; Conditions (printed on invoice)</label>
             <textarea
               value={form.terms_conditions || ''}
@@ -135,8 +135,8 @@ export default function SettingsPage() {
         </div>
 
         {/* GST Info panel */}
-        <div className="card-gold p-5">
-          <h3 className="font-semibold text-[#c9a84c] mb-4 text-sm">GST Rate Reference — Stone Crushing Products</h3>
+        <div className="card-gold" style={{ padding: 20 }}>
+          <h3 className="font-semibold text-sm" style={{ marginBottom: 16, color: '#c9a84c' }}>GST Rate Reference — Stone Crushing Products</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 12 }}>
             {[
               { item: 'M-Sand, P-Sand', hsn: '25171010', gst: '5%' },
@@ -146,10 +146,10 @@ export default function SettingsPage() {
               { item: 'Boulder / Bollar', hsn: '25171010', gst: '5%' },
               { item: 'Transport (if billed)', hsn: '996511', gst: '12%' },
             ].map(r => (
-              <div key={r.item} className="card p-3">
+              <div key={r.item} className="card" style={{ padding: 12 }}>
                 <p className="font-medium text-white">{r.item}</p>
                 <p className="font-mono" style={{ color: 'rgba(200,212,232,0.4)' }}>HSN: {r.hsn}</p>
-                <p className="font-bold mt-0.5" style={{ color: '#e8c96a' }}>GST: {r.gst}</p>
+                <p className="font-bold" style={{ marginTop: 2, color: '#e8c96a' }}>GST: {r.gst}</p>
               </div>
             ))}
           </div>

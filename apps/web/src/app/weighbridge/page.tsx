@@ -54,7 +54,7 @@ function LiveWeightDisplay({ weighbridge }: { weighbridge: any }) {
   const status = weight?.status || 'unknown';
 
   return (
-    <div className={`border-2 rounded-2xl p-6 transition-all ${statusColors[status] || statusColors.unknown}`}>
+    <div className={`border-2 rounded-2xl transition-all ${statusColors[status] || statusColors.unknown}`} style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
         <div>
           <p className="font-semibold text-lg">{weighbridge.name}</p>
@@ -66,12 +66,12 @@ function LiveWeightDisplay({ weighbridge }: { weighbridge: any }) {
       </div>
 
       {/* Big weight display */}
-      <div className="text-center py-6">
+      <div style={{ textAlign: 'center', paddingTop: 24, paddingBottom: 24 }}>
         <p className="text-6xl font-bold font-mono tracking-tight">
           {kg.toLocaleString('en-IN')}
         </p>
         <p className="text-xl font-medium mt-1 opacity-70">kg &nbsp;·&nbsp; {mt} MT</p>
-        <div className={`mt-3 px-3 py-1 rounded-full text-sm font-medium capitalize border ${statusColors[status]}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <div className={`rounded-full text-sm font-medium capitalize border ${statusColors[status]}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 4, paddingBottom: 4 }}>
           {status === 'stable' ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
           {status}
         </div>
@@ -108,8 +108,8 @@ function NewTicketForm({ weighbridges }: { weighbridges: any[] }) {
   const net = Math.max(0, Number(form.gross_weight_kg) - Number(form.tare_weight_kg || 0));
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="font-semibold text-[#1a3c5e] mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Scale size={18} /> New Weigh Ticket</h2>
+    <div className="bg-white rounded-xl shadow-sm" style={{ padding: 24 }}>
+      <h2 className="font-semibold text-[#1a3c5e]" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}><Scale size={18} /> New Weigh Ticket</h2>
       <form onSubmit={e => { e.preventDefault(); mutation.mutate({ ...form, gross_weight_kg: Number(form.gross_weight_kg), tare_weight_kg: Number(form.tare_weight_kg || 0) }); }}
         style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
 
@@ -178,7 +178,7 @@ function NewTicketForm({ weighbridges }: { weighbridges: any[] }) {
         </div>
 
         <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
-          <button type="submit" disabled={mutation.isPending} className="bg-[#1a3c5e] hover:bg-[#2563a8] text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-60 transition-colors">
+          <button type="submit" disabled={mutation.isPending} className="bg-[#1a3c5e] hover:bg-[#2563a8] text-white rounded-lg font-medium disabled:opacity-60 transition-colors" style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 10, paddingBottom: 10 }}>
             {mutation.isPending ? 'Creating…' : 'Create Weigh Ticket'}
           </button>
         </div>
@@ -196,7 +196,7 @@ export default function WeighbridgePage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, padding: 32 }}>
-        <h1 className="text-2xl font-bold text-[#1a3c5e] mb-6">Weighbridge</h1>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]" style={{ marginBottom: 24 }}>Weighbridge</h1>
 
         {/* Live displays */}
         {(weighbridges as any[]).length > 0 ? (
@@ -219,9 +219,9 @@ export default function WeighbridgePage() {
           <NewTicketForm weighbridges={weighbridges as any[]} />
 
           {/* Recent tickets */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="font-semibold text-[#1a3c5e] mb-4">Recent Tickets</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }} style={{ maxHeight: 480, overflowY: 'auto' }}>
+          <div className="bg-white rounded-xl shadow-sm" style={{ padding: 24 }}>
+            <h2 className="font-semibold text-[#1a3c5e]" style={{ marginBottom: 16 }}>Recent Tickets</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 480, overflowY: 'auto' }}>
               {(tickets as any[]).map((t: any) => (
                 <div key={t.id} className="bg-gray-50 rounded-lg border border-gray-100" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
                   <div>

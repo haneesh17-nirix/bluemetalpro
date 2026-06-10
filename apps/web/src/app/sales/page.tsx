@@ -225,7 +225,7 @@ export default function SalesPage() {
             </div>
             {(search || statusFilter !== 'all') && (
               <button onClick={() => { setSearch(''); setStatusFilter('all'); }}
-                className="btn-ghost text-xs py-2 px-3 self-end">
+                className="btn-ghost text-xs" style={{ padding: '8px 12px', alignSelf: 'flex-end' }}>
                 Clear
               </button>
             )}
@@ -234,7 +234,7 @@ export default function SalesPage() {
           {/* ── Sales Table ─────────────────────────── */}
           <div className="card" style={{ overflow: 'hidden' }}>
             <div className="table-wrapper">
-              <table className="w-full text-sm">
+              <table className="text-sm" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     {['Invoice', 'Date', 'Party', 'Vehicle', 'Amount', 'Received', 'Balance', 'Mode', 'Status', ''].map(h => (
@@ -244,14 +244,14 @@ export default function SalesPage() {
                 </thead>
                 <tbody>
                   {filtered.map((s: any) => (
-                    <tr key={s.id} className={s.status === 'cancelled' ? 'opacity-50' : ''}>
+                    <tr key={s.id} style={s.status === 'cancelled' ? { opacity: 0.5 } : {}}>
                       <td className="font-mono text-xs text-white">{s.invoice_number}</td>
                       <td className="whitespace-nowrap">{dayjs(s.sale_date).format('DD/MM/YY')}</td>
                       <td className="truncate" style={{ maxWidth: 140 }}>{s.party_name || 'Cash'}</td>
-                      <td className="text-white/50">{s.vehicle_number || '—'}</td>
+                      <td style={{ color: 'rgba(255,255,255,0.5)' }}>{s.vehicle_number || '—'}</td>
                       <td className="font-semibold text-white whitespace-nowrap">{inr(Number(s.grand_total))}</td>
                       <td className="text-emerald-400 whitespace-nowrap">{inr(Number(s.amount_received))}</td>
-                      <td className={Number(s.balance_due) > 0 ? 'text-red-400 whitespace-nowrap' : 'text-white/30'}>
+                      <td className={Number(s.balance_due) > 0 ? 'text-red-400 whitespace-nowrap' : undefined} style={Number(s.balance_due) > 0 ? {} : { color: 'rgba(255,255,255,0.3)' }}>
                         {inr(Number(s.balance_due))}
                       </td>
                       <td><PayBadge mode={s.payment_mode || 'credit'} /></td>
@@ -261,14 +261,14 @@ export default function SalesPage() {
                           <button
                             onClick={() => handleDownload(s.id, s.invoice_number)}
                             title="Download PDF"
-                            className="btn-ghost p-1.5 text-white/40 hover:text-white">
+                            className="btn-ghost" style={{ padding: 6, color: 'rgba(255,255,255,0.4)' }}>
                             <Download size={14} />
                           </button>
                           {s.status === 'confirmed' && (
                             <button
                               onClick={() => setCancelId(s.id)}
                               title="Cancel sale"
-                              className="btn-ghost p-1.5 text-white/25 hover:text-red-400 transition-colors">
+                              className="btn-ghost" style={{ padding: 6, color: 'rgba(255,255,255,0.25)' }}>
                               <X size={14} />
                             </button>
                           )}
@@ -282,8 +282,8 @@ export default function SalesPage() {
               {/* Empty state */}
               {filtered.length === 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 64, paddingBottom: 64, gap: 12 }}>
-                  <FileText size={40} className="text-white/10" />
-                  <p className="text-white/40 text-sm font-medium">
+                  <FileText size={40} style={{ color: 'rgba(255,255,255,0.1)' }} />
+                  <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>
                     {search || statusFilter !== 'all' ? 'No sales match your filters' : 'No sales in this period'}
                   </p>
                   {!search && statusFilter === 'all' && (
@@ -308,23 +308,24 @@ export default function SalesPage() {
 
       {/* ── Cancel Confirmation Dialog ──────────────────── */}
       {cancelId && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card w-full max-w-sm p-6 space-y-4">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 384, padding: 24 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <AlertCircle size={18} className="text-red-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-white">Cancel Sale?</h3>
-                <p className="text-sm text-white/50 mt-1">This action cannot be undone. The invoice will be marked as cancelled.</p>
+                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>This action cannot be undone. The invoice will be marked as cancelled.</p>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-              <button onClick={() => setCancelId(null)} className="btn-secondary">Keep</button>
+              <button onClick={() => setCancelId(null)} className="btn-ghost">Keep</button>
               <button
                 onClick={() => cancelMutation.mutate(cancelId!)}
                 disabled={cancelMutation.isPending}
-                className="btn-primary bg-red-600 hover:bg-red-500 disabled:opacity-60">
+                className="btn-primary"
+                style={{ background: '#dc2626', opacity: cancelMutation.isPending ? 0.6 : 1 }}>
                 {cancelMutation.isPending ? 'Cancelling…' : 'Yes, Cancel'}
               </button>
             </div>
@@ -334,14 +335,14 @@ export default function SalesPage() {
 
       {/* ── New Sale Modal ──────────────────────────────── */}
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card-gold w-full max-w-4xl max-h-[92vh] overflow-y-auto p-6">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div className="card-gold" style={{ width: '100%', maxWidth: 896, maxHeight: '92vh', overflowY: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div>
-                <h2 className="text-xl font-bold text-white">New Sale Invoice</h2>
-                <p className="text-xs text-white/40 mt-0.5">Fill in the details below</p>
+                <h2 className="font-bold text-white" style={{ fontSize: 20 }}>New Sale Invoice</h2>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>Fill in the details below</p>
               </div>
-              <button onClick={() => { setShowForm(false); resetForm(); }} className="btn-ghost p-2">
+              <button onClick={() => { setShowForm(false); resetForm(); }} className="btn-ghost" style={{ padding: 8 }}>
                 <X size={18} />
               </button>
             </div>
@@ -427,47 +428,47 @@ export default function SalesPage() {
                     <Plus size={13} /> Add Row
                   </button>
                 </div>
-                <div className="rounded-xl border border-white/10" style={{ overflow: 'hidden' }}>
-                  <table className="w-full text-sm">
-                    <thead className="bg-white/5">
+                <div style={{ overflow: 'hidden', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <table className="text-sm" style={{ width: '100%' }}>
+                    <thead style={{ background: 'rgba(255,255,255,0.05)' }}>
                       <tr>
                         {['Product', 'Unit', 'Qty', 'Rate (₹)', 'GST%', 'Amount', ''].map(h => (
-                          <th key={h} className="px-3 py-2.5 text-left text-xs font-medium text-white/50 uppercase tracking-wide">{h}</th>
+                          <th key={h} className="text-left text-xs font-medium" style={{ padding: '10px 12px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {items.map((item, idx) => (
-                        <tr key={idx} className="border-t border-white/8">
-                          <td className="px-2 py-2">
+                        <tr key={idx} style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                          <td style={{ padding: '8px' }}>
                             <select value={item.product_id}
                               onChange={e => updateItem(idx, 'product_id', e.target.value)}
-                              className="select w-40 py-1.5 text-xs">
+                              className="select text-xs" style={{ width: 160, paddingTop: 6, paddingBottom: 6 }}>
                               <option value="">Select…</option>
                               {(products as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                             </select>
                           </td>
-                          <td className="px-2 py-2 text-white/50 text-xs">{item.unit || '—'}</td>
-                          <td className="px-2 py-2">
+                          <td className="text-xs" style={{ padding: '8px', color: 'rgba(255,255,255,0.5)' }}>{item.unit || '—'}</td>
+                          <td style={{ padding: '8px' }}>
                             <input type="number" value={item.quantity || ''}
                               onChange={e => updateItem(idx, 'quantity', Number(e.target.value))}
-                              className="input w-20 py-1.5 text-sm" min="0" step="0.001" />
+                              className="input text-sm" style={{ width: 80, paddingTop: 6, paddingBottom: 6 }} min="0" step="0.001" />
                           </td>
-                          <td className="px-2 py-2">
+                          <td style={{ padding: '8px' }}>
                             <input type="number" value={item.rate || ''}
                               onChange={e => updateItem(idx, 'rate', Number(e.target.value))}
-                              className="input w-24 py-1.5 text-sm" min="0" />
+                              className="input text-sm" style={{ width: 96, paddingTop: 6, paddingBottom: 6 }} min="0" />
                           </td>
-                          <td className="px-2 py-2">
+                          <td style={{ padding: '8px' }}>
                             <span className="badge-gray text-xs">{item.gst_rate}%</span>
                           </td>
-                          <td className="px-2 py-2 font-semibold text-white text-right whitespace-nowrap">
+                          <td className="font-semibold text-white text-right whitespace-nowrap" style={{ padding: '8px' }}>
                             {inr(item.quantity * item.rate)}
                           </td>
-                          <td className="px-2 py-2">
+                          <td style={{ padding: '8px' }}>
                             {items.length > 1 && (
                               <button type="button" onClick={() => removeItem(idx)}
-                                className="text-red-400/60 hover:text-red-400 transition-colors">
+                                style={{ color: 'rgba(248,113,113,0.6)' }}>
                                 <Trash2 size={13} />
                               </button>
                             )}
@@ -480,14 +481,14 @@ export default function SalesPage() {
 
                 {/* Totals */}
                 <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-                  <div className="rounded-xl border border-white/10 bg-white/3 px-5 py-3 space-y-1.5 min-w-52 text-sm">
+                  <div className="text-sm" style={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.03)', padding: '12px 20px', minWidth: 208, display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 40 }}>
-                      <span className="text-white/50">Subtotal</span>
-                      <span className="text-white/70">{inr(subtotal)}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>Subtotal</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)' }}>{inr(subtotal)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 40 }}>
-                      <span className="text-white/50">GST</span>
-                      <span className="text-white/70">{inr(totalGst)}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>GST</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)' }}>{inr(totalGst)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 40, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 6, fontWeight: 700 }}>
                       <span className="text-white">Grand Total</span>
@@ -526,9 +527,10 @@ export default function SalesPage() {
               {/* Actions */}
               <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 8 }}>
                 <button type="button" onClick={() => { setShowForm(false); resetForm(); }}
-                  className="btn-secondary">Cancel</button>
+                  className="btn-ghost">Cancel</button>
                 <button type="submit" disabled={createMutation.isPending}
-                  className="btn-primary disabled:opacity-60 min-w-32">
+                  className="btn-primary"
+                  style={{ minWidth: 128, opacity: createMutation.isPending ? 0.6 : 1 }}>
                   {createMutation.isPending ? 'Creating…' : 'Create Invoice'}
                 </button>
               </div>

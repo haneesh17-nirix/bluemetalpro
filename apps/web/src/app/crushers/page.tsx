@@ -50,9 +50,8 @@ function CrusherModal({ crusher, onClose }: { crusher: any | null; onClose: () =
   };
 
   return (
-    <div className="fixed inset-0 z-50 p-4"
-      style={{ background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="w-full max-w-2xl card p-6 max-h-[90vh] overflow-y-auto" style={{ overflowY: 'auto' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, padding: 16, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="card" style={{ width: '100%', maxWidth: 672, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-lg font-bold text-white">{crusher ? 'Edit Crusher' : 'Add Crusher'}</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={16} /></button>
@@ -98,9 +97,8 @@ function GrantModal({ crusherId, onClose }: { crusherId: string; onClose: () => 
   });
 
   return (
-    <div className="fixed inset-0 z-50 p-4"
-      style={{ background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="w-full max-w-sm card p-6">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, padding: 16, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="card" style={{ width: '100%', maxWidth: 384, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <h2 className="text-base font-bold text-white">Grant Access</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={16} /></button>
@@ -158,32 +156,32 @@ function CrusherRow({ crusher }: { crusher: any }) {
     <>
       {editOpen && <CrusherModal crusher={crusher} onClose={() => setEditOpen(false)} />}
       {grantOpen && <GrantModal crusherId={crusher.id} onClose={() => { setGrantOpen(false); refetch(); }} />}
-      <tr className="border-b border-surface-border hover:bg-white/2 transition-colors">
-        <td className="px-4 py-3">
+      <tr style={{ borderBottom: '1px solid var(--surface-border, rgba(255,255,255,0.1))' }}>
+        <td style={{ padding: '12px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.2)' }}>
               {crusher.logo_url
-                ? <img src={crusher.logo_url} alt={crusher.name} className="w-7 h-7 object-contain rounded" />
+                ? <img src={crusher.logo_url} alt={crusher.name} style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: 4 }} />
                 : <span className="text-gold text-sm font-bold">{crusher.name?.charAt(0)}</span>
               }
             </div>
             <span className="font-medium text-white text-sm">{crusher.name}</span>
           </div>
         </td>
-        <td className="px-4 py-3 text-sm text-white/60">{crusher.legal_name || '—'}</td>
-        <td className="px-4 py-3 text-sm text-white/60 font-mono">{crusher.gstin || '—'}</td>
-        <td className="px-4 py-3 text-sm text-white/60">{[crusher.city, crusher.state].filter(Boolean).join(', ') || '—'}</td>
-        <td className="px-4 py-3">
+        <td className="text-sm text-white/60" style={{ padding: '12px 16px' }}>{crusher.legal_name || '—'}</td>
+        <td className="text-sm text-white/60 font-mono" style={{ padding: '12px 16px' }}>{crusher.gstin || '—'}</td>
+        <td className="text-sm text-white/60" style={{ padding: '12px 16px' }}>{[crusher.city, crusher.state].filter(Boolean).join(', ') || '—'}</td>
+        <td style={{ padding: '12px 16px' }}>
           <span className={`badge ${crusher.is_active !== false ? 'badge-blue' : 'badge-gray'}`}>
             {crusher.is_active !== false ? 'Active' : 'Inactive'}
           </span>
         </td>
-        <td className="px-4 py-3">
+        <td style={{ padding: '12px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={() => setEditOpen(true)} className="btn-ghost p-1.5" title="Edit">
+            <button onClick={() => setEditOpen(true)} className="btn-ghost" style={{ padding: 6 }} title="Edit">
               <Pencil size={14} />
             </button>
-            <button onClick={() => setExpanded(v => !v)} className="btn-ghost p-1.5 text-xs" style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Users">
+            <button onClick={() => setExpanded(v => !v)} className="btn-ghost text-xs" style={{ padding: 6, display: 'flex', alignItems: 'center', gap: 4 }} title="Users">
               <Users size={14} />
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             </button>
@@ -192,10 +190,10 @@ function CrusherRow({ crusher }: { crusher: any }) {
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={6} className="px-4 py-3 bg-surface-hover">
+          <td colSpan={6} style={{ padding: '12px 16px', background: 'var(--surface-hover, rgba(255,255,255,0.03))' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Users with Access</p>
-              <button onClick={() => setGrantOpen(true)} className="btn-primary text-xs py-1 px-3">
+              <button onClick={() => setGrantOpen(true)} className="btn-primary text-xs" style={{ padding: '4px 12px' }}>
                 <Plus size={12} /> Add User
               </button>
             </div>
@@ -209,7 +207,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
                       <p className="text-sm text-white font-medium">{u.name || u.user_name}</p>
                       <p className="text-xs text-white/40">{u.email} · <span className="text-gold/70">{u.role}</span></p>
                     </div>
-                    <button onClick={() => revoke.mutate(u.user_id || u.id)} className="btn-ghost p-1.5 text-red-400 hover:text-red-300">
+                    <button onClick={() => revoke.mutate(u.user_id || u.id)} className="btn-ghost" style={{ padding: 6, color: '#f87171' }}>
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -241,25 +239,25 @@ export default function CrushersPage() {
                 <h2 className="font-semibold text-white">All Crushers</h2>
                 <span className="badge badge-gray">{crushers.length}</span>
               </div>
-              <button onClick={() => setAddOpen(true)} className="btn-primary text-sm">
+              <button onClick={() => setAddOpen(true)} className="btn-primary">
                 <Plus size={15} /> Add Crusher
               </button>
             </div>
 
             <div className="table-wrapper">
-              <table className="w-full">
+              <table style={{ width: '100%' }}>
                 <thead>
-                  <tr className="border-b border-surface-border">
+                  <tr style={{ borderBottom: '1px solid var(--surface-border, rgba(255,255,255,0.1))' }}>
                     {['Name', 'Legal Name', 'GSTIN', 'Location', 'Status', 'Actions'].map(h => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">{h}</th>
+                      <th key={h} className="text-left text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ padding: '12px 16px' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-white/30">Loading…</td></tr>
+                    <tr><td colSpan={6} className="text-center text-white/30" style={{ padding: '32px 16px' }}>Loading…</td></tr>
                   ) : crushers.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-white/30">No crushers found</td></tr>
+                    <tr><td colSpan={6} className="text-center text-white/30" style={{ padding: '32px 16px' }}>No crushers found</td></tr>
                   ) : crushers.map((c: any) => (
                     <CrusherRow key={c.id} crusher={c} />
                   ))}
