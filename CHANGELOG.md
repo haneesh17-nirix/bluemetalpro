@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.24] — 2026-06-10
+
+
+### Other Changes
+
+- Migration 012: re-home all orphan FKs to c1, not just name-matched duplicates ([432d486])
+
 ## [1.21.23] — 2026-06-10
 
 
