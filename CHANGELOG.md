@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0] — 2026-06-10
+
+
+### Features
+
+- `logo` high-fidelity SVG — low-poly gold mountains, 3D bevel B, green bars ([0dae371])
+
 ## [1.19.0] — 2026-06-10
 
 
