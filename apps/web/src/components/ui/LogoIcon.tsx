@@ -39,7 +39,7 @@ export default function LogoIcon({ size = 52 }: LogoIconProps) {
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
-        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 2 }}
       >
         <defs>
           {/* Matte gold — warm ochre tones, subtle variation, no bright flash */}

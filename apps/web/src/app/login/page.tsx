@@ -290,11 +290,11 @@ export default function LoginPage() {
           }} />
         </div>
 
-        {/* Logo + branding + features */}
+        {/* Logo + branding — centred upper block */}
         <div style={{
           position: 'relative', zIndex: 10,
           display: 'flex', flexDirection: 'column', alignItems: 'center',
-          gap: 24,
+          gap: 20,
         }}>
           <div style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
             <LogoIcon size={148} />
@@ -310,7 +310,11 @@ export default function LoginPage() {
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>BUSINESS INTELLIGENCE</p>
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'inline-flex', flexDirection: 'column', gap: 10 }}>
+        </div>
+
+        {/* Features + stats — bottom block */}
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'inline-flex', flexDirection: 'column', gap: 10, alignSelf: 'center' }}>
             {features.map(f => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
@@ -318,19 +322,17 @@ export default function LoginPage() {
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Stats */}
-        <div style={{ position: 'relative', zIndex: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-          {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
-            <div key={s.label} style={{
-              textAlign: 'center', padding: '14px 12px', borderRadius: 16,
-              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
-              <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{s.label}</p>
-            </div>
-          ))}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+            {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
+              <div key={s.label} style={{
+                textAlign: 'center', padding: '14px 12px', borderRadius: 16,
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+              }}>
+                <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
+                <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
