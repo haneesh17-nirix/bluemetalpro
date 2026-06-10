@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.5] — 2026-06-10
+
+
+### Other Changes
+
+- Crop logo to shield and add edgy metallic gold ring ([7b9e0f3])
+
 ## [1.21.4] — 2026-06-10
 
 

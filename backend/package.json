@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.21.4",
+  "version": "1.21.5",
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
     "build": "tsc",
