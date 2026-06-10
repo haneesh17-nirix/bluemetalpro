@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.22.1] — 2026-06-10
+
+
+### Documentation
+
+- update architecture, README, changelog for v1.22.0 tenant layer ([b4a8b2c])
+
+### Other Changes
+
+- Merge remote-tracking branch 'origin/main' ([71f7f89])
+
 ## [1.22.0] — 2026-06-10
 
 ### Features
