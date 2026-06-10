@@ -18,6 +18,12 @@ Full-stack ERP for quarry and stone crushing operations — React Native mobile 
 Web: `https://bluemetalpro.in`
 API: `https://api.bluemetalpro.in`
 
+## Multi-Tenant Architecture
+
+BlueMetal Pro is a multi-tenant SaaS platform. Hierarchy: **Tenant (company) → Crusher (plant) → Users**.
+
+A platform admin provisions tenants and crushers via `/platform`. Users are granted access at the tenant level (sees all crushers) or at an individual crusher level. The JWT carries `tenant_id` + `crusher_id` after the 3-step login flow: login → select-tenant → select-crusher.
+
 ## Modules
 
 | Module | Mobile | Web |
@@ -26,7 +32,6 @@ API: `https://api.bluemetalpro.in`
 | Sales + GST Invoices | ✅ | ✅ |
 | Purchases | — | ✅ |
 | Quarry Sales | ✅ | ✅ |
-| Parties (Customer/Supplier) | — | ✅ |
 | Vehicles | ✅ | ✅ |
 | Ledger / Receipts | — | ✅ |
 | Reports (item-wise, party, GST, trend) | ✅ | ✅ |
@@ -34,42 +39,47 @@ API: `https://api.bluemetalpro.in`
 | Wages & Attendance | ✅ | ✅ |
 | User Management | — | ✅ |
 | Company Config / GST Setup | — | ✅ |
+| Platform Admin (tenant/crusher mgmt) | — | ✅ |
 | Weighbridge Integration | — | ⏳ |
 | CCTV Live Cameras | — | ⏳ |
 
 ## Roles
 
-| Role | Access |
-|---|---|
-| `platform_admin` | Cross-crusher platform management — `/platform` dashboard |
-| `admin` | Full access to a crusher |
-| `operations` | Sales, purchases, quarry, vehicles, maintenance, ledger, wages |
-| `report_viewer` | Read-only reports, sales & ledger |
+| Technical role | Business name | Access |
+|---|---|---|
+| `platform_admin` | Super Admin | Tenant/crusher provisioning — `/platform` only; no crusher context |
+| `admin` | Admin | Full read/write within a tenant; crusher list is read-only |
+| `operations` | Operator | Data entry — sales, purchases, quarry, vehicles, maintenance, ledger, wages |
+| `report_viewer` | Partner | Read-only across all modules (owner / external stakeholder) |
+
+All roles see all navigation pages. No pages are hidden by role.
 
 ## Test Accounts
 
 All passwords: `Test@1234`
 
-| Email | Role | Notes |
-|---|---|---|
-| platform@bluemetal.local | platform_admin | Super admin — lands on `/platform`, no crusher selection |
-| admin@bluemetal.local | admin | Access to both demo units |
-| sales@bluemetal.local | operations | Access to both demo units |
-| accounts@bluemetal.local | operations | Access to both demo units |
-| manager@bluemetal.local | operations | Access to both demo units |
-| operator1@bluemetal.local | operations | Access to both demo units |
-| operator2@bluemetal.local | operations | Access to both demo units |
-| maintenance@bluemetal.local | operations | Access to both demo units |
-| reports@bluemetal.local | report_viewer | Access to both demo units |
+| Email | Role | Business name | Notes |
+|---|---|---|---|
+| platform@bluemetal.local | platform_admin | Super Admin | Lands on `/platform`; manages tenants & crushers; no crusher context |
+| admin@bluemetal.local | admin | Admin | Access to Default Company → both demo crushers |
+| sales@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| accounts@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| manager@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| operator1@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| operator2@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| maintenance@bluemetal.local | operations | Operator | Access to Default Company → both demo crushers |
+| reports@bluemetal.local | report_viewer | Partner | Read-only access to Default Company → both demo crushers |
+
+Login flow: enter credentials → select company (if multiple) → select crusher (if multiple) → dashboard.
 
 ## Demo Data
 
-Two demo crusher units are seeded by `007_seed_test_data.sql`:
+Seeded by `007_seed_test_data.sql`. Demo crushers belong to the **"Default Company"** tenant (created by migration 014).
 
-| Unit | Location | Products | Parties | Workers |
-|---|---|---|---|---|
-| BlueMetal Quarry Unit 1 | Hosur, TN | M-Sand, P-Sand, 20mm, 40mm, 6mm | 6 | 5 |
-| BlueMetal Quarry Unit 2 | Salem, TN | M-Sand, P-Sand, 20mm, 40mm, Quarry Dust | 6 | 4 |
+| Unit | Location | Products | Workers |
+|---|---|---|---|
+| BlueMetal Quarry Unit 1 | Hosur, TN | M-Sand, P-Sand, 20mm, 40mm, 6mm | 5 |
+| BlueMetal Quarry Unit 2 | Salem, TN | M-Sand, P-Sand, 20mm, 40mm, Quarry Dust | 4 |
 
 Each unit has 3 months of sales, purchases, quarry sales, maintenance records, wages, attendance, and ledger entries.
 

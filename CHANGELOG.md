@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.22.0] — 2026-06-10
+
+### Features
+
+- **Tenant architecture**: Multi-tenant SaaS layer above crushers. A tenant = a company; each company owns multiple crushing plants. Login now returns tenants[], new `/select-tenant` page, JWT carries `tenant_id` + `tenant_name`.
+- **Platform admin console**: Complete tenant management UI at `/platform` — create/edit tenants, add crushing plants, provision admin users, activate/deactivate.
+- **3-step auth flow**: login → select-tenant → select-crusher. Single-tenant / single-crusher users are auto-forwarded.
+- **DB migration 014**: `tenants` table, `tenant_id` on `crushers`, `user_tenant_access` table for company-level access grants.
+
+### Other Changes
+
+- Remove Parties tab from sidebar navigation
+- Crushers page now read-only for admin role (no add/edit/grant)
+- Dashboard: remove "Assigned to me" and "My submissions" panels; header shows crusher name
+- Dashboard: remove GSTIN/crusher info strip
+- Business role names: platform_admin → Super Admin, admin → Admin, operations → Operator, report_viewer → Partner
+- Updated architecture doc and README with tenant model, auth flow, role table
+
 ## [1.21.32] — 2026-06-10
 
 
