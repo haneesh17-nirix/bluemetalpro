@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Truck, Package, Users, FileText,
   BarChart3, Wrench, DollarSign, Mountain, Settings,
-  Scale, Camera, ChevronRight, Factory, Bell,
+  Scale, Camera, ChevronRight, Factory,
 } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
@@ -18,7 +18,6 @@ const nav = [
   { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','operations'], admin: false },
   { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','operations','report_viewer'], admin: false },
   { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/notifications', label: 'Notifications', icon: Bell,            roles: ['admin','operations','report_viewer'], admin: false },
   { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['admin','operations'], admin: false },
   { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','operations'], admin: false },
   { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','operations'], admin: false },

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Bell, CheckCheck, X, LogOut, User } from 'lucide-react';
+import { Bell, CheckCheck, X, LogOut, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -230,6 +231,17 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                     {!n.is_read && <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, marginTop: 5, background: '#c9a84c' }} />}
                   </div>
                 ))}
+              </div>
+              <div style={{ borderTop: '1px solid rgba(26,53,112,0.4)', padding: '8px 12px' }}>
+                <Link href="/notifications" onClick={() => setNotifOpen(false)} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  padding: '7px 12px', borderRadius: 8, textDecoration: 'none',
+                  fontSize: 12, fontWeight: 600, color: '#c9a84c',
+                  background: 'rgba(184,149,62,0.07)', border: '1px solid rgba(184,149,62,0.15)',
+                  transition: 'all 0.15s',
+                }}>
+                  View all notifications <ArrowRight size={12} />
+                </Link>
               </div>
             </div>
           )}
