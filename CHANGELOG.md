@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.10] — 2026-06-10
+
+
+### Bug Fixes
+
+- force backend redeploy with two-step auth; add field-audit Playwright tests ([d153800])
+
 ## [1.14.9] — 2026-06-10
 
 
