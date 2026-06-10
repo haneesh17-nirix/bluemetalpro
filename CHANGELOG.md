@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1] — 2026-06-10
+
+
+### Bug Fixes
+
+- add category column to product INSERTs in migration 007 ([266fcb7])
+
 ## [1.14.0] — 2026-06-10
 
 
