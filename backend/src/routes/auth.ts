@@ -29,11 +29,11 @@ authRouter.post('/login', async (req, res) => {
 
     // Fetch accessible crushers
     const crushers = await query(
-      `SELECT c.id, c.name, c.legal_name, c.city, c.state, c.gstin, c.logo_url, uca.role
+      `SELECT DISTINCT ON (c.id) c.id, c.name, c.legal_name, c.city, c.state, c.gstin, c.logo_url, uca.role
        FROM user_crusher_access uca
        JOIN crushers c ON c.id = uca.crusher_id
        WHERE uca.user_id = $1 AND uca.is_active = true AND c.is_active = true
-       ORDER BY c.name`,
+       ORDER BY c.id, c.name`,
       [user.id]
     );
 
