@@ -47,6 +47,11 @@ jobs:
         working-directory: backend
         run: npm run build
 
+      - name: Prepare deploy artifact
+        # Copy root workspace lockfile (has all transitive deps) into backend/
+        # so the Docker job can run `npm ci` in a self-contained folder.
+        run: cp package-lock.json backend/package-lock.json
+
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
@@ -54,7 +59,7 @@ jobs:
           path: |
             backend/dist
             backend/package.json
-            package-lock.json
+            backend/package-lock.json
             backend/Dockerfile
           retention-days: 1
 
