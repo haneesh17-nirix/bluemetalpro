@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.13] — 2026-06-10
+
+
+### Other Changes
+
+- Select crusher: compact name-only tiles in 3-col grid, dark navy + matte gold theme ([cf40ee5])
+
 ## [1.21.12] — 2026-06-10
 
 
