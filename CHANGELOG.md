@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.9] — 2026-06-10
+
+
+### Other Changes
+
+- Add migration 011 to deployment pipeline ([b474fce])
+
 ## [1.14.8] — 2026-06-10
 
 
