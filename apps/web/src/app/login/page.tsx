@@ -141,7 +141,7 @@ export default function LoginPage() {
             {features.map(f => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(220,230,245,0.95)' }}>{f}</span>
               </li>
             ))}
           </ul>

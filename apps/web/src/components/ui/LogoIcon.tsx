@@ -10,6 +10,12 @@ export default function LogoIcon({ size = 52 }: LogoIconProps) {
 
   return (
     <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+      {/* Inner backlight — warm amber glow from behind the logo */}
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: '50%',
+        background: 'radial-gradient(circle at 50% 55%, rgba(210,155,20,0.55) 0%, rgba(190,130,10,0.28) 45%, transparent 72%)',
+        zIndex: 0,
+      }} />
       <img
         src="/logo-icon.png"
         alt="BlueMetal Pro"
@@ -17,11 +23,14 @@ export default function LogoIcon({ size = 52 }: LogoIconProps) {
         height={size}
         style={{
           display: 'block',
+          position: 'relative',
+          zIndex: 1,
           width: size,
           height: size,
           borderRadius: '50%',
           objectFit: 'cover',
           objectPosition: 'center',
+          filter: 'brightness(1.35) contrast(1.05)',
         }}
       />
 
