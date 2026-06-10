@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1] — 2026-06-10
+
+
+### Bug Fixes
+
+- `mobile` NewSaleScreen dark theme — replace hardcoded light colours ([d53f427])
+
 ## [1.12.0] — 2026-06-10
 
 
