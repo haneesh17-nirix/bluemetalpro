@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.18] — 2026-06-10
+
+
+### Other Changes
+
+- responsive mobile layout — branding top, form below, features hidden ([f031932])
+
 ## [1.21.17] — 2026-06-10
 
 
