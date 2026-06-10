@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.14.16] — 2026-06-10
+
+
+### Bug Fixes
+
+- `mobile` metro config, google-services stub; fix(db): cleanup duplicate crushers ([4b914e5])
+- also exclude playwright.config.ts from web tsconfig type-check ([377d75c])
+- treat NODE_ENV=prod as production in logger (container crashes without pino-pretty) ([325077b])
+
 ## [1.14.15] — 2026-06-10
 
 
