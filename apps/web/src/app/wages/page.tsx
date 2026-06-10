@@ -324,9 +324,6 @@ export default function WagesPage() {
             </div>
           )}
 
-        </main>
-      </div>
-
       {/* Add/Edit Worker modal */}
       {showWorkerForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
