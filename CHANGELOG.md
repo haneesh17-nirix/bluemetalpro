@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.3] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ci` remove redundant npm ci step — Dockerfile handles prod install ([32325cb])
+
 ## [1.10.2] — 2026-06-10
 
 
