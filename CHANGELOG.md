@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.11] — 2026-06-10
+
+
+### Bug Fixes
+
+- correct Playwright field-audit selectors and login robustness ([754c117])
+
 ## [1.14.10] — 2026-06-10
 
 
