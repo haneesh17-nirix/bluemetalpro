@@ -137,7 +137,7 @@ export default function LoginPage() {
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>BUSINESS INTELLIGENCE</p>
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10, alignSelf: 'stretch' }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'inline-flex', flexDirection: 'column', gap: 10 }}>
             {features.map(f => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
