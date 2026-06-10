@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { login, selectCrusher, getCrushers } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
-import { Lock, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
 const features = [
@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`).catch(() => {});
@@ -82,21 +83,23 @@ export default function LoginPage() {
     }
   };
 
-  const inputStyle = (field: string): React.CSSProperties => ({
+  const inputStyle = (field: string, hasRightIcon = false): React.CSSProperties => ({
     width: '100%',
-    background: 'rgba(4, 10, 22, 0.85)',
+    background: focusedField === field
+      ? 'rgba(2, 8, 28, 0.92)'
+      : 'rgba(3, 9, 24, 0.80)',
     border: focusedField === field
-      ? '1px solid rgba(170,128,28,0.75)'
-      : '1px solid rgba(110,78,14,0.4)',
+      ? '1px solid rgba(180,138,32,0.6)'
+      : '1px solid rgba(90,120,180,0.18)',
     borderRadius: 10,
-    padding: '11px 14px 11px 40px',
+    padding: `11px ${hasRightIcon ? '40px' : '14px'} 11px 40px`,
     fontSize: 14,
     color: '#dde6f4',
     outline: 'none',
     boxShadow: focusedField === field
-      ? '0 0 0 1px rgba(150,108,20,0.3), 0 0 8px rgba(130,92,16,0.1), inset 0 1px 0 rgba(150,108,20,0.06)'
-      : 'inset 0 1px 0 rgba(255,255,255,0.03)',
-    transition: 'border-color 0.18s, box-shadow 0.18s',
+      ? '0 0 0 2px rgba(140,100,20,0.12), 0 0 14px rgba(120,85,12,0.18), inset 0 0 18px rgba(10,30,80,0.3)'
+      : 'inset 0 0 12px rgba(5,18,55,0.4)',
+    transition: 'border-color 0.18s, box-shadow 0.18s, background 0.18s',
   });
 
   return (
@@ -175,21 +178,21 @@ export default function LoginPage() {
           <div style={{
             borderRadius: 20,
             padding: '32px 28px',
-            background: 'linear-gradient(175deg, #1e2d3d 0%, #172330 55%, #111c28 100%)',
-            border: '3px solid transparent',
+            background: 'linear-gradient(175deg, #050f28 0%, #03091c 55%, #020814 100%)',
+            border: '2px solid transparent',
             backgroundClip: 'padding-box',
-            outline: '3px solid transparent',
+            outline: '2px solid transparent',
             boxShadow: [
-              /* rugged matte gold outer ring */
-              '0 0 0 3px #6a4808',
-              '0 0 0 4px #3e2604',
-              '0 0 0 5.5px #8a5e12',
-              '0 0 0 7px #4a3008',
+              /* rugged matte gold outer ring — half thickness */
+              '0 0 0 1.5px #6a4808',
+              '0 0 0 2px #3e2604',
+              '0 0 0 2.8px #8a5e12',
+              '0 0 0 3.5px #4a3008',
               /* ambient glow */
-              '0 0 22px rgba(100,68,10,0.45)',
+              '0 0 16px rgba(100,68,10,0.35)',
               '0 28px 60px rgba(0,0,0,0.6)',
-              'inset 0 1px 0 rgba(120,160,200,0.1)',
-              'inset 0 -1px 0 rgba(0,0,20,0.4)',
+              'inset 0 1px 0 rgba(80,120,200,0.08)',
+              'inset 0 -1px 0 rgba(0,0,20,0.5)',
             ].join(', '),
           }}>
 
@@ -215,10 +218,14 @@ export default function LoginPage() {
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 7, textTransform: 'uppercase' }}>Password</label>
                 <div style={{ position: 'relative' }}>
                   <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'password' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
-                  <input type="password" required value={form.password}
+                  <input type={showPassword ? 'text' : 'password'} required value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                     onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)}
-                    style={inputStyle('password')} placeholder="••••••••" autoComplete="current-password" />
+                    style={inputStyle('password', true)} placeholder="••••••••" autoComplete="current-password" />
+                  <button type="button" onClick={() => setShowPassword(v => !v)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: showPassword ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s', display: 'flex', alignItems: 'center' }}>
+                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
                 </div>
               </div>
 
