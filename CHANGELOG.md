@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.12] — 2026-06-10
+
+
+### Other Changes
+
+- move features above stats; restore gold ring z-index on logo ([2b9096d])
+
 ## [1.21.11] — 2026-06-10
 
 
