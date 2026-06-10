@@ -31,7 +31,7 @@ export default function ReportsPage() {
   const fmtQty = (v: number) => `${Number(v || 0).toFixed(2)} MT`;
 
   const dateActions = (
-    <div className="flex items-center gap-3">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <input
         type="date"
         value={range.from}

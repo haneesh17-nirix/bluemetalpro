@@ -55,12 +55,12 @@ function LiveWeightDisplay({ weighbridge }: { weighbridge: any }) {
 
   return (
     <div className={`border-2 rounded-2xl p-6 transition-all ${statusColors[status] || statusColors.unknown}`}>
-      <div className="flex justify-between items-start mb-4">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
         <div>
           <p className="font-semibold text-lg">{weighbridge.name}</p>
           <p className="text-sm opacity-70">{weighbridge.location_label}</p>
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-medium">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 500 }}>
           {wsConnected ? <><Wifi size={12} /> Live</> : <><WifiOff size={12} /> Polling</>}
         </div>
       </div>
@@ -71,7 +71,7 @@ function LiveWeightDisplay({ weighbridge }: { weighbridge: any }) {
           {kg.toLocaleString('en-IN')}
         </p>
         <p className="text-xl font-medium mt-1 opacity-70">kg &nbsp;·&nbsp; {mt} MT</p>
-        <div className={`inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full text-sm font-medium capitalize border ${statusColors[status]}`}>
+        <div className={`mt-3 px-3 py-1 rounded-full text-sm font-medium capitalize border ${statusColors[status]}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           {status === 'stable' ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
           {status}
         </div>
@@ -109,9 +109,9 @@ function NewTicketForm({ weighbridges }: { weighbridges: any[] }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="font-semibold text-[#1a3c5e] mb-4 flex items-center gap-2"><Scale size={18} /> New Weigh Ticket</h2>
+      <h2 className="font-semibold text-[#1a3c5e] mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Scale size={18} /> New Weigh Ticket</h2>
       <form onSubmit={e => { e.preventDefault(); mutation.mutate({ ...form, gross_weight_kg: Number(form.gross_weight_kg), tare_weight_kg: Number(form.tare_weight_kg || 0) }); }}
-        className="grid grid-cols-2 gap-3">
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
 
         <div>
           <label className="label">Weighbridge *</label>
@@ -165,19 +165,19 @@ function NewTicketForm({ weighbridges }: { weighbridges: any[] }) {
         </div>
 
         {(Number(form.gross_weight_kg) > 0) && (
-          <div className="col-span-2 bg-[#1a3c5e] text-white rounded-xl p-4 text-center">
+          <div style={{ gridColumn: 'span 2', background: '#1a3c5e', color: 'white', borderRadius: 12, padding: 16, textAlign: 'center' }}>
             <p className="text-sm opacity-70">Net Weight</p>
             <p className="text-3xl font-bold font-mono">{net.toLocaleString('en-IN')} kg</p>
             <p className="text-lg opacity-80">{(net / 1000).toFixed(3)} MT</p>
           </div>
         )}
 
-        <div className="col-span-2">
+        <div style={{ gridColumn: 'span 2' }}>
           <label className="label">Notes</label>
           <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="input" placeholder="Optional note" />
         </div>
 
-        <div className="col-span-2 flex justify-end">
+        <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
           <button type="submit" disabled={mutation.isPending} className="bg-[#1a3c5e] hover:bg-[#2563a8] text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-60 transition-colors">
             {mutation.isPending ? 'Creating…' : 'Create Weigh Ticket'}
           </button>
@@ -193,21 +193,21 @@ export default function WeighbridgePage() {
   const { data: tickets = [] } = useQuery({ queryKey: ['wb-tickets'], queryFn: () => api.get('/weighbridge/tickets').then(r => r.data) });
 
   return (
-    <div className="flex">
+    <div style={{ display: 'flex' }}>
       <Sidebar />
-      <main className="flex-1 p-8">
+      <main style={{ flex: 1, padding: 32 }}>
         <h1 className="text-2xl font-bold text-[#1a3c5e] mb-6">Weighbridge</h1>
 
         {/* Live displays */}
         {(weighbridges as any[]).length > 0 ? (
-          <div className="grid grid-cols-3 gap-5 mb-8">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 32 }}>
             {(weighbridges as any[]).map((wb: any) => (
               <LiveWeightDisplay key={wb.id} weighbridge={wb} />
             ))}
           </div>
         ) : (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6 flex gap-3">
-            <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+          <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: 20, marginBottom: 24, display: 'flex', gap: 12 }}>
+            <AlertTriangle size={20} style={{ color: '#d97706', flexShrink: 0, marginTop: 2 }} />
             <div>
               <p className="font-medium text-amber-800 text-sm">No weighbridges configured</p>
               <p className="text-xs text-amber-700 mt-0.5">Go to Settings → Weighbridges to add and configure your scales.</p>
@@ -215,15 +215,15 @@ export default function WeighbridgePage() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
           <NewTicketForm weighbridges={weighbridges as any[]} />
 
           {/* Recent tickets */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-semibold text-[#1a3c5e] mb-4">Recent Tickets</h2>
-            <div className="space-y-3 max-h-[480px] overflow-y-auto">
+            <div className="space-y-3" style={{ maxHeight: 480, overflowY: 'auto' }}>
               {(tickets as any[]).map((t: any) => (
-                <div key={t.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div key={t.id} className="bg-gray-50 rounded-lg border border-gray-100" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
                   <div>
                     <p className="font-medium text-sm text-[#1a3c5e]">{t.ticket_number}</p>
                     <p className="text-xs text-gray-500">{t.vehicle_number} · {t.party_name || 'CASH'}</p>

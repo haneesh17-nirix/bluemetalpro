@@ -95,7 +95,7 @@ export default function UsersPage() {
   const pageActions = (
     <button
       onClick={() => { setEditUser(null); setForm(emptyForm); setShowForm(true); }}
-      className="btn-primary flex items-center gap-2 text-sm"
+      className="btn-primary text-sm" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
     >
       <Plus size={16} /> Add User
     </button>
@@ -116,10 +116,10 @@ export default function UsersPage() {
       <StatsRow stats={userStats} />
 
       {/* Role reference cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {roleGroups.map(([role, cfg]) => (
-              <div key={role} className="card p-4">
-                <div className="flex items-center gap-2 mb-3">
+              <div key={role} className="card" style={{ padding: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <ShieldCheck size={15} className="text-[#c9a84c]" />
                   <span className={cfg.badge}>{cfg.label}</span>
                   <span className="text-xs text-white/30 ml-auto">
@@ -128,7 +128,7 @@ export default function UsersPage() {
                 </div>
                 <ul className="space-y-1">
                   {cfg.permissions.map(p => (
-                    <li key={p} className="text-xs text-white/50 flex gap-1.5">
+                    <li key={p} className="text-xs text-white/50" style={{ display: 'flex', gap: 6 }}>
                       <span className="text-emerald-400 mt-0.5">✓</span>{p}
                     </li>
                   ))}
@@ -170,7 +170,7 @@ export default function UsersPage() {
                       {new Date(u.created_at).toLocaleDateString('en-IN')}
                     </td>
                     <td>
-                      <div className="flex gap-3">
+                      <div style={{ display: 'flex', gap: 12 }}>
                         <button onClick={() => openEdit(u)} className="text-xs text-[#c9a84c] hover:underline font-medium">Edit</button>
                         <button onClick={() => setResetModal({ user: u, password: '' })} className="text-xs text-white/50 hover:text-white hover:underline font-medium">Reset pwd</button>
                       </div>
@@ -184,9 +184,9 @@ export default function UsersPage() {
 
       {/* Add/Edit User modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-lg p-6">
-            <div className="flex justify-between items-center mb-5">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editUser ? 'Edit User' : 'Add User'}</h2>
               <button onClick={() => setShowForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
@@ -196,7 +196,7 @@ export default function UsersPage() {
                   <label className="label">Full Name *</label>
                   <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="input" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                   <div>
                     <label className="label">Email *</label>
                     <input required type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="input" disabled={!!editUser} />
@@ -229,13 +229,13 @@ export default function UsersPage() {
                   </div>
                 )}
                 {editUser && (
-                  <div className="flex items-center gap-2">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <input type="checkbox" id="is_active" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))} className="rounded" />
                     <label htmlFor="is_active" className="text-sm text-white/70">Active (can log in)</label>
                   </div>
                 )}
               </div>
-              <div className="flex justify-end gap-3 mt-6">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
                 <button type="button" onClick={() => setShowForm(false)} className="btn-ghost">Cancel</button>
                 <button type="submit" disabled={saveMutation.isPending} className="btn-primary disabled:opacity-60">
                   {saveMutation.isPending ? 'Saving…' : editUser ? 'Update User' : 'Create User'}
@@ -248,7 +248,7 @@ export default function UsersPage() {
 
       {/* Reset password modal */}
       {resetModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-sm p-6">
             <h2 className="text-lg font-bold text-white mb-1">Reset Password</h2>
             <p className="text-sm text-white/50 mb-4">Set a new password for <strong className="text-white">{resetModal.user.name}</strong></p>
@@ -260,12 +260,12 @@ export default function UsersPage() {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setResetModal(null)} className="btn-ghost flex-1">Cancel</button>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setResetModal(null)} className="btn-ghost" style={{ flex: 1 }}>Cancel</button>
               <button
                 onClick={() => resetPasswordMutation.mutate({ id: resetModal.user.id, password: resetModal.password })}
                 disabled={resetPasswordMutation.isPending || resetModal.password.length < 8}
-                className="btn-primary flex-1 disabled:opacity-60"
+                className="btn-primary disabled:opacity-60" style={{ flex: 1 }}
               >
                 {resetPasswordMutation.isPending ? 'Resetting…' : 'Reset Password'}
               </button>

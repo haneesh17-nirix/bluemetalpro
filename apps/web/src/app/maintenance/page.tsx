@@ -99,13 +99,13 @@ export default function MaintenancePage() {
   };
 
   const pageActions = (
-    <div className="flex gap-2">
-      <button onClick={() => setShowAssetForm(true)} className="btn-secondary flex items-center gap-2 text-sm">
+    <div style={{ display: 'flex', gap: 8 }}>
+      <button onClick={() => setShowAssetForm(true)} className="btn-secondary text-sm" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <Plus size={16} /> Add Asset
       </button>
       <button
         onClick={() => { setEditRecord(null); setRecordForm(emptyRecord); setShowRecordForm(true); }}
-        className="btn-primary flex items-center gap-2 text-sm"
+        className="btn-primary text-sm" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
       >
         <Plus size={16} /> Schedule
       </button>
@@ -131,8 +131,8 @@ export default function MaintenancePage() {
 
       {/* Upcoming alert */}
       {upcoming.length > 0 && (
-        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-          <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 12, border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.1)', padding: 16 }}>
+          <AlertTriangle size={20} style={{ color: '#fbbf24', flexShrink: 0, marginTop: 2 }} />
           <div>
             <p className="font-semibold text-amber-300 text-sm">{upcoming.length} maintenance task{upcoming.length > 1 ? 's' : ''} due within 7 days</p>
             <p className="text-xs text-amber-400/80 mt-0.5">{upcoming.map((r: any) => r.asset_name).join(', ')}</p>
@@ -141,14 +141,14 @@ export default function MaintenancePage() {
       )}
 
       {/* Tabs + Filters */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
         <TabBar
           tabs={[{ key: 'records', label: 'Maintenance Records' }, { key: 'assets', label: 'Assets' }]}
           active={tab}
           onChange={k => setTab(k as 'records' | 'assets')}
         />
 
-        <div className="flex gap-1 p-1 rounded-lg bg-[#111e35] border border-[#1f3659]">
+        <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 8, background: '#111e35', border: '1px solid #1f3659' }}>
           {[['', 'All'], ['machinery', 'Machinery'], ['vehicle', 'Vehicle']].map(([v, l]) => (
             <button key={v} onClick={() => setAssetTypeFilter(v)}
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${assetTypeFilter === v ? 'bg-[#162c52] text-[#e8c96a]' : 'text-white/50 hover:text-white'}`}>
@@ -183,7 +183,7 @@ export default function MaintenancePage() {
                   {(records as any[]).map((r: any) => (
                     <tr key={r.id}>
                       <td>
-                        <div className="flex items-center gap-2">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           {r.asset_type === 'vehicle'
                             ? <Truck size={14} className="text-blue-400" />
                             : <Wrench size={14} className="text-purple-400" />}
@@ -208,7 +208,7 @@ export default function MaintenancePage() {
                         </span>
                       </td>
                       <td>
-                        <div className="flex gap-2">
+                        <div style={{ display: 'flex', gap: 8 }}>
                           {r.status === 'scheduled' && (
                             <button onClick={() => updateStatus(r.id, 'in_progress')} className="text-xs text-blue-400 hover:underline">Start</button>
                           )}
@@ -241,7 +241,7 @@ export default function MaintenancePage() {
                   {(assets as any[]).map((a: any) => (
                     <tr key={a.id}>
                       <td>
-                        <div className="flex items-center gap-2">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           {a.asset_type === 'vehicle'
                             ? <Truck size={14} className="text-blue-400" />
                             : <Wrench size={14} className="text-purple-400" />}
@@ -263,14 +263,14 @@ export default function MaintenancePage() {
 
       {/* Add Record modal */}
       {showRecordForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-center mb-5">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editRecord ? 'Update Record' : 'New Maintenance Record'}</h2>
               <button onClick={() => setShowRecordForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
             <form onSubmit={e => { e.preventDefault(); recordMutation.mutate({ ...recordForm, cost: Number(recordForm.cost) || 0 }); }} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 <div>
                   <label className="label">Asset Type</label>
                   <select value={recordForm.asset_type} onChange={e => setRecordForm(f => ({ ...f, asset_type: e.target.value as AssetType, asset_id: '' }))} className="select">
@@ -295,7 +295,7 @@ export default function MaintenancePage() {
                 <label className="label">Description</label>
                 <textarea value={recordForm.description} onChange={e => setRecordForm(f => ({ ...f, description: e.target.value }))} className="input" rows={2} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 <div>
                   <label className="label">Scheduled Date</label>
                   <input type="date" value={recordForm.scheduled_date} onChange={e => setRecordForm(f => ({ ...f, scheduled_date: e.target.value }))} className="input" />
@@ -321,7 +321,7 @@ export default function MaintenancePage() {
                 <label className="label">Next Service Date</label>
                 <input type="date" value={recordForm.next_service_date} onChange={e => setRecordForm(f => ({ ...f, next_service_date: e.target.value }))} className="input" />
               </div>
-              <div className="flex justify-end gap-3 pt-2">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingTop: 8 }}>
                 <button type="button" onClick={() => setShowRecordForm(false)} className="btn-ghost">Cancel</button>
                 <button type="submit" disabled={recordMutation.isPending} className="btn-primary disabled:opacity-60">
                   {recordMutation.isPending ? 'Saving…' : editRecord ? 'Update' : 'Add Record'}
@@ -334,14 +334,14 @@ export default function MaintenancePage() {
 
       {/* Add Asset modal */}
       {showAssetForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-center mb-5">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">Add Asset</h2>
               <button onClick={() => setShowAssetForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
             <form onSubmit={e => { e.preventDefault(); assetMutation.mutate({ ...assetForm, purchase_cost: Number(assetForm.purchase_cost) || 0 }); }} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 <div>
                   <label className="label">Asset Type</label>
                   <select value={assetForm.asset_type} onChange={e => setAssetForm(f => ({ ...f, asset_type: e.target.value as AssetType }))} className="select">
@@ -370,7 +370,7 @@ export default function MaintenancePage() {
                   <input type="number" value={assetForm.purchase_cost} onChange={e => setAssetForm(f => ({ ...f, purchase_cost: e.target.value }))} className="input" min="0" />
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-2">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingTop: 8 }}>
                 <button type="button" onClick={() => setShowAssetForm(false)} className="btn-ghost">Cancel</button>
                 <button type="submit" disabled={assetMutation.isPending} className="btn-primary disabled:opacity-60">
                   {assetMutation.isPending ? 'Saving…' : 'Add Asset'}

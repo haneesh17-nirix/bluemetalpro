@@ -89,7 +89,7 @@ export default function PartiesPage() {
       actions={
         <button
           onClick={() => { setEditParty(null); setForm(emptyForm); setShowForm(true); }}
-          className="btn-primary flex items-center gap-2"
+          className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
           <Plus size={16} /> New Party
         </button>
@@ -98,15 +98,15 @@ export default function PartiesPage() {
       <StatsRow stats={stats} />
 
       {/* Filters */}
-      <div className="flex gap-3">
+      <div style={{ display: 'flex', gap: 12 }}>
         <input
           type="text"
           placeholder="Search by name or phone…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="input w-64"
+          className="input" style={{ width: 256 }}
         />
-        <div className="flex gap-1 bg-[#0e2544]/60 border border-[#263d5e] p-1 rounded-lg">
+        <div style={{ display: 'flex', gap: 4, background: 'rgba(14,37,68,0.6)', border: '1px solid #263d5e', padding: 4, borderRadius: 8 }}>
           {[['', 'All'], ['customer', 'Customers'], ['supplier', 'Suppliers'], ['both', 'Both']].map(([v, l]) => (
             <button
               key={v}
@@ -120,7 +120,7 @@ export default function PartiesPage() {
       </div>
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
           <table className="w-full text-sm">
             <thead>
@@ -137,9 +137,9 @@ export default function PartiesPage() {
                 return (
                   <tr key={p.id}>
                     <td>
-                      <div className="flex items-center gap-3">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 12, fontWeight: 700 }}
                           style={{ background: 'rgba(201,168,76,0.15)', color: '#e8c96a', border: '1px solid rgba(201,168,76,0.25)' }}
                         >
                           {initials}
@@ -187,15 +187,15 @@ export default function PartiesPage() {
 
       {/* Add/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <h2 className="text-xl font-bold text-white">{editParty ? 'Edit Party' : 'New Party'}</h2>
               <button onClick={() => setShowForm(false)} className="btn-ghost p-2"><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+                <div style={{ gridColumn: 'span 2' }}>
                   <label className="label">Party Name *</label>
                   <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="input" placeholder="Customer / Supplier name" />
                 </div>
@@ -235,7 +235,7 @@ export default function PartiesPage() {
                   <label className="label">Pincode</label>
                   <input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))} className="input" maxLength={6} />
                 </div>
-                <div className="col-span-2">
+                <div style={{ gridColumn: 'span 2' }}>
                   <label className="label">Address</label>
                   <textarea value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="input" rows={2} />
                 </div>
@@ -250,7 +250,7 @@ export default function PartiesPage() {
                   </div>
                 )}
               </div>
-              <div className="flex gap-3 mt-6 justify-end">
+              <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
                 <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
                 <button type="submit" disabled={createMutation.isPending} className="btn-primary">
                   {createMutation.isPending ? 'Saving…' : editParty ? 'Update Party' : 'Add Party'}

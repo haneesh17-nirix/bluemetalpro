@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Truck, Package, Users, FileText,
-  BarChart3, Wrench, DollarSign, Mountain, Settings, LogOut,
+  BarChart3, Wrench, DollarSign, Mountain, Settings,
   Scale, Camera, ChevronRight, Factory,
 } from 'lucide-react';
 
@@ -24,16 +24,6 @@ const nav = [
   { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'], admin: true },
   { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'], admin: true },
 ];
-
-const ROLE_LABELS: Record<string, string> = {
-  admin:            'Administrator',
-  sales_operator:   'Sales Operator',
-  accounts:         'Accounts',
-  report_viewer:    'Report Viewer',
-  vehicle_manager:  'Vehicle Manager',
-  quarry_operator:  'Quarry Operator',
-  partner:          'Partner',
-};
 
 function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) {
   const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
@@ -92,15 +82,6 @@ export default function Sidebar() {
 
   const mainItems = filtered.filter(item => !item.admin);
   const adminItems = filtered.filter(item => item.admin);
-
-  const logout = () => {
-    ['token', 'user', 'crusher', 'crushers_list'].forEach(k => localStorage.removeItem(k));
-    window.location.href = '/login';
-  };
-
-  const initials = user?.name
-    ? user.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
-    : 'BM';
 
   return (
     <aside style={{
@@ -174,55 +155,6 @@ export default function Sidebar() {
         )}
       </nav>
 
-      {/* ── User profile ── */}
-      <div style={{
-        padding: 12, flexShrink: 0, borderTop: '1px solid rgba(30,52,88,0.8)',
-      }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '10px 12px', borderRadius: 12, marginBottom: 4,
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-        }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, fontSize: 13, color: '#0c1f3d',
-            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-          }}>{initials}</div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{
-              fontSize: 13, fontWeight: 600, color: '#fff',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>{user?.name || 'User'}</p>
-            <p style={{
-              fontSize: 10, marginTop: 2, color: 'rgba(200,212,232,0.45)',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>{ROLE_LABELS[user?.role] || user?.role || 'Unknown'}</p>
-          </div>
-        </div>
-
-        <button
-          onClick={logout}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            width: '100%', padding: '8px 12px', borderRadius: 10,
-            fontSize: 13, fontWeight: 500, cursor: 'pointer',
-            background: 'transparent', border: 'none',
-            color: 'rgba(200,212,232,0.45)', transition: 'all 0.15s',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#fca5a5';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = 'rgba(200,212,232,0.45)';
-            (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-          }}
-        >
-          <LogOut size={14} />
-          <span>Sign out</span>
-        </button>
-      </div>
     </aside>
   );
 }

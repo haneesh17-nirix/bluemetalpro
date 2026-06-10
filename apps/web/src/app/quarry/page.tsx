@@ -52,14 +52,14 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
   const amount = Number(form.quantity) * Number(form.rate);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">New Quarry Entry</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Date *</label>
               <input required type="date" value={form.sale_date} onChange={e => set('sale_date', e.target.value)} className="input" />
@@ -85,7 +85,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
               {(vehicles as any[]).map(v => <option key={v.id} value={v.id}>{v.vehicle_number}</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Quantity ({form.unit}) *</label>
               <input required type="number" min="0" step="0.01" value={form.quantity} onChange={e => set('quantity', e.target.value)} className="input" placeholder="0.00" />
@@ -108,7 +108,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
             <label className="label">Notes</label>
             <input value={form.notes} onChange={e => set('notes', e.target.value)} className="input" placeholder="Optional notes" />
           </div>
-          <div className="flex gap-3 mt-6 justify-end">
+          <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={mutation.isPending} className="btn-primary disabled:opacity-60">
               {mutation.isPending ? 'Saving…' : 'Record Sale'}
@@ -153,7 +153,7 @@ export default function QuarryPage() {
       title="Quarry"
       subtitle="Stone extraction and internal transfers"
       actions={
-        <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+        <button onClick={() => setShowNew(true)} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Plus size={16} /> New Entry
         </button>
       }
@@ -161,23 +161,23 @@ export default function QuarryPage() {
       <StatsRow stats={quarryStats} />
 
       {/* Filters */}
-      <div className="card p-4 flex flex-wrap gap-3 items-end">
+      <div className="card" style={{ padding: 16, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
             <div>
               <label className="label">From</label>
-              <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
+              <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input" style={{ width: 160 }} />
             </div>
             <div>
               <label className="label">To</label>
-              <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
+              <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input" style={{ width: 160 }} />
             </div>
-            <div className="flex-1 min-w-[200px]">
+            <div style={{ flex: 1, minWidth: 200 }}>
               <label className="label">Search</label>
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Material or vehicle…" className="input w-full" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Material or vehicle…" className="input" style={{ width: '100%' }} />
             </div>
           </div>
 
           {/* Table */}
-          <div className="card overflow-hidden">
+          <div className="card" style={{ overflow: 'hidden' }}>
             <div className="table-wrapper">
               <table className="w-full text-sm">
                 <thead>

@@ -69,7 +69,7 @@ export default function VehiclesPage() {
       actions={
         <button
           onClick={() => { setEditVehicle(null); setForm(emptyForm); setShowForm(true); }}
-          className="btn-primary flex items-center gap-2"
+          className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
           <Plus size={16} /> Add Vehicle
         </button>
@@ -79,10 +79,10 @@ export default function VehiclesPage() {
 
       {/* Vehicles grid */}
       {(vehicles as any[]).length ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           {(vehicles as any[]).map((v: any) => (
-            <div key={v.id} className="card p-5" style={{ borderLeft: v.status === 'active' ? '3px solid #34d399' : v.status === 'maintenance' ? '3px solid #fbbf24' : '3px solid rgba(255,255,255,0.1)' }}>
-              <div className="flex justify-between items-start mb-3">
+            <div key={v.id} className="card" style={{ padding: 20, borderLeft: v.status === 'active' ? '3px solid #34d399' : v.status === 'maintenance' ? '3px solid #fbbf24' : '3px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                 <div
                   className="text-sm font-bold px-3 py-1 rounded-lg"
                   style={{ background: '#1e3a5f', border: '1px solid #263d5e', color: '#c8d4e8' }}
@@ -95,7 +95,7 @@ export default function VehiclesPage() {
               <p className="text-sm mt-1" style={{ color: 'rgba(200,212,232,0.6)' }}>{v.owner_name || '—'}</p>
               {v.owner_phone && <p className="text-xs mt-0.5" style={{ color: 'rgba(200,212,232,0.4)' }}>{v.owner_phone}</p>}
               {v.capacity_mt && (
-                <div className="mt-3 flex items-center gap-1.5">
+                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>
                     {v.capacity_mt} MT
                   </span>
@@ -107,8 +107,8 @@ export default function VehiclesPage() {
           ))}
         </div>
       ) : (
-        <div className="card flex flex-col items-center py-20 gap-3">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 80, paddingBottom: 80, gap: 12 }}>
+          <div style={{ width: 64, height: 64, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <Truck size={28} style={{ color: 'rgba(200,212,232,0.25)' }} />
           </div>
           <p className="text-base font-semibold text-white/70">No vehicles added yet</p>
@@ -118,15 +118,15 @@ export default function VehiclesPage() {
 
       {/* Add/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <h2 className="text-xl font-bold text-white">{editVehicle ? 'Edit Vehicle' : 'Add Vehicle'}</h2>
               <button onClick={() => setShowForm(false)} className="btn-ghost p-2"><X size={18} /></button>
             </div>
             <form onSubmit={e => { e.preventDefault(); mutation.mutate({ ...form, capacity_mt: Number(form.capacity_mt) || null }); }}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+                <div style={{ gridColumn: 'span 2' }}>
                   <label className="label">Registration Number *</label>
                   <input required value={form.registration_number} onChange={e => setForm(f => ({ ...f, registration_number: e.target.value.toUpperCase() }))} className="input" placeholder="TN 38 AB 1234" />
                 </div>
@@ -156,12 +156,12 @@ export default function VehiclesPage() {
                     </select>
                   </div>
                 )}
-                <div className="col-span-2">
+                <div style={{ gridColumn: 'span 2' }}>
                   <label className="label">Notes</label>
                   <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="input" />
                 </div>
               </div>
-              <div className="flex gap-3 mt-6 justify-end">
+              <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
                 <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
                 <button type="submit" disabled={mutation.isPending} className="btn-primary">
                   {mutation.isPending ? 'Saving…' : editVehicle ? 'Update' : 'Add Vehicle'}

@@ -50,16 +50,16 @@ function CrusherModal({ crusher, onClose }: { crusher: any | null; onClose: () =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.7)' }}>
-      <div className="w-full max-w-2xl card p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
+    <div className="fixed inset-0 z-50 p-4"
+      style={{ background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="w-full max-w-2xl card p-6 max-h-[90vh] overflow-y-auto" style={{ overflowY: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-lg font-bold text-white">{crusher ? 'Edit Crusher' : 'Add Crusher'}</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={16} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
           {FIELDS.map(f => (
-            <div key={f.key} className={f.key === 'address' ? 'md:col-span-2' : ''}>
+            <div key={f.key} style={f.key === 'address' ? { gridColumn: 'span 2' } : {}}>
               <label className="label">{f.label}</label>
               <input
                 className="input"
@@ -69,7 +69,7 @@ function CrusherModal({ crusher, onClose }: { crusher: any | null; onClose: () =
               />
             </div>
           ))}
-          <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+          <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
             <button type="button" onClick={onClose} className="btn-ghost">Cancel</button>
             <button type="submit" className="btn-primary" disabled={mutation.isPending}>
               {mutation.isPending ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : 'Save'}
@@ -98,10 +98,10 @@ function GrantModal({ crusherId, onClose }: { crusherId: string; onClose: () => 
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 p-4"
+      style={{ background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="w-full max-w-sm card p-6">
-        <div className="flex items-center justify-between mb-5">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <h2 className="text-base font-bold text-white">Grant Access</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={16} /></button>
         </div>
@@ -121,7 +121,7 @@ function GrantModal({ crusherId, onClose }: { crusherId: string; onClose: () => 
               {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
-          <div className="flex justify-end gap-3">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
             <button onClick={onClose} className="btn-ghost">Cancel</button>
             <button onClick={() => mutation.mutate()} disabled={!userId || mutation.isPending} className="btn-primary">
               {mutation.isPending ? <Loader2 size={14} className="animate-spin" /> : 'Grant'}
@@ -160,8 +160,8 @@ function CrusherRow({ crusher }: { crusher: any }) {
       {grantOpen && <GrantModal crusherId={crusher.id} onClose={() => { setGrantOpen(false); refetch(); }} />}
       <tr className="border-b border-surface-border hover:bg-white/2 transition-colors">
         <td className="px-4 py-3">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
               style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.2)' }}>
               {crusher.logo_url
                 ? <img src={crusher.logo_url} alt={crusher.name} className="w-7 h-7 object-contain rounded" />
@@ -180,11 +180,11 @@ function CrusherRow({ crusher }: { crusher: any }) {
           </span>
         </td>
         <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button onClick={() => setEditOpen(true)} className="btn-ghost p-1.5" title="Edit">
               <Pencil size={14} />
             </button>
-            <button onClick={() => setExpanded(v => !v)} className="btn-ghost p-1.5 flex items-center gap-1 text-xs" title="Users">
+            <button onClick={() => setExpanded(v => !v)} className="btn-ghost p-1.5 text-xs" style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Users">
               <Users size={14} />
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             </button>
@@ -194,7 +194,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
       {expanded && (
         <tr>
           <td colSpan={6} className="px-4 py-3 bg-surface-hover">
-            <div className="flex items-center justify-between mb-3">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Users with Access</p>
               <button onClick={() => setGrantOpen(true)} className="btn-primary text-xs py-1 px-3">
                 <Plus size={12} /> Add User
@@ -205,7 +205,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
             ) : (
               <div className="space-y-2">
                 {users.map((u: any) => (
-                  <div key={u.user_id || u.id} className="flex items-center justify-between p-3 rounded-xl"
+                  <div key={u.user_id || u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderRadius: 12 }}
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <div>
                       <p className="text-sm text-white font-medium">{u.name || u.user_name}</p>
@@ -237,8 +237,8 @@ export default function CrushersPage() {
           {addOpen && <CrusherModal crusher={null} onClose={() => setAddOpen(false)} />}
 
           <div className="card">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-surface-border">
-              <div className="flex items-center gap-3">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid var(--surface-border, rgba(255,255,255,0.1))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <Factory size={18} className="text-gold" />
                 <h2 className="font-semibold text-white">All Crushers</h2>
                 <span className="badge badge-gray">{crushers.length}</span>

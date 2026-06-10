@@ -54,16 +54,16 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="card-gold w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">New Purchase Bill</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
         <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
 
           {/* Header fields */}
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Bill / Invoice No. *</label>
               <input required value={form.bill_number} onChange={e => setForm(f => ({ ...f, bill_number: e.target.value }))} className="input" placeholder="e.g. SUP/2526/001" />
@@ -96,15 +96,15 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
 
           {/* Items */}
           <div>
-            <div className="flex justify-between items-center mb-2">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <p className="text-sm font-semibold text-white">Items</p>
               <button type="button" onClick={() => setItems(p => [...p, emptyItem()])}
                 className="btn-ghost text-xs px-3 py-1.5">+ Add item</button>
             </div>
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-12 gap-2 items-end bg-white/5 border border-white/10 p-3 rounded-lg">
-                  <div className="col-span-4">
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 8, alignItems: 'flex-end', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8 }}>
+                  <div style={{ gridColumn: 'span 4' }}>
                     <label className="label">Product</label>
                     <select value={item.product_id} onChange={e => {
                       const p = (products as any[]).find((x: any) => x.id === e.target.value);
@@ -115,27 +115,27 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
                       {(products as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                   </div>
-                  <div className="col-span-2">
+                  <div style={{ gridColumn: 'span 2' }}>
                     <label className="label">Qty ({item.unit})</label>
                     <input type="number" value={item.quantity} onChange={e => updateItem(i, 'quantity', e.target.value)} className="input" min="0" step="0.001" placeholder="0" />
                   </div>
-                  <div className="col-span-2">
+                  <div style={{ gridColumn: 'span 2' }}>
                     <label className="label">Rate (₹)</label>
                     <input type="number" value={item.rate} onChange={e => updateItem(i, 'rate', e.target.value)} className="input" min="0" step="0.01" placeholder="0" />
                   </div>
-                  <div className="col-span-2">
+                  <div style={{ gridColumn: 'span 2' }}>
                     <label className="label">GST %</label>
                     <select value={item.gst_rate} onChange={e => updateItem(i, 'gst_rate', e.target.value)} className="select">
                       {[0, 5, 12, 18, 28].map(r => <option key={r} value={r}>{r}%</option>)}
                     </select>
                   </div>
-                  <div className="col-span-1 text-right">
+                  <div style={{ gridColumn: 'span 1', textAlign: 'right' }}>
                     <label className="label">Amt</label>
-                    <p className="text-xs font-semibold text-white/70 py-2">
+                    <p className="text-xs font-semibold text-white/70" style={{ paddingTop: 8, paddingBottom: 8 }}>
                       ₹{(Number(item.quantity) * Number(item.rate)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                     </p>
                   </div>
-                  <div className="col-span-1 flex justify-end pb-1">
+                  <div style={{ gridColumn: 'span 1', display: 'flex', justifyContent: 'flex-end', paddingBottom: 4 }}>
                     {items.length > 1 && (
                       <button type="button" onClick={() => setItems(p => p.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300">
                         <X size={14} />
@@ -148,14 +148,14 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Totals */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 grid grid-cols-3 gap-4 text-center text-sm">
+          <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 16, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, textAlign: 'center', fontSize: 14 }}>
             <div><p className="text-white/50 mb-1">Subtotal</p><p className="font-bold text-white">₹{subtotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
             <div><p className="text-white/50 mb-1">GST</p><p className="font-bold text-white">₹{gstTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
             <div><p className="text-white/50 mb-1">Grand Total</p><p className="font-bold text-lg text-white">₹{grandTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p></div>
           </div>
 
           {/* Payment */}
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Amount Paid (₹)</label>
               <input type="number" value={form.amount_paid} onChange={e => setForm(f => ({ ...f, amount_paid: e.target.value }))} className="input" min="0" />
@@ -166,13 +166,13 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
                 {['credit', 'cash', 'upi', 'cheque', 'neft', 'rtgs'].map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
               </select>
             </div>
-            <div className="col-span-2">
+            <div style={{ gridColumn: 'span 2' }}>
               <label className="label">Notes</label>
               <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="input" placeholder="Optional remarks" />
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6 justify-end">
+          <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={mutation.isPending} className="btn-primary disabled:opacity-60">
               {mutation.isPending ? 'Saving…' : 'Record Purchase'}
@@ -213,7 +213,7 @@ export default function PurchasesPage() {
       title="Purchases"
       subtitle="Track procurement and supplier orders"
       actions={
-        <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+        <button onClick={() => setShowNew(true)} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Plus size={16} /> New Purchase
         </button>
       }
@@ -221,19 +221,19 @@ export default function PurchasesPage() {
       <StatsRow stats={stats} />
 
       {/* Filters */}
-      <div className="card p-4 flex gap-3 items-end flex-wrap">
+      <div className="card" style={{ padding: 16, display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         <div>
           <label className="label">From</label>
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
+          <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input" style={{ width: 160 }} />
         </div>
         <div>
           <label className="label">To</label>
-          <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
+          <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input" style={{ width: 160 }} />
         </div>
       </div>
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
           <table className="w-full text-sm">
             <thead>
@@ -249,7 +249,7 @@ export default function PurchasesPage() {
               ) : !(purchases as any[]).length ? (
                 <tr>
                   <td colSpan={8}>
-                    <div className="flex flex-col items-center py-16 text-white/30">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 64, paddingBottom: 64, color: 'rgba(255,255,255,0.3)' }}>
                       <Package size={40} className="mb-2" />
                       <p className="text-sm">No purchases in this period</p>
                     </div>

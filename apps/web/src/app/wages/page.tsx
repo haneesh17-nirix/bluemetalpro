@@ -126,12 +126,12 @@ export default function WagesPage() {
   const pageActions = tab === 'workers' ? (
     <button
       onClick={() => { setEditWorker(null); setWorkerForm(emptyWorker); setShowWorkerForm(true); }}
-      className="btn-primary flex items-center gap-2 text-sm"
+      className="btn-primary text-sm" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
     >
       <Plus size={16} /> Add Worker
     </button>
   ) : tab === 'attendance' ? (
-    <div className="flex items-center gap-3">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <input
         type="date"
         value={selectedDate}
@@ -142,7 +142,7 @@ export default function WagesPage() {
         <button
           onClick={handleSaveAttendance}
           disabled={saveMutation.isPending}
-          className="btn-primary flex items-center gap-2 text-sm disabled:opacity-60"
+          className="btn-primary text-sm disabled:opacity-60" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
           <Save size={16} /> {saveMutation.isPending ? 'Saving…' : 'Save Attendance'}
         </button>
@@ -181,7 +181,7 @@ export default function WagesPage() {
           {tab === 'attendance' && (
             <>
               {/* Summary badges */}
-              <div className="flex flex-wrap gap-2 mb-5">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                 {Object.entries(summary).map(([s, n]) => (
                   <span key={s} className={`px-3 py-1 rounded-full border text-xs capitalize font-medium ${statusActiveClass[s as AttendanceStatus]}`}>
                     {n} {s.replace('_', ' ')}
@@ -207,7 +207,7 @@ export default function WagesPage() {
                           <td className="text-white/60">{w.designation || '—'}</td>
                           <td>₹{Number(w.wage_rate).toLocaleString('en-IN')}/{w.wage_type === 'daily' ? 'day' : 'mo'}</td>
                           <td>
-                            <div className="flex gap-1 flex-wrap">
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                               {(['present', 'absent', 'half_day', 'leave'] as AttendanceStatus[]).map(s => (
                                 <button key={s} onClick={() => setLocalStatus(ls => ({ ...ls, [w.id]: s }))}
                                   className={`px-2 py-1 rounded text-xs font-medium border transition-all capitalize ${status === s ? statusActiveClass[s] : 'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'}`}>
@@ -265,9 +265,9 @@ export default function WagesPage() {
 
           {/* PAYROLL TAB */}
           {tab === 'payroll' && (
-            <div className="grid grid-cols-2 gap-6">
-              <div className="card p-6">
-                <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+              <div className="card" style={{ padding: 24 }}>
+                <h2 className="font-semibold text-white mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Calculator size={18} className="text-[#c9a84c]" /> Calculate Wages
                 </h2>
                 <div className="space-y-4">
@@ -278,7 +278,7 @@ export default function WagesPage() {
                       {(workers as any[]).map((w: any) => <option key={w.id} value={w.id}>{w.name}</option>)}
                     </select>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
                     <div>
                       <label className="label">From</label>
                       <input type="date" value={payPeriod.from} onChange={e => setPayPeriod(p => ({ ...p, from: e.target.value }))} className="input" />
@@ -295,7 +295,7 @@ export default function WagesPage() {
               </div>
 
               {payrollResult && (
-                <div className="card-gold p-6">
+                <div className="card-gold" style={{ padding: 24 }}>
                   <h2 className="font-semibold text-white mb-4">Payroll Summary — {payrollResult.worker?.name}</h2>
                   <div className="space-y-1 text-sm">
                     {[
@@ -306,12 +306,12 @@ export default function WagesPage() {
                       ['Gross Wages', `₹${Number(payrollResult.gross_wages).toLocaleString('en-IN')}`],
                       ['Advance Deducted', `₹${Number(payrollResult.advance_deducted).toLocaleString('en-IN')}`],
                     ].map(([l, v]) => (
-                      <div key={l} className="flex justify-between py-2 border-b border-white/5">
+                      <div key={l} style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, paddingBottom: 8, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                         <span className="text-white/50">{l}</span>
                         <span className="font-medium text-white capitalize">{v}</span>
                       </div>
                     ))}
-                    <div className="flex justify-between py-3 mt-2 bg-[#c9a84c]/15 rounded-lg px-3 border border-[#c9a84c]/30">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 12, paddingBottom: 12, marginTop: 8, background: 'rgba(201,168,76,0.15)', borderRadius: 8, paddingLeft: 12, paddingRight: 12, border: '1px solid rgba(201,168,76,0.3)' }}>
                       <span className="font-bold text-[#c9a84c]">Net Wages</span>
                       <span className="font-bold text-lg text-[#c9a84c]">₹{Number(payrollResult.net_wages).toLocaleString('en-IN')}</span>
                     </div>
@@ -326,15 +326,15 @@ export default function WagesPage() {
 
       {/* Add/Edit Worker modal */}
       {showWorkerForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="card-gold w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-center mb-5">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="text-lg font-bold text-white">{editWorker ? 'Edit Worker' : 'Add Worker'}</h2>
               <button onClick={() => setShowWorkerForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
             <form onSubmit={e => { e.preventDefault(); workerMutation.mutate({ ...workerForm, wage_rate: Number(workerForm.wage_rate) }); }}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+                <div style={{ gridColumn: 'span 2' }}>
                   <label className="label">Full Name *</label>
                   <input required value={workerForm.name} onChange={e => setWorkerForm(f => ({ ...f, name: e.target.value }))} className="input" />
                 </div>
@@ -368,7 +368,7 @@ export default function WagesPage() {
                   <input value={workerForm.aadhaar} onChange={e => setWorkerForm(f => ({ ...f, aadhaar: e.target.value }))} className="input" maxLength={12} placeholder="12-digit Aadhaar" />
                 </div>
               </div>
-              <div className="flex justify-end gap-3 mt-6">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
                 <button type="button" onClick={() => setShowWorkerForm(false)} className="btn-ghost">Cancel</button>
                 <button type="submit" disabled={workerMutation.isPending} className="btn-primary disabled:opacity-60">
                   {workerMutation.isPending ? 'Saving…' : editWorker ? 'Update Worker' : 'Add Worker'}

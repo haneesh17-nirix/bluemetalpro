@@ -29,9 +29,9 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="card-gold w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h2 className="text-xl font-bold text-white">Record Receipt</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
@@ -43,7 +43,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
               {(parties as any[]).map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Date *</label>
               <input required type="date" value={form.txn_date} onChange={e => setForm(f => ({ ...f, txn_date: e.target.value }))} className="input" />
@@ -60,7 +60,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
           {form.payment_mode === 'cheque' && (
-            <div className="grid grid-cols-2 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
               <div>
                 <label className="label">Cheque No.</label>
                 <input value={form.cheque_number} onChange={e => setForm(f => ({ ...f, cheque_number: e.target.value }))} className="input" placeholder="123456" />
@@ -79,7 +79,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
             <label className="label">Narration</label>
             <input value={form.narration} onChange={e => setForm(f => ({ ...f, narration: e.target.value }))} className="input" placeholder="Payment details" />
           </div>
-          <div className="flex gap-3 mt-6 justify-end">
+          <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
             <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className="btn-primary">
               {mutation.isPending ? 'Saving…' : 'Record Receipt'}
@@ -102,30 +102,30 @@ function PartyLedgerDrawer({ partyId, partyName, onClose }: { partyId: string; p
   });
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex justify-end">
-      <div className="w-full max-w-lg bg-[#0e2544] border-l border-[#263d5e] h-full shadow-2xl flex flex-col">
-        <div className="flex justify-between items-center p-5 border-b border-[#263d5e]">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div className="w-full max-w-lg bg-[#0e2544] border-l border-[#263d5e] h-full shadow-2xl" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 20, borderBottom: '1px solid #263d5e' }}>
           <div>
             <h2 className="font-bold text-white text-lg">{partyName}</h2>
             <p className="text-sm text-white/50">Transaction history</p>
           </div>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
-        <div className="flex gap-3 p-4 border-b border-[#263d5e]">
+        <div style={{ display: 'flex', gap: 12, padding: 16, borderBottom: '1px solid #263d5e' }}>
           <div>
             <label className="label">From</label>
-            <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-36" />
+            <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input" style={{ width: 144 }} />
           </div>
           <div>
             <label className="label">To</label>
-            <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-36" />
+            <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input" style={{ width: 144 }} />
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="space-y-2" style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
           {!(txns as any[]).length ? (
             <p className="text-center text-white/30 py-10 text-sm">No transactions in this period</p>
           ) : (txns as any[]).map((t: any) => (
-            <div key={t.id} className="card flex items-center justify-between p-3">
+            <div key={t.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
               <div>
                 <p className="text-xs font-semibold uppercase text-white/40">{t.txn_type}</p>
                 <p className="text-sm font-medium text-white">{t.narration || `${t.payment_mode?.toUpperCase()} payment`}</p>
@@ -174,7 +174,7 @@ export default function LedgerPage() {
       title="Ledger"
       subtitle="Party balances and transaction history"
       actions={
-        <button onClick={() => setShowReceipt(true)} className="btn-primary flex items-center gap-2">
+        <button onClick={() => setShowReceipt(true)} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Plus size={16} /> New Receipt
         </button>
       }
@@ -192,7 +192,7 @@ export default function LedgerPage() {
       </div>
 
       {/* Party balances table */}
-      <div className="card overflow-hidden">
+      <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrapper">
           <table className="w-full text-sm">
             <thead>
@@ -218,9 +218,9 @@ export default function LedgerPage() {
                 return (
                   <tr key={b.party_id}>
                     <td>
-                      <div className="flex items-center gap-3">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 12, fontWeight: 700 }}
                           style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.25)' }}
                         >
                           {initials}
@@ -252,7 +252,7 @@ export default function LedgerPage() {
                     <td>
                       <button
                         onClick={() => setSelectedParty({ id: b.party_id, name: b.party_name })}
-                        className="btn-ghost text-xs px-2 py-1 flex items-center gap-1"
+                        className="btn-ghost text-xs" style={{ padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4 }}
                       >
                         View <ArrowRight size={12} />
                       </button>
