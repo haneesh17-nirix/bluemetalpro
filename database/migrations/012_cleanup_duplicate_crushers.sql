@@ -1,22 +1,17 @@
 -- =============================================================
 -- 012_cleanup_duplicate_crushers.sql
 -- Remove duplicate crusher rows created by repeated migration runs.
--- Keeps only the two crushers that actually have seeded data,
--- then re-wires user_crusher_access for all test accounts.
+-- Re-homes all FK references to the keeper rows before deleting.
 -- =============================================================
 
 DO $$
 DECLARE
-  -- The two crusher IDs that have real data (identified by sales count > 0)
   c1 UUID;  -- BlueMetal Quarry Unit 1 (Hosur)
   c2 UUID;  -- BlueMetal Quarry Unit 2 (Salem)
-  main_plant UUID;
 
-  -- Test user IDs
   u_admin      UUID;
   u_operator1  UUID;
   u_reports    UUID;
-  u_platadmin  UUID;
 BEGIN
 
   -- ── 1. Identify the two crushers that have data ───────────────────────────
@@ -39,42 +34,63 @@ BEGIN
 
   RAISE NOTICE 'Keeping Unit1=% Unit2=%', c1, c2;
 
-  -- ── 2. Delete user_crusher_access for all OTHER crushers ─────────────────
-  DELETE FROM user_crusher_access
-   WHERE crusher_id NOT IN (c1, c2);
+  -- ── 2. Re-home all FK references from duplicate Unit-1 rows to c1 ─────────
+  UPDATE sales              SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE purchases          SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE quarry_sales       SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE parties            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE vehicles           SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE products           SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE workers            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE assets             SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE ledger_transactions SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE maintenance_records SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE attendance         SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE cameras            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE notifications      SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
+  UPDATE wage_payments      SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
 
-  -- ── 3. Delete all other crusher rows (cascade cleans up access) ──────────
-  -- Safe: cascade delete handles user_crusher_access via FK
-  DELETE FROM crushers
-   WHERE id NOT IN (c1, c2);
+  -- ── 3. Re-home all FK references from duplicate Unit-2 rows to c2 ─────────
+  UPDATE sales              SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE purchases          SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE quarry_sales       SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE parties            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE vehicles           SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE products           SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE workers            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE assets             SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE ledger_transactions SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE maintenance_records SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE attendance         SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE cameras            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE notifications      SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  UPDATE wage_payments      SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
 
-  -- ── 4. Ensure crusher names are clean ────────────────────────────────────
-  UPDATE crushers SET name = 'BlueMetal Quarry Unit 1', location = 'Hosur, TN'
-   WHERE id = c1;
-  UPDATE crushers SET name = 'BlueMetal Quarry Unit 2', location = 'Salem, TN'
-   WHERE id = c2;
+  -- ── 4. Remove access rows for duplicates, then delete duplicates ──────────
+  DELETE FROM user_crusher_access WHERE crusher_id NOT IN (c1, c2);
+  DELETE FROM crushers WHERE id NOT IN (c1, c2);
 
-  -- ── 5. Re-wire user_crusher_access for test accounts ─────────────────────
+  -- ── 5. Normalise keeper names ─────────────────────────────────────────────
+  UPDATE crushers SET name = 'BlueMetal Quarry Unit 1' WHERE id = c1;
+  UPDATE crushers SET name = 'BlueMetal Quarry Unit 2' WHERE id = c2;
+
+  -- ── 6. Re-wire user_crusher_access for test accounts ─────────────────────
   SELECT id INTO u_admin     FROM users WHERE email = 'admin@bluemetal.local'     LIMIT 1;
   SELECT id INTO u_operator1 FROM users WHERE email = 'operator1@bluemetal.local' LIMIT 1;
   SELECT id INTO u_reports   FROM users WHERE email = 'reports@bluemetal.local'   LIMIT 1;
-  SELECT id INTO u_platadmin FROM users WHERE email = 'platadmin@bluemetal.local' LIMIT 1;
 
-  -- admin → both units
   IF u_admin IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role)
       VALUES (u_admin, c1, 'admin'), (u_admin, c2, 'admin')
     ON CONFLICT (user_id, crusher_id) DO UPDATE SET role = EXCLUDED.role;
   END IF;
 
-  -- operator1 → both units
   IF u_operator1 IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role)
       VALUES (u_operator1, c1, 'operations'), (u_operator1, c2, 'operations')
     ON CONFLICT (user_id, crusher_id) DO UPDATE SET role = EXCLUDED.role;
   END IF;
 
-  -- reports → both units (read-only viewer)
   IF u_reports IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role)
       VALUES (u_reports, c1, 'report_viewer'), (u_reports, c2, 'report_viewer')
