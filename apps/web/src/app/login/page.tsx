@@ -26,32 +26,24 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
-
-      // ── New two-step flow: { temp_token, user, crushers[] } ──
       if (data.temp_token && Array.isArray(data.crushers)) {
         localStorage.setItem('token', data.temp_token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
         if (data.crushers.length === 1) {
           const sel = await selectCrusher(data.crushers[0].id);
           localStorage.setItem('token', sel.token);
           localStorage.setItem('user', JSON.stringify(sel.user));
           setCrusher(sel.crusher);
-          log.action('Login successful', { role: sel.user?.role, crusher: data.crushers[0].name });
+          log.action('Login successful', { role: sel.user?.role });
           router.push('/dashboard');
         } else {
           localStorage.setItem('crushers_list', JSON.stringify(data.crushers));
-          log.action('Login — crusher selection required', { count: data.crushers.length });
           router.push('/select-crusher');
         }
-
-      // ── Legacy single-step flow: { token, user } ──
       } else if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        log.action('Login successful (legacy)', { role: data.user?.role });
         router.push('/dashboard');
-
       } else {
         throw new Error('Unexpected login response');
       }
@@ -64,204 +56,152 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'row',
-        background: 'linear-gradient(175deg, #060f20 0%, #0c1f3d 50%, #060f20 100%)',
-      }}
-    >
-      {/* ── Left panel — branding ──────────────────── */}
-      <div style={{ width: '46%', minWidth: '400px', display: 'flex', flexDirection: 'column', padding: '48px', position: 'relative', overflow: 'hidden' }}
-        className="hidden lg:flex">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'row',
+      background: 'linear-gradient(175deg, #060f20 0%, #0c1f3d 50%, #060f20 100%)',
+    }}>
 
+      {/* ── Left branding panel ── */}
+      <div style={{
+        width: '46%',
+        minWidth: '420px',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '48px',
+        position: 'relative',
+        overflow: 'hidden',
+        flexShrink: 0,
+      }}>
         {/* Background blobs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute w-[500px] h-[500px] rounded-full"
-            style={{
-              top: '-100px', left: '-150px',
-              background: 'radial-gradient(circle, rgba(37,99,168,0.2) 0%, transparent 65%)',
-            }}
-          />
-          <div
-            className="absolute w-[400px] h-[400px] rounded-full"
-            style={{
-              bottom: '-80px', right: '-100px',
-              background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%)',
-            }}
-          />
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', width: 500, height: 500, borderRadius: '50%',
+            top: -100, left: -150,
+            background: 'radial-gradient(circle, rgba(37,99,168,0.2) 0%, transparent 65%)',
+          }} />
+          <div style={{
+            position: 'absolute', width: 400, height: 400, borderRadius: '50%',
+            bottom: -80, right: -100,
+            background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%)',
+          }} />
         </div>
 
         {/* Logo */}
-        <div className="relative z-10 flex items-center gap-4 mb-16">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl flex-shrink-0"
-            style={{
-              background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
-              color: '#0c1f3d',
-              boxShadow: '0 6px 20px rgba(201,168,76,0.35)',
-            }}
-          >
-            B
-          </div>
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: 16, marginBottom: 64 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 16, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', fontWeight: 900, fontSize: 20, flexShrink: 0,
+            background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
+            color: '#0c1f3d', boxShadow: '0 6px 20px rgba(201,168,76,0.35)',
+          }}>B</div>
           <div>
-            <p className="font-bold text-xl text-white leading-none">BlueMetal Pro</p>
-            <p
-              className="text-xs font-semibold tracking-widest mt-0.5"
-              style={{
-                background: 'linear-gradient(135deg, #c9a84c, #f0d878)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              QUARRY ERP
-            </p>
+            <p style={{ fontWeight: 700, fontSize: 20, color: '#fff', lineHeight: 1 }}>BlueMetal Pro</p>
+            <p style={{
+              fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', marginTop: 4,
+              background: 'linear-gradient(135deg, #c9a84c, #f0d878)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>QUARRY ERP</p>
           </div>
         </div>
 
         {/* Headline */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center">
-          <h2 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
+        <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <h2 style={{ fontSize: 36, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 16, letterSpacing: '-0.02em' }}>
             Stone Crushing<br />
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #c9a84c 0%, #f0d878 50%, #c9a84c 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Business Intelligence
-            </span>
+            <span style={{
+              background: 'linear-gradient(135deg, #c9a84c 0%, #f0d878 50%, #c9a84c 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>Business Intelligence</span>
           </h2>
-          <p className="text-base mb-10 leading-relaxed" style={{ color: 'rgba(200,212,232,0.65)', maxWidth: '340px' }}>
+          <p style={{ fontSize: 15, marginBottom: 40, lineHeight: 1.6, color: 'rgba(200,212,232,0.65)', maxWidth: 340 }}>
             Complete ERP built for quarry operations — from weighbridge to GST filing.
           </p>
-
-          {/* Feature list */}
-          <ul className="space-y-3">
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {features.map(f => (
-              <li key={f} className="flex items-center gap-3">
+              <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <CheckCircle size={16} style={{ color: '#e8c96a', flexShrink: 0 }} />
-                <span className="text-sm font-medium" style={{ color: 'rgba(200,212,232,0.8)' }}>{f}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Footer stats */}
-        <div className="relative z-10 grid grid-cols-3 gap-3 mt-12">
-          {[
-            { label: 'Modules', value: '12+' },
-            { label: 'GST Ready', value: '100%' },
-            { label: 'Real-time', value: 'Live' },
-          ].map(s => (
-            <div
-              key={s.label}
-              className="text-center p-4 rounded-2xl"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}
-            >
-              <p className="text-xl font-extrabold" style={{ color: '#e8c96a' }}>{s.value}</p>
-              <p className="text-xs mt-0.5 font-medium" style={{ color: 'rgba(200,212,232,0.55)' }}>{s.label}</p>
+        {/* Stats */}
+        <div style={{ position: 'relative', zIndex: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 48 }}>
+          {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
+            <div key={s.label} style={{
+              textAlign: 'center', padding: '16px 12px', borderRadius: 16,
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+            }}>
+              <p style={{ fontSize: 20, fontWeight: 800, color: '#e8c96a' }}>{s.value}</p>
+              <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.55)' }}>{s.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Right panel — login form ───────────────── */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div className="w-full max-w-[400px] animate-slide-up">
-
-          {/* Mobile logo */}
-          <div className="lg:hidden flex flex-col items-center mb-10">
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl mb-4"
-              style={{
-                background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
-                color: '#0c1f3d',
-                boxShadow: '0 8px 24px rgba(201,168,76,0.4)',
-              }}
-            >
-              B
-            </div>
-            <h1 className="text-2xl font-bold text-white">BlueMetal Pro</h1>
-            <p className="text-xs mt-1 font-semibold tracking-widest" style={{ color: 'rgba(201,168,76,0.8)' }}>
-              QUARRY ERP
-            </p>
-          </div>
+      {/* ── Right login panel ── */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ width: '100%', maxWidth: 400 }}>
 
           {/* Card */}
-          <div
-            className="rounded-3xl p-8"
-            style={{
-              background: '#162c52',
-              border: '1px solid rgba(201,168,76,0.2)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.08)',
-            }}
-          >
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white tracking-tight">Welcome back</h2>
-              <p className="text-sm mt-1.5 font-medium" style={{ color: 'rgba(200,212,232,0.55)' }}>
+          <div style={{
+            borderRadius: 24, padding: 32,
+            background: '#162c52',
+            border: '1px solid rgba(201,168,76,0.2)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.08)',
+          }}>
+            <div style={{ marginBottom: 32 }}>
+              <h2 style={{ fontSize: 24, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>Welcome back</h2>
+              <p style={{ fontSize: 13, marginTop: 6, fontWeight: 500, color: 'rgba(200,212,232,0.55)' }}>
                 Sign in to your workspace
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
                 <label className="label">Email address</label>
-                <div className="relative">
-                  <Mail
-                    size={15}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{ color: 'rgba(200,212,232,0.4)' }}
-                  />
+                <div style={{ position: 'relative' }}>
+                  <Mail size={15} style={{
+                    position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                    pointerEvents: 'none', color: 'rgba(200,212,232,0.4)',
+                  }} />
                   <input
-                    type="email"
-                    required
-                    value={form.email}
+                    type="email" required value={form.email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    className="input pl-10"
-                    placeholder="admin@company.com"
-                    autoComplete="email"
+                    className="input" style={{ paddingLeft: 40 }}
+                    placeholder="admin@company.com" autoComplete="email"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="label">Password</label>
-                <div className="relative">
-                  <Lock
-                    size={15}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{ color: 'rgba(200,212,232,0.4)' }}
-                  />
+                <div style={{ position: 'relative' }}>
+                  <Lock size={15} style={{
+                    position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                    pointerEvents: 'none', color: 'rgba(200,212,232,0.4)',
+                  }} />
                   <input
-                    type="password"
-                    required
-                    value={form.password}
+                    type="password" required value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                    className="input pl-10"
-                    placeholder="••••••••"
-                    autoComplete="current-password"
+                    className="input" style={{ paddingLeft: 40 }}
+                    placeholder="••••••••" autoComplete="current-password"
                   />
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-primary w-full mt-2" style={{ padding: '12px' }}>
-                {loading ? (
-                  <><Loader2 size={16} className="animate-spin" /> Signing in…</>
-                ) : (
-                  <>Sign In <ArrowRight size={16} /></>
-                )}
+              <button type="submit" disabled={loading} className="btn-primary w-full" style={{ padding: '12px', marginTop: 4 }}>
+                {loading
+                  ? <><Loader2 size={16} className="animate-spin" /> Signing in…</>
+                  : <>Sign In <ArrowRight size={16} /></>}
               </button>
             </form>
 
-            <div className="gold-divider mt-8 mb-5" />
-            <p className="text-center text-xs" style={{ color: 'rgba(200,212,232,0.35)' }}>
+            <div className="gold-divider" style={{ margin: '28px 0 20px' }} />
+            <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(200,212,232,0.35)' }}>
               BlueMetal Pro · Quarry & Stone Crushing ERP
             </p>
           </div>
