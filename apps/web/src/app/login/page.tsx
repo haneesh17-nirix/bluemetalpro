@@ -89,7 +89,7 @@ export default function LoginPage() {
           <div style={{
             position: 'absolute', width: 400, height: 400, borderRadius: '50%',
             bottom: -80, right: -100,
-            background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(184,149,62,0.12) 0%, transparent 65%)',
           }} />
         </div>
 
@@ -98,14 +98,14 @@ export default function LoginPage() {
           <div style={{
             width: 48, height: 48, borderRadius: 16, display: 'flex', alignItems: 'center',
             justifyContent: 'center', fontWeight: 900, fontSize: 20, flexShrink: 0,
-            background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
-            color: '#0c1f3d', boxShadow: '0 6px 20px rgba(201,168,76,0.35)',
+            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
+            color: '#0c1f3d', boxShadow: '0 6px 20px rgba(184,149,62,0.35)',
           }}>B</div>
           <div>
             <p style={{ fontWeight: 700, fontSize: 20, color: '#fff', lineHeight: 1 }}>BlueMetal Pro</p>
             <p style={{
               fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', marginTop: 4,
-              background: 'linear-gradient(135deg, #c9a84c, #f0d878)',
+              background: 'linear-gradient(135deg, #c9a84c, #d4aa52)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>QUARRY ERP</p>
           </div>
@@ -116,7 +116,7 @@ export default function LoginPage() {
           <h2 style={{ fontSize: 36, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 16, letterSpacing: '-0.02em' }}>
             Stone Crushing<br />
             <span style={{
-              background: 'linear-gradient(135deg, #c9a84c 0%, #f0d878 50%, #c9a84c 100%)',
+              background: 'linear-gradient(135deg, #c9a84c 0%, #d4aa52 50%, #c9a84c 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>Business Intelligence</span>
           </h2>
@@ -126,7 +126,7 @@ export default function LoginPage() {
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {features.map(f => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <CheckCircle size={16} style={{ color: '#e8c96a', flexShrink: 0 }} />
+                <CheckCircle size={16} style={{ color: '#c9a84c', flexShrink: 0 }} />
                 <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
               </li>
             ))}
@@ -140,7 +140,7 @@ export default function LoginPage() {
               textAlign: 'center', padding: '16px 12px', borderRadius: 16,
               background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
             }}>
-              <p style={{ fontSize: 20, fontWeight: 800, color: '#e8c96a' }}>{s.value}</p>
+              <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
               <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.55)' }}>{s.label}</p>
             </div>
           ))}
@@ -155,8 +155,8 @@ export default function LoginPage() {
           <div style={{
             borderRadius: 24, padding: 32,
             background: '#162c52',
-            border: '1px solid rgba(201,168,76,0.2)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.08)',
+            border: '1px solid rgba(184,149,62,0.2)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(184,149,62,0.08)',
           }}>
             <div style={{ marginBottom: 32 }}>
               <h2 style={{ fontSize: 24, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>Welcome back</h2>
@@ -208,7 +208,7 @@ export default function LoginPage() {
                   <div style={{ height: 2, borderRadius: 1, background: 'rgba(255,255,255,0.08)', overflow: 'hidden', marginTop: 8 }}>
                     <div style={{
                       height: '100%', width: '60%', borderRadius: 1,
-                      background: 'linear-gradient(90deg, transparent, #e8c96a, transparent)',
+                      background: 'linear-gradient(90deg, transparent, #c9a84c, transparent)',
                       animation: 'shimmer 1.2s infinite',
                       backgroundSize: '200% 100%',
                     }} />

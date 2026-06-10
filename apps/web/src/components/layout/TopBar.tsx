@@ -20,7 +20,7 @@ const TYPE_COLORS: Record<string, string> = {
   maintenance: '#f59e0b',
   quarry: '#a78bfa',
   wages: '#34d399',
-  payment: '#e8c96a',
+  payment: '#c9a84c',
 };
 
 interface TopBarProps {
@@ -133,11 +133,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '12px 24px', flexShrink: 0, position: 'relative',
-        borderBottom: '1px solid #1f3659',
-        boxShadow: '0 1px 0 rgba(201,168,76,0.08)',
-        background: 'rgba(9,22,40,0.85)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        background: 'rgba(5, 14, 30, 0.85)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(30,52,88,0.9)',
+        boxShadow: '0 1px 0 rgba(184,149,62,0.06), 0 4px 20px rgba(0,0,0,0.3)',
         zIndex: 40,
       }}
     >
@@ -154,8 +154,8 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
             padding: '3px 10px', borderRadius: 20,
-            background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)',
-            fontSize: 11, fontWeight: 600, color: '#e8c96a',
+            background: 'rgba(184,149,62,0.1)', border: '1px solid rgba(184,149,62,0.2)',
+            fontSize: 11, fontWeight: 600, color: '#c9a84c',
           }}>
             {crusherName}
           </div>
@@ -170,15 +170,15 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
             position: 'relative', width: 38, height: 38, borderRadius: 12,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 0.15s', cursor: 'pointer',
-            background: open ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.06)',
-            border: open ? '1px solid rgba(201,168,76,0.3)' : '1px solid #2a4570',
+            background: open ? 'rgba(184,149,62,0.15)' : 'rgba(255,255,255,0.06)',
+            border: open ? '1px solid rgba(184,149,62,0.3)' : '1px solid rgba(42,69,112,0.7)',
           }}
         >
-          <Bell size={16} style={{ color: open ? '#e8c96a' : 'rgba(200,212,232,0.7)' }} />
+          <Bell size={16} style={{ color: open ? '#c9a84c' : 'rgba(200,212,232,0.7)' }} />
           {unread > 0 && (
             <span
               className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[10px] font-bold"
-              style={{ background: '#e8c96a', color: '#0c1f3d' }}
+              style={{ background: '#c9a84c', color: '#0c1f3d' }}
             >
               {unread > 99 ? '99+' : unread}
             </span>
@@ -202,12 +202,12 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
               style={{ borderBottom: '1px solid #1f3659' }}
             >
               <div className="flex items-center gap-2">
-                <Bell size={14} style={{ color: '#e8c96a' }} />
+                <Bell size={14} style={{ color: '#c9a84c' }} />
                 <span className="text-sm font-semibold text-white">Notifications</span>
                 {unread > 0 && (
                   <span
                     className="px-1.5 py-0.5 rounded-full text-xs font-bold"
-                    style={{ background: 'rgba(232,201,106,0.15)', color: '#e8c96a' }}
+                    style={{ background: 'rgba(184,149,62,0.15)', color: '#c9a84c' }}
                   >
                     {unread} new
                   </span>
@@ -251,11 +251,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                     onClick={() => !n.is_read && markRead(n.id)}
                     className="flex gap-3 px-4 py-3 transition-all cursor-pointer"
                     style={{
-                      background: n.is_read ? 'transparent' : 'rgba(201,168,76,0.04)',
+                      background: n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)',
                       borderBottom: '1px solid rgba(255,255,255,0.04)',
                     }}
                     onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = n.is_read ? 'transparent' : 'rgba(201,168,76,0.04)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)'; }}
                   >
                     {/* Type dot */}
                     <div
@@ -282,7 +282,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                       </p>
                     </div>
                     {!n.is_read && (
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-2" style={{ background: '#e8c96a' }} />
+                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-2" style={{ background: '#c9a84c' }} />
                     )}
                   </div>
                 ))

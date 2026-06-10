@@ -100,8 +100,8 @@ export default function DashboardPage() {
       value: inr(monthSales),
       sub: `${data?.month_sales?.count || 0} invoices`,
       icon: TrendingUp,
-      grad: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
-      glow: 'rgba(201,168,76,0.35)',
+      grad: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
+      glow: 'rgba(184,149,62,0.35)',
       delta: null,
     },
     {
@@ -127,7 +127,7 @@ export default function DashboardPage() {
   const quickActions = [
     { label: 'New Sale',     href: '/sales',       icon: ShoppingCart, color: '#2563a8' },
     { label: 'Add Vehicle',  href: '/vehicles',    icon: Truck,        color: '#2e7d52' },
-    { label: 'New Purchase', href: '/purchases',   icon: Package,      color: '#9a7a2e' },
+    { label: 'New Purchase', href: '/purchases',   icon: Package,      color: '#8a6a28' },
     { label: 'Maintenance',  href: '/maintenance', icon: Wrench,       color: '#7f1d1d' },
   ];
 
@@ -162,7 +162,13 @@ export default function DashboardPage() {
 
           {/* ── Crusher info strip ────────────────────── */}
           {crusher && (
-            <div className="card flex items-center gap-4 px-5 py-3 text-sm">
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(184,149,62,0.08) 0%, rgba(184,149,62,0.03) 100%)',
+              border: '1px solid rgba(184,149,62,0.18)',
+              borderRadius: 14,
+              padding: '12px 20px',
+              display: 'flex', alignItems: 'center', gap: 16,
+            }} className="text-sm">
               <div className="flex-1 flex flex-wrap gap-x-6 gap-y-1">
                 {crusher.gstin && (
                   <span className="text-white/50">
@@ -190,16 +196,15 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Area chart — 12-month trend */}
-            <div className="card p-5">
-              <div className="flex items-center justify-between mb-4">
+            <div className="card overflow-hidden">
+              <div className="panel-header">
                 <div>
-                  <h2 className="font-semibold text-white">Monthly Revenue</h2>
-                  <p className="text-xs text-white/40 mt-0.5">Last 12 months · confirmed sales</p>
+                  <h2 className="panel-title">Monthly Revenue</h2>
+                  <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>Last 12 months · confirmed sales</p>
                 </div>
-                <Link href="/reports" className="btn-ghost text-xs py-1 px-3">
-                  Full report <ArrowUpRight size={12} />
-                </Link>
+                <Link href="/reports" className="btn-ghost text-xs py-1 px-3">Full report <ArrowUpRight size={12} /></Link>
               </div>
+              <div className="panel-body">
               {isLoading ? (
                 <div className="skeleton h-48 w-full" />
               ) : (
@@ -207,8 +212,8 @@ export default function DashboardPage() {
                   <AreaChart data={trend as any[]} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
                     <defs>
                       <linearGradient id="areaGold" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="#e8c96a" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#e8c96a" stopOpacity={0.02} />
+                        <stop offset="0%"   stopColor="#c9a84c" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#c9a84c" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
@@ -218,22 +223,24 @@ export default function DashboardPage() {
                     <Tooltip content={<ChartTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.08)', strokeWidth: 1 }} />
                     <Area
                       type="monotone" dataKey="total_sales" name="Revenue"
-                      stroke="#e8c96a" strokeWidth={2}
-                      fill="url(#areaGold)" dot={false} activeDot={{ r: 4, fill: '#e8c96a' }}
+                      stroke="#c9a84c" strokeWidth={2}
+                      fill="url(#areaGold)" dot={false} activeDot={{ r: 4, fill: '#c9a84c' }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
+              </div>
             </div>
 
             {/* Top Products bar — right panel */}
-            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="flex items-center justify-between mb-4">
+            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="panel-header">
                 <div>
-                  <h2 className="font-semibold text-white">Top Products</h2>
-                  <p className="text-xs text-white/40 mt-0.5">Revenue — last 30 days</p>
+                  <h2 className="panel-title">Top Products</h2>
+                  <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>Revenue — last 30 days</p>
                 </div>
               </div>
+              <div className="panel-body" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               {isLoading ? (
                 <div className="skeleton flex-1 w-full" />
               ) : (data?.top_products?.length ? (
@@ -241,8 +248,8 @@ export default function DashboardPage() {
                   <BarChart data={data.top_products} layout="vertical" margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="goldH" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%"   stopColor="#9a7a2e" />
-                        <stop offset="100%" stopColor="#e8c96a" />
+                        <stop offset="0%"   stopColor="#7a5e22" />
+                        <stop offset="100%" stopColor="#c9a84c" />
                       </linearGradient>
                     </defs>
                     <XAxis type="number" hide />
@@ -261,6 +268,7 @@ export default function DashboardPage() {
                   <p className="text-white/30 text-sm">No data yet</p>
                 </div>
               ))}
+              </div>
             </div>
           </div>
 
@@ -268,16 +276,15 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Recent sales */}
-            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="flex items-center justify-between mb-4">
+            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="panel-header">
                 <div>
-                  <h2 className="font-semibold text-white">Recent Sales</h2>
-                  <p className="text-xs text-white/40 mt-0.5">Last 6 confirmed invoices</p>
+                  <h2 className="panel-title">Recent Sales</h2>
+                  <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>Last 6 confirmed invoices</p>
                 </div>
-                <Link href="/sales" className="btn-ghost text-xs py-1 px-3">
-                  All sales <ArrowUpRight size={12} />
-                </Link>
+                <Link href="/sales" className="btn-ghost text-xs py-1 px-3">All sales <ArrowUpRight size={12} /></Link>
               </div>
+              <div className="panel-body" style={{ flex: 1 }}>
               {isLoading ? (
                 <div className="space-y-2">
                   {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-12 w-full" />)}
@@ -321,20 +328,20 @@ export default function DashboardPage() {
                   <p className="text-white/30 text-sm">No sales recorded yet</p>
                 </div>
               )}
+              </div>
             </div>
 
             {/* Upcoming Maintenance */}
-            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="flex items-center justify-between mb-4">
+            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="panel-header">
                 <div>
-                  <h2 className="font-semibold text-white">Maintenance Due</h2>
-                  <p className="text-xs text-white/40 mt-0.5">This week</p>
+                  <h2 className="panel-title">Maintenance Due</h2>
+                  <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 3 }}>This week</p>
                 </div>
-                <Link href="/maintenance" className="btn-ghost text-xs py-1 px-3">
-                  All <ArrowUpRight size={12} />
-                </Link>
+                <Link href="/maintenance" className="btn-ghost text-xs py-1 px-3">All <ArrowUpRight size={12} /></Link>
               </div>
-              <div className="flex-1 space-y-2 overflow-y-auto">
+              <div className="panel-body" style={{ flex: 1 }}>
+              <div className="space-y-2 overflow-y-auto">
                 {maintenance?.length ? maintenance.map((m: any) => (
                   <div key={m.id}
                     className="flex items-start justify-between p-3 rounded-xl"
@@ -360,12 +367,16 @@ export default function DashboardPage() {
                   </div>
                 )}
               </div>
+              </div>
             </div>
           </div>
 
           {/* ── Quick Actions ─────────────────────────── */}
-          <div className="card p-5">
-            <h2 className="font-semibold text-white mb-4">Quick Actions</h2>
+          <div className="card overflow-hidden">
+            <div className="panel-header">
+              <h2 className="panel-title">Quick Actions</h2>
+            </div>
+            <div className="panel-body">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {quickActions.map(a => (
                 <Link key={a.href} href={a.href}
@@ -377,6 +388,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-white/70 group-hover:text-white font-medium transition-colors">{a.label}</span>
                 </Link>
               ))}
+            </div>
             </div>
           </div>
 

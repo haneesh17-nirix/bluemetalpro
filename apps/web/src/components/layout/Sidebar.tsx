@@ -39,10 +39,10 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
   const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
 
   const activeStyle: React.CSSProperties = {
-    background: 'linear-gradient(135deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.07) 100%)',
-    border: '1px solid rgba(201,168,76,0.25)',
-    color: '#f0d878',
-    borderLeft: '3px solid #e8c96a',
+    background: 'linear-gradient(135deg, rgba(184,149,62,0.14) 0%, rgba(184,149,62,0.06) 100%)',
+    border: '1px solid rgba(184,149,62,0.2)',
+    color: '#d4aa52',
+    borderLeft: '3px solid #d4aa52',
     paddingLeft: 10,
   };
   const inactiveStyle: React.CSSProperties = {
@@ -74,9 +74,9 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
         }
       }}
     >
-      <item.icon size={15} style={{ color: active ? '#e8c96a' : 'rgba(200,212,232,0.5)', flexShrink: 0 }} />
+      <item.icon size={15} style={{ color: active ? '#c9a84c' : 'rgba(200,212,232,0.5)', flexShrink: 0 }} />
       <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
-      {active && <ChevronRight size={12} style={{ color: 'rgba(201,168,76,0.6)', flexShrink: 0 }} />}
+      {active && <ChevronRight size={12} style={{ color: 'rgba(184,149,62,0.5)', flexShrink: 0 }} />}
     </Link>
   );
 }
@@ -113,8 +113,8 @@ export default function Sidebar() {
         top: 0,
         flexShrink: 0,
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #060f20 0%, #091628 50%, #0c1f3d 100%)',
-        borderRight: '1px solid #1f3659',
+        background: 'linear-gradient(180deg, #050e1e 0%, #081525 50%, #0a1c35 100%)',
+        borderRight: '1px solid rgba(30, 52, 88, 0.8)',
       }}
     >
       {/* ── Logo ──────────────────────────────────── */}
@@ -125,9 +125,9 @@ export default function Sidebar() {
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-lg"
           style={{
-            background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
+            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
             color: '#0c1f3d',
-            boxShadow: '0 4px 12px rgba(201,168,76,0.3)',
+            boxShadow: '0 4px 12px rgba(184,149,62,0.25)',
           }}
         >
           B
@@ -137,7 +137,7 @@ export default function Sidebar() {
           <p
             className="text-[10px] font-semibold mt-0.5 tracking-wide"
             style={{
-              background: 'linear-gradient(135deg, #c9a84c, #f0d878)',
+              background: 'linear-gradient(135deg, #b8953e, #d4aa52)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -153,8 +153,8 @@ export default function Sidebar() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '4px 10px', borderRadius: 20,
-            background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)',
-            fontSize: 11, fontWeight: 600, color: '#e8c96a',
+            background: 'rgba(184,149,62,0.1)', border: '1px solid rgba(184,149,62,0.2)',
+            fontSize: 11, fontWeight: 600, color: '#d4aa52',
             maxWidth: '100%',
           }}>
             <Factory size={11} style={{ flexShrink: 0 }} />
@@ -170,8 +170,8 @@ export default function Sidebar() {
         {adminItems.length > 0 && (
           <>
             <div style={{ margin: '10px 4px 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(200,212,232,0.3)', textTransform: 'uppercase' }}>Admin</span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(42,69,112,0.6)' }} />
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(184,149,62,0.4)', textTransform: 'uppercase' }}>Admin</span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(184,149,62,0.12)' }} />
             </div>
             {adminItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
           </>
@@ -187,7 +187,7 @@ export default function Sidebar() {
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
             style={{
-              background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)',
+              background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
               color: '#0c1f3d',
             }}
           >
