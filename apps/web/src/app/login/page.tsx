@@ -134,15 +134,15 @@ export default function LoginPage() {
         }
         .lp-brand { display: flex; flex-direction: column; gap: 28px; }
         .lp-logo-wrap {
-          display: flex; align-items: center; gap: 18px;
+          display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
         }
         .lp-wordmark { display: flex; flex-direction: column; gap: 4px; }
         .lp-wordmark-name {
-          font-size: 28px; font-weight: 900; color: #fff;
+          font-size: 40px; font-weight: 900; color: #fff;
           letter-spacing: -0.03em; line-height: 1;
         }
         .lp-wordmark-tag {
-          font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+          font-size: 13px; font-weight: 700; letter-spacing: 0.22em;
           background: linear-gradient(135deg, #b8953e, #d4aa52);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -304,24 +304,14 @@ export default function LoginPage() {
         <div className="lp-left">
           <div className="lp-brand">
             <div className="lp-logo-wrap">
-              <div style={{ filter: 'drop-shadow(0 6px 24px rgba(160,112,20,0.5))' }}>
-                <LogoIcon size={64} />
+              <div style={{ filter: 'drop-shadow(0 8px 32px rgba(160,112,20,0.6))' }}>
+                <LogoIcon size={120} />
               </div>
               <div className="lp-wordmark">
                 <span className="lp-wordmark-name">BlueMetal Pro</span>
                 <span className="lp-wordmark-tag">QUARRY ERP</span>
               </div>
             </div>
-          </div>
-
-          <div className="lp-hero">
-            <h1 className="lp-hero-heading">
-              Run your quarry<br />
-              <span>smarter, faster.</span>
-            </h1>
-            <p className="lp-hero-sub">
-              End-to-end business intelligence for stone crushing operations — from weighbridge to GST filing.
-            </p>
           </div>
 
           <div className="lp-features">
