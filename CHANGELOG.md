@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.13] — 2026-06-10
+
+
+### Bug Fixes
+
+- remove crusher?.id query guard from dashboard — fires regardless of crusher context ([7570c17])
+
 ## [1.14.12] — 2026-06-10
 
 
