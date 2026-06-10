@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="Quarry & Stone Crushing ERP" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0e2544" />
-        <link rel="icon" href="/logo-icon.png" />
+        <link rel="icon" href="/logo-icon.svg" type="image/svg+xml" />
         {/* Preconnect for Google Fonts speed */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

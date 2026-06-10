@@ -6,6 +6,7 @@ import {
   BarChart3, Wrench, DollarSign, Mountain, Settings,
   Scale, Camera, ChevronRight, Factory,
 } from 'lucide-react';
+import LogoIcon from '@/components/ui/LogoIcon';
 
 const nav = [
   { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','operations','report_viewer'], admin: false },
@@ -96,13 +97,9 @@ export default function Sidebar() {
         padding: '20px 20px 18px', display: 'flex', alignItems: 'center', gap: 12,
         flexShrink: 0, borderBottom: '1px solid rgba(30,52,88,0.8)',
       }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontWeight: 900, fontSize: 18, color: '#0c1f3d',
-          background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-          boxShadow: '0 4px 12px rgba(184,149,62,0.25)',
-        }}>B</div>
+        <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 12px rgba(180,140,20,0.35))' }}>
+          <LogoIcon size={40} />
+        </div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: '#fff', lineHeight: 1.2, margin: 0 }}>
             BlueMetal Pro

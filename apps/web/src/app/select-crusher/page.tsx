@@ -5,6 +5,7 @@ import { selectCrusher } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { log } from '@bluemetal/shared';
 import { Factory, MapPin, ChevronRight, Loader2 } from 'lucide-react';
+import LogoIcon from '@/components/ui/LogoIcon';
 
 export default function SelectCrusherPage() {
   const router = useRouter();
@@ -36,12 +37,12 @@ export default function SelectCrusherPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6"
-      style={{ background: 'linear-gradient(160deg, #071530 0%, #0e2544 50%, #071530 100%)' }}>
+      style={{ background: 'linear-gradient(160deg, #111418 0%, #161c24 50%, #111418 100%)' }}>
       <div className="w-full max-w-lg">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-            style={{ background: 'linear-gradient(135deg, #9a7a2e, #e8c96a)' }}>
-            <Factory size={28} color="#071530" />
+          <div className="inline-flex items-center justify-center mb-4"
+            style={{ filter: 'drop-shadow(0 6px 18px rgba(180,140,20,0.5))' }}>
+            <LogoIcon size={72} />
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Select Your Plant</h1>
           <p className="text-white/50 text-sm">Choose the crushing plant you want to manage</p>

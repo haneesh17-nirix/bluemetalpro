@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { login, selectCrusher, getCrushers } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
+import LogoIcon from '@/components/ui/LogoIcon';
 
 const features = [
   'GST-ready tax invoices',
@@ -87,7 +88,7 @@ export default function LoginPage() {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'row',
-      background: 'linear-gradient(175deg, #060f20 0%, #0c1f3d 50%, #060f20 100%)',
+      background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
     }}>
 
       {/* ── Left branding panel ── */}
@@ -117,12 +118,9 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: 16, marginBottom: 64 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 16, display: 'flex', alignItems: 'center',
-            justifyContent: 'center', fontWeight: 900, fontSize: 20, flexShrink: 0,
-            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-            color: '#0c1f3d', boxShadow: '0 6px 20px rgba(184,149,62,0.35)',
-          }}>B</div>
+          <div style={{ flexShrink: 0, filter: 'drop-shadow(0 6px 20px rgba(180,140,20,0.45))' }}>
+            <LogoIcon size={52} />
+          </div>
           <div>
             <p style={{ fontWeight: 700, fontSize: 20, color: '#fff', lineHeight: 1 }}>BlueMetal Pro</p>
             <p style={{
@@ -176,8 +174,8 @@ export default function LoginPage() {
           {/* Card */}
           <div style={{
             borderRadius: 24, padding: 32,
-            background: '#162c52',
-            border: '1px solid rgba(184,149,62,0.2)',
+            background: '#1a3570',
+            border: '1px solid rgba(184,149,62,0.25)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(184,149,62,0.08)',
           }}>
             <div style={{ marginBottom: 32 }}>

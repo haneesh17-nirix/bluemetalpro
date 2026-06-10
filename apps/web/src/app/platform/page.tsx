@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import {
   Building2, Users, Plus, X, ChevronRight, ToggleLeft, ToggleRight,
-  LogOut, Shield, Loader2, TrendingUp, IndianRupee, MapPin, CheckCircle,
+  LogOut, Shield, Loader2, TrendingUp, IndianRupee, MapPin, CheckCircle, BarChart2,
   UserPlus, Trash2, AlertCircle,
 } from 'lucide-react';
+import LogoIcon from '@/components/ui/LogoIcon';
 import {
   getPlatformOverview, getPlatformUsers, platformCreateCrusher,
   getPlatformCrusherUsers, platformAddUserToCrusher, platformRemoveUserFromCrusher,
@@ -457,7 +458,7 @@ export default function PlatformPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(175deg, #060f20 0%, #0c1f3d 50%, #060f20 100%)',
+      background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
       color: '#e8edf5',
     }}>
       {/* Top bar */}
@@ -469,12 +470,8 @@ export default function PlatformPage() {
         position: 'sticky', top: 0, zIndex: 100,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'linear-gradient(135deg, #7a5e22 0%, #c9a84c 55%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Shield size={16} color="#0c1f3d" />
+          <div style={{ filter: 'drop-shadow(0 3px 8px rgba(180,140,20,0.4))' }}>
+            <LogoIcon size={34} />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#e8edf5', lineHeight: 1.2 }}>BlueMetal Pro</div>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 132" width="120" height="132">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0c83a"/>
+      <stop offset="35%" stop-color="#d4a020"/>
+      <stop offset="65%" stop-color="#c89018"/>
+      <stop offset="100%" stop-color="#a87010"/>
+    </linearGradient>
+    <linearGradient id="gold-v" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8b828"/>
+      <stop offset="50%" stop-color="#c48c14"/>
+      <stop offset="100%" stop-color="#9a6808"/>
+    </linearGradient>
+    <linearGradient id="shield-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e3f7a"/>
+      <stop offset="100%" stop-color="#132a5a"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#1e6830"/>
+      <stop offset="100%" stop-color="#2ea848"/>
+    </linearGradient>
+    <clipPath id="b-upper-inner">
+      <path d="M36 22 Q68 22 68 38 Q68 52 36 52 Z"/>
+    </clipPath>
+    <clipPath id="b-lower-inner">
+      <path d="M36 56 Q74 56 74 72 Q74 88 36 88 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Shield body -->
+  <path d="M60 4 L110 20 L110 72 Q110 108 60 126 Q10 108 10 72 L10 20 Z" fill="url(#shield-fill)"/>
+  <!-- Shield border gold -->
+  <path d="M60 4 L110 20 L110 72 Q110 108 60 126 Q10 108 10 72 L10 20 Z" fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <!-- Shield inner highlight -->
+  <path d="M60 10 L104 24 L104 72 Q104 104 60 120 Q16 104 16 72 L16 24 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- B left spine (gold) -->
+  <rect x="24" y="18" width="12" height="74" rx="3" fill="url(#gold-v)"/>
+
+  <!-- B upper bump outer (gold) -->
+  <path d="M36 18 Q74 18 74 36 Q74 54 36 54 Z" fill="url(#gold)"/>
+  <!-- B upper bump inner cutout (navy) — mountain area -->
+  <path d="M36 23 Q68 23 68 37 Q68 50 36 50 Z" fill="#152e68"/>
+  <!-- Mountain silhouette inside upper B -->
+  <g clip-path="url(#b-upper-inner)">
+    <!-- Rocky mountain peaks — dark navy against lighter showing through -->
+    <polygon points="36,50 44,38 48,42 53,32 58,36 62,28 68,38 68,50" fill="#1a3a7a"/>
+    <polygon points="53,32 58,28 64,32 68,32 68,28 62,22 56,26 50,22 44,30 48,34" fill="#1e4488"/>
+    <!-- Snow/highlight tips -->
+    <polygon points="62,22 58,28 65,28" fill="rgba(255,255,255,0.15)"/>
+    <polygon points="50,22 46,28 53,26" fill="rgba(255,255,255,0.10)"/>
+  </g>
+  <!-- Mountain bottom fill for depth -->
+  <path d="M36 44 Q68 44 68 50 L36 50 Z" fill="#0f2255" opacity="0.6"/>
+
+  <!-- B lower bump outer (gold, larger) -->
+  <path d="M36 56 Q78 56 78 72 Q78 90 36 90 Z" fill="url(#gold)"/>
+  <!-- B lower bump inner cutout (navy) — bars area -->
+  <path d="M36 61 Q72 61 72 72 Q72 85 36 85 Z" fill="#152e68"/>
+  <!-- Green bar chart bars -->
+  <rect x="43" y="73" width="7" height="11" rx="1.5" fill="url(#green)"/>
+  <rect x="52" y="67" width="7" height="17" rx="1.5" fill="url(#green)"/>
+  <rect x="61" y="70" width="7" height="14" rx="1.5" fill="url(#green)"/>
+</svg>

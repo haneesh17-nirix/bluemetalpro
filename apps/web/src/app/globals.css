@@ -9,29 +9,30 @@
 ───────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    /* Brand blues */
-    --brand-darkest:  #060f20;
-    --brand-dark:     #091628;
-    --brand:          #0c1f3d;
-    --brand-mid:      #112749;
-    --brand-light:    #1a3460;
-    --brand-bright:   #2563a8;
+    /* Brand — shield navy (from new logo) */
+    --brand-darkest:  #0d1520;
+    --brand-dark:     #111c2e;
+    --brand:          #1a3570;
+    --brand-mid:      #1e3d7c;
+    --brand-light:    #244688;
+    --brand-bright:   #2e58a8;
 
     /* Gold */
-    --gold:           #b8953e;
-    --gold-light:     #d4aa52;
-    --gold-bright:    #e0bc60;
-    --gold-dark:      #8a6a28;
+    --gold:           #c89018;
+    --gold-light:     #d4a828;
+    --gold-bright:    #e8c040;
+    --gold-dark:      #9a6c0a;
 
-    /* Gem green */
-    --gem:            #2e7d52;
-    --gem-light:      #3da066;
+    /* Emerald green (from bar chart in logo) */
+    --gem:            #2a8040;
+    --gem-light:      #2ea848;
+    --gem-dark:       #1e6830;
 
-    /* Surfaces — noticeably lighter than body so cards pop */
-    --surface-card:   #162c52;   /* +20 lightness vs body */
-    --surface-raised: #1c3660;   /* hover / raised state   */
-    --surface-border: #2a4570;   /* visible border          */
-    --surface-border-subtle: #1f3659;
+    /* Surfaces */
+    --surface-card:   #1a3570;   /* shield navy */
+    --surface-raised: #1e3d7c;
+    --surface-border: #2a4e8a;
+    --surface-border-subtle: #1e3060;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,13 +46,13 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 14px;
     line-height: 1.5;
-    color: #e8edf5;          /* near-white, never pure white — easier on eyes */
-    background: #060f20;
+    color: #e8edf5;
+    background: #111418;
     background-image:
-      radial-gradient(ellipse 90% 50% at 15% -10%,  rgba(20, 60, 130, 0.25) 0%, transparent 60%),
-      radial-gradient(ellipse 70% 40% at 85% 110%,  rgba(184, 149, 62, 0.07) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 60% at 50% 50%,   rgba(6, 15, 32, 0) 0%, transparent 100%),
-      linear-gradient(170deg, #07111f 0%, #0b1c38 40%, #071120 100%);
+      radial-gradient(ellipse 90% 50% at 15% -10%,  rgba(26, 53, 112, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 40% at 85% 110%,  rgba(184, 149, 62, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 50% 50%,   rgba(17, 20, 24, 0) 0%, transparent 100%),
+      linear-gradient(170deg, #111418 0%, #161c24 40%, #111418 100%);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -59,7 +60,7 @@
 
   /* Scrollbar */
   ::-webkit-scrollbar       { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: #1a1c1f; }
+  ::-webkit-scrollbar-track { background: #141820; }
   ::-webkit-scrollbar-thumb { background: #3a3d42; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #b8953e; }
 
@@ -72,52 +73,21 @@
 ───────────────────────────────────────────────────────── */
 @layer components {
 
-  /* ── Cards — lapis lazuli rock facets + iOS glass ────── */
+  /* ── Cards — SVG polygon rock mosaic tile + iOS glass ── */
   /*
-   * Replicates the rock texture from the logo:
-   *   - Very dark navy base (#131a2e) — near-black blue
-   *   - Angular facet planes via layered diagonal radials (lighter/darker navy)
-   *   - Gold pyrite veins at two crossing angles (sharper, more opaque)
-   *   - White calcite specular patches
-   *   - iOS glass treatment on top
+   * 6 interlocking stone polygons (shield-navy palette) with gold crack
+   * lines between them, tiled as a data URI background. iOS glass on top.
+   * Stones: S1(0,0–80,80) S2(80,0–240,80) S3(160,0–240,80)
+   *         S4(0,80–80,160) S5(75,80–160,160) S6(155,80–240,160)
+   * All share exact edge coordinates — zero gaps.
    */
   .card {
-    background:
-      /* iOS gloss sheen */
+    background-image:
       linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      /* gold pyrite veins — two crossing sets, more opaque than before */
-      repeating-linear-gradient(
-        55deg,
-        transparent 0px, transparent 24px,
-        rgba(212,168,32,0.14) 24px, rgba(212,168,32,0.14) 26px,
-        transparent 26px, transparent 52px,
-        rgba(196,152,24,0.09) 52px, rgba(196,152,24,0.09) 53px,
-        transparent 53px
-      ),
-      repeating-linear-gradient(
-        122deg,
-        transparent 0px, transparent 38px,
-        rgba(220,180,40,0.11) 38px, rgba(220,180,40,0.11) 40px,
-        transparent 40px, transparent 78px,
-        rgba(200,160,28,0.07) 78px, rgba(200,160,28,0.07) 79px,
-        transparent 79px
-      ),
-      /* white calcite specular patches */
-      radial-gradient(ellipse 22% 14% at 66% 20%, rgba(255,255,255,0.08) 0%, transparent 100%),
-      radial-gradient(ellipse 14% 10% at 18% 74%, rgba(255,255,255,0.05) 0%, transparent 100%),
-      /* facet planes — angular polygonal light/dark zones */
-      radial-gradient(ellipse 50% 38% at 18% 58%, #1a2440 0%, transparent 65%),
-      radial-gradient(ellipse 42% 48% at 80% 24%, #202d52 0%, transparent 62%),
-      radial-gradient(ellipse 36% 42% at 55% 82%, #141c34 0%, transparent 58%),
-      radial-gradient(ellipse 28% 32% at 38% 14%, #1c2848 0%, transparent 55%),
-      /* dark lapis base — near-black navy, like the rocks in the logo */
-      linear-gradient(148deg,
-        #151e36 0%,  #101828 16%,
-        #192240 30%, #0e1624 45%,
-        #171f38 58%, #111928 72%,
-        #151e36 85%, #101828 100%
-      );
-    border: 1px solid rgba(80,120,200,0.22);
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 240px 160px;
+    background-repeat: no-repeat, repeat;
+    border: 1px solid rgba(80,120,200,0.25);
     border-radius: 16px;
     box-shadow:
       inset 0 1.5px 0 rgba(255,255,255,0.16),
@@ -146,15 +116,11 @@
   .card > * { position: relative; z-index: 1; }
 
   .card-gold {
-    background:
+    background-image:
       linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      repeating-linear-gradient(55deg, transparent 0px, transparent 24px, rgba(212,168,32,0.14) 24px, rgba(212,168,32,0.14) 26px, transparent 26px, transparent 52px, rgba(196,152,24,0.09) 52px, rgba(196,152,24,0.09) 53px, transparent 53px),
-      repeating-linear-gradient(122deg, transparent 0px, transparent 38px, rgba(220,180,40,0.11) 38px, rgba(220,180,40,0.11) 40px, transparent 40px, transparent 78px, rgba(200,160,28,0.07) 78px, rgba(200,160,28,0.07) 79px, transparent 79px),
-      radial-gradient(ellipse 22% 14% at 66% 20%, rgba(255,255,255,0.08) 0%, transparent 100%),
-      radial-gradient(ellipse 50% 38% at 18% 58%, #1a2440 0%, transparent 65%),
-      radial-gradient(ellipse 42% 48% at 80% 24%, #202d52 0%, transparent 62%),
-      radial-gradient(ellipse 28% 32% at 38% 14%, #1c2848 0%, transparent 55%),
-      linear-gradient(148deg, #151e36 0%, #101828 16%, #192240 30%, #0e1624 45%, #171f38 58%, #111928 72%, #151e36 85%, #101828 100%);
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 240px 160px;
+    background-repeat: no-repeat, repeat;
     border: 1px solid rgba(184,149,62,0.36);
     border-radius: 16px;
     box-shadow:
@@ -321,7 +287,7 @@
     box-shadow: 0 0 0 3px rgba(184,149,62,0.12);
   }
   .select option {
-    background: #162c52;
+    background: #1a3570;
     color: #e8edf5;
   }
 
@@ -381,19 +347,14 @@
   .badge-yellow { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
   .badge-gray   { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.15); }
 
-  /* ── Stat cards — lapis lazuli rock facets + iOS glass ── */
+  /* ── Stat cards — SVG polygon rock tile + iOS glass ───── */
   .stat-card {
-    background:
+    background-image:
       linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      repeating-linear-gradient(55deg, transparent 0px, transparent 24px, rgba(212,168,32,0.14) 24px, rgba(212,168,32,0.14) 26px, transparent 26px, transparent 52px, rgba(196,152,24,0.09) 52px, rgba(196,152,24,0.09) 53px, transparent 53px),
-      repeating-linear-gradient(122deg, transparent 0px, transparent 38px, rgba(220,180,40,0.11) 38px, rgba(220,180,40,0.11) 40px, transparent 40px, transparent 78px, rgba(200,160,28,0.07) 78px, rgba(200,160,28,0.07) 79px, transparent 79px),
-      radial-gradient(ellipse 24% 16% at 70% 18%, rgba(255,255,255,0.08) 0%, transparent 100%),
-      radial-gradient(ellipse 50% 38% at 18% 58%, #1a2440 0%, transparent 65%),
-      radial-gradient(ellipse 42% 48% at 80% 24%, #202d52 0%, transparent 62%),
-      radial-gradient(ellipse 36% 42% at 55% 82%, #141c34 0%, transparent 58%),
-      radial-gradient(ellipse 28% 32% at 38% 14%, #1c2848 0%, transparent 55%),
-      linear-gradient(148deg, #151e36 0%, #101828 16%, #192240 30%, #0e1624 45%, #171f38 58%, #111928 72%, #151e36 85%, #101828 100%);
-    border: 1px solid rgba(80,120,200,0.22);
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 240px 160px;
+    background-repeat: no-repeat, repeat;
+    border: 1px solid rgba(80,120,200,0.25);
     border-radius: 16px;
     padding: 20px;
     display: flex;
