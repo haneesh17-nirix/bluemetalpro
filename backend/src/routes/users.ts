@@ -6,6 +6,32 @@ import { logger, logAction } from '../utils/logger';
 
 export const usersRouter = Router();
 usersRouter.use(authenticate);
+
+// ── Self-service routes (any authenticated user) ─────────────────────────────
+usersRouter.get('/me', async (req, res) => {
+  const user = await queryOne(
+    `SELECT id, name, email, phone, role, notify_events FROM users WHERE id = $1`,
+    [req.user!.id]
+  );
+  res.json(user);
+});
+
+usersRouter.patch('/me', async (req, res) => {
+  const { notify_events } = req.body;
+  const allowed = ['sale','purchase','maintenance','quarry','wages','vehicle','party','weighbridge','ledger'];
+  const filtered = Array.isArray(notify_events)
+    ? notify_events.filter((e: string) => allowed.includes(e))
+    : null;
+  const user = await queryOne(
+    `UPDATE users SET notify_events = $1, updated_at = now() WHERE id = $2
+     RETURNING id, name, email, phone, role, notify_events`,
+    [filtered, req.user!.id]
+  );
+  logAction('user.notify_prefs_updated', { userId: req.user!.id, notify_events: filtered });
+  res.json(user);
+});
+
+// ── Admin-only routes below ──────────────────────────────────────────────────
 usersRouter.use(authorize('admin'));
 
 usersRouter.get('/', async (req, res) => {

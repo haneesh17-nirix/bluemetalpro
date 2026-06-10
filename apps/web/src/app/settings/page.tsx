@@ -4,13 +4,37 @@ import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import AppLayout from '@/components/layout/AppLayout';
-import { getConfig, updateConfig } from '@/lib/api';
-import { Save, Building2, CreditCard, FileText, Phone } from 'lucide-react';
+import { getConfig, updateConfig, getMyProfile, updateMyNotifyPrefs } from '@/lib/api';
+import { Save, Building2, CreditCard, FileText, Bell } from 'lucide-react';
+
+const ALL_EVENTS: { key: string; label: string; desc: string }[] = [
+  { key: 'sale',        label: 'Sales',          desc: 'New invoice created' },
+  { key: 'purchase',    label: 'Purchases',       desc: 'New purchase entry recorded' },
+  { key: 'quarry',      label: 'Quarry',          desc: 'Production entry logged' },
+  { key: 'maintenance', label: 'Maintenance',     desc: 'Maintenance job added' },
+  { key: 'wages',       label: 'Wages',           desc: 'Attendance / wages recorded' },
+  { key: 'vehicle',     label: 'Vehicles',        desc: 'Vehicle added or updated' },
+  { key: 'party',       label: 'Parties',         desc: 'New party added to directory' },
+  { key: 'weighbridge', label: 'Weighbridge',     desc: 'Weigh ticket created' },
+  { key: 'ledger',      label: 'Payments',        desc: 'Payment / receipt recorded' },
+];
 
 export default function SettingsPage() {
   useEffect(() => { log.page('Settings'); }, []);
   const qc = useQueryClient();
   const { data: config } = useQuery({ queryKey: ['config'], queryFn: getConfig });
+  const { data: myProfile } = useQuery({ queryKey: ['my-profile'], queryFn: getMyProfile });
+  const [notifyEvents, setNotifyEvents] = useState<string[]>([]);
+  useEffect(() => {
+    if (myProfile?.notify_events) setNotifyEvents(myProfile.notify_events);
+    else if (myProfile) setNotifyEvents(ALL_EVENTS.map(e => e.key));
+  }, [myProfile]);
+
+  const notifyMutation = useMutation({
+    mutationFn: updateMyNotifyPrefs,
+    onSuccess: () => { toast.success('Notification preferences saved'); qc.invalidateQueries({ queryKey: ['my-profile'] }); },
+    onError: () => toast.error('Failed to save preferences'),
+  });
 
   const [form, setForm] = useState<any>({
     company_name: '', gstin: '', pan: '', address: '', city: '',
@@ -131,6 +155,72 @@ export default function SettingsPage() {
               rows={3}
               placeholder="E.g. Goods once sold will not be taken back. Subject to local jurisdiction."
             />
+          </div>
+        </div>
+
+        {/* Notification Preferences */}
+        <div className="card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(200,144,24,0.15)', border: '1px solid rgba(200,144,24,0.25)' }}>
+                <Bell size={16} style={{ color: '#d4a828' }} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-white text-sm">Notification Preferences</h2>
+                <p className="text-xs" style={{ color: 'rgba(200,212,232,0.45)' }}>Choose which events trigger in-app and push notifications for you</p>
+              </div>
+            </div>
+            <button
+              onClick={() => notifyMutation.mutate(notifyEvents)}
+              disabled={notifyMutation.isPending}
+              className="btn-primary text-sm disabled:opacity-60"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px' }}
+            >
+              <Save size={14} /> {notifyMutation.isPending ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+            {ALL_EVENTS.map(ev => {
+              const on = notifyEvents.includes(ev.key);
+              return (
+                <button
+                  key={ev.key}
+                  onClick={() => setNotifyEvents(prev =>
+                    prev.includes(ev.key) ? prev.filter(e => e !== ev.key) : [...prev, ev.key]
+                  )}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '12px 14px', borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+                    border: on ? '1px solid rgba(200,144,24,0.35)' : '1px solid rgba(255,255,255,0.06)',
+                    background: on ? 'rgba(200,144,24,0.08)' : 'rgba(255,255,255,0.03)',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {/* Toggle pill */}
+                  <div style={{
+                    width: 36, height: 20, borderRadius: 10, flexShrink: 0, position: 'relative',
+                    background: on ? '#c89018' : 'rgba(255,255,255,0.12)',
+                    transition: 'background 0.2s',
+                  }}>
+                    <div style={{
+                      position: 'absolute', top: 2, left: on ? 18 : 2,
+                      width: 16, height: 16, borderRadius: '50%',
+                      background: '#fff',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                      transition: 'left 0.2s',
+                    }} />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: on ? '#e8c040' : 'rgba(200,212,232,0.7)', lineHeight: 1.2 }}>{ev.label}</p>
+                    <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.35)', marginTop: 2 }}>{ev.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+            <button onClick={() => setNotifyEvents(ALL_EVENTS.map(e => e.key))} className="btn-ghost" style={{ fontSize: 12, padding: '5px 12px' }}>Enable all</button>
+            <button onClick={() => setNotifyEvents([])} className="btn-ghost" style={{ fontSize: 12, padding: '5px 12px' }}>Disable all</button>
           </div>
         </div>
 

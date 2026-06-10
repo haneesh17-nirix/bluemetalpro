@@ -157,6 +157,7 @@ REQUIRED=(
   database/migrations/010_simplify_roles.sql
   database/migrations/011_fix_test_passwords.sql
   database/migrations/012_cleanup_duplicate_crushers.sql
+  database/migrations/013_notify_events_extended.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
@@ -202,6 +203,7 @@ REQUIRED=(
   apps/web/src/app/platform/page.tsx
   apps/web/src/app/purchases/page.tsx
   apps/web/src/app/quarry/page.tsx
+  apps/web/src/app/notifications/page.tsx
   apps/web/src/app/reports/page.tsx
   apps/web/src/app/sales/page.tsx
   apps/web/src/app/select-crusher/page.tsx

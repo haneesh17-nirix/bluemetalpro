@@ -120,3 +120,12 @@ export const platformAddUserToCrusher = (id: string, data: any) => api.post(`/pl
 export const platformRemoveUserFromCrusher = (crusherId: string, userId: string) => api.delete(`/platform/crushers/${crusherId}/users/${userId}`).then(r => r.data);
 export const platformSetCrusherStatus = (id: string, is_active: boolean) => api.patch(`/platform/crushers/${id}/status`, { is_active }).then(r => r.data);
 export const platformCreateUser = (data: any) => api.post('/platform/users', data).then(r => r.data);
+
+// Profile / notification prefs
+export const getMyProfile = () => api.get('/users/me').then(r => r.data);
+export const updateMyNotifyPrefs = (notify_events: string[]) => api.patch('/users/me', { notify_events }).then(r => r.data);
+
+// Full notification list
+export const getNotifications = (limit = 50) => api.get(`/notifications?limit=${limit}`).then(r => r.data);
+export const markNotificationRead = (id: string) => api.patch(`/notifications/${id}/read`).then(r => r.data);
+export const markAllNotificationsRead = () => api.post('/notifications/mark-all-read').then(r => r.data);
