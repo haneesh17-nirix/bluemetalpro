@@ -80,12 +80,6 @@ jobs:
           name: backend-dist
           path: deploy
 
-      - name: Restore production dependencies
-        working-directory: deploy
-        # Use the root workspace lockfile (has all transitive deps).
-        # npm ci picks up package-lock.json from cwd; the root lock is uploaded alongside.
-        run: npm ci --omit=dev --ignore-scripts
-
       - name: Set image tag
         id: meta
         run: echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
