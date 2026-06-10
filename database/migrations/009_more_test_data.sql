@@ -460,9 +460,15 @@ BEGIN
     END IF;
   END IF;
   IF v1_5 IS NOT NULL THEN
-    IF NOT EXISTS(SELECT 1 FROM maintenance_records WHERE asset_id=v1_5 AND title='Tipper tyre replacement' AND scheduled_date='2026-05-29') THEN
+    -- Ensure asset entry exists for this vehicle (maintenance_records.asset_id → assets.id)
+    IF NOT EXISTS (SELECT 1 FROM assets WHERE vehicle_id = v1_5) THEN
+      INSERT INTO assets (name, asset_type, vehicle_id, purchase_date, purchase_cost, crusher_id)
+      VALUES ('TN33 AE 7890', 'vehicle', v1_5, '2021-03-10', 900000, c1);
+    END IF;
+    SELECT id INTO a1_crusher FROM assets WHERE vehicle_id = v1_5 LIMIT 1; -- reuse var
+    IF NOT EXISTS(SELECT 1 FROM maintenance_records WHERE asset_id=a1_crusher AND title='Tipper tyre replacement' AND scheduled_date='2026-05-29') THEN
       INSERT INTO maintenance_records(asset_id,asset_type,title,description,scheduled_date,completed_date,cost,vendor_name,next_service_date,status,crusher_id)
-      VALUES(v1_5,'vehicle','Tipper tyre replacement','Front axle tyre burst on site, replaced pair','2026-05-29','2026-05-29',18400,'Hosur Tyres & Auto','2026-11-29','completed',c1);
+      VALUES(a1_crusher,'vehicle','Tipper tyre replacement','Front axle tyre burst on site, replaced pair','2026-05-29','2026-05-29',18400,'Hosur Tyres & Auto','2026-11-29','completed',c1);
     END IF;
   END IF;
 
@@ -736,9 +742,15 @@ BEGIN
     END IF;
   END IF;
   IF v2_4 IS NOT NULL THEN
-    IF NOT EXISTS(SELECT 1 FROM maintenance_records WHERE asset_id=v2_4 AND title='Brake pad replacement' AND scheduled_date='2026-06-02') THEN
+    -- Ensure asset entry exists for this vehicle (maintenance_records.asset_id → assets.id)
+    IF NOT EXISTS (SELECT 1 FROM assets WHERE vehicle_id = v2_4) THEN
+      INSERT INTO assets (name, asset_type, vehicle_id, purchase_date, purchase_cost, crusher_id)
+      VALUES ('TN30 BM 1122', 'vehicle', v2_4, '2020-08-15', 850000, c2);
+    END IF;
+    SELECT id INTO a2_crusher FROM assets WHERE vehicle_id = v2_4 LIMIT 1; -- reuse var
+    IF NOT EXISTS(SELECT 1 FROM maintenance_records WHERE asset_id=a2_crusher AND title='Brake pad replacement' AND scheduled_date='2026-06-02') THEN
       INSERT INTO maintenance_records(asset_id,asset_type,title,description,scheduled_date,completed_date,cost,vendor_name,next_service_date,status,crusher_id)
-      VALUES(v2_4,'vehicle','Brake pad replacement','Rear brake pads worn, replaced all 4 corners','2026-06-02','2026-06-02',9600,'Salem Tyres & Auto','2026-12-02','completed',c2);
+      VALUES(a2_crusher,'vehicle','Brake pad replacement','Rear brake pads worn, replaced all 4 corners','2026-06-02','2026-06-02',9600,'Salem Tyres & Auto','2026-12-02','completed',c2);
     END IF;
   END IF;
 
