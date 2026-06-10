@@ -117,33 +117,11 @@ export default function LoginPage() {
           }} />
         </div>
 
-        {/* ── TOP: Headline + features ── */}
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 14, letterSpacing: '-0.02em' }}>
-            Stone Crushing<br />
-            <span style={{
-              background: 'linear-gradient(135deg, #c9a84c 0%, #d4aa52 50%, #c9a84c 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>Business Intelligence</span>
-          </h2>
-          <p style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6, color: 'rgba(200,212,232,0.6)', maxWidth: 340 }}>
-            Complete ERP built for quarry operations — from weighbridge to GST filing.
-          </p>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {features.map(f => (
-              <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* ── CENTRE: Logo + branding (vertically centred in the panel) ── */}
+        {/* ── UPPER-MIDDLE: Logo + branding + features ── */}
         <div style={{
           position: 'relative', zIndex: 10,
           display: 'flex', flexDirection: 'column', alignItems: 'center',
-          gap: 20, padding: '32px 0',
+          gap: 24,
         }}>
           <div style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
             <LogoIcon size={148} />
@@ -157,8 +135,16 @@ export default function LoginPage() {
               fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8,
               background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>QUARRY ERP</p>
+            }}>BUSINESS INTELLIGENCE</p>
           </div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10, alignSelf: 'stretch' }}>
+            {features.map(f => (
+              <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(200,212,232,0.8)' }}>{f}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* ── BOTTOM: Stats ── */}
