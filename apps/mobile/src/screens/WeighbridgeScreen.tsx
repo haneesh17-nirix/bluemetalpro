@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, RefreshControl,
-  TouchableOpacity, FlatList, ActivityIndicator,
+  TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import dayjs from 'dayjs';
 import { log } from '@bluemetal/shared';
+import { colors, radius, shadows } from '../theme';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  stable:   { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
-  unstable: { bg: '#fffbeb', text: '#b45309', border: '#fcd34d' },
-  overload: { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' },
-  error:    { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' },
-  unknown:  { bg: '#f9fafb', text: '#9ca3af', border: '#e5e7eb' },
+  stable:   { bg: 'rgba(52,211,153,0.10)', text: '#34d399', border: 'rgba(52,211,153,0.30)' },
+  unstable: { bg: 'rgba(251,146,60,0.10)', text: '#fb923c', border: 'rgba(251,146,60,0.30)' },
+  overload: { bg: 'rgba(248,113,113,0.10)', text: '#f87171', border: 'rgba(248,113,113,0.30)' },
+  error:    { bg: 'rgba(248,113,113,0.10)', text: '#f87171', border: 'rgba(248,113,113,0.30)' },
+  unknown:  { bg: 'rgba(255,255,255,0.04)', text: colors.textDim, border: colors.border },
 };
 
 function LiveCard({ wb }: { wb: any }) {
   const [live, setLive] = useState<any>(null);
-  const wsRef = useRef<WebSocket | null>(null);
 
   const { data: cloudLive } = useQuery({
     queryKey: ['wb-live-mobile', wb.id],
@@ -30,32 +30,34 @@ function LiveCard({ wb }: { wb: any }) {
   const weight = live || cloudLive;
   const kg = Number(weight?.weight_kg || 0);
   const status: string = weight?.status || 'unknown';
-  const colors = STATUS_COLORS[status] || STATUS_COLORS.unknown;
+  const sc = STATUS_COLORS[status] || STATUS_COLORS.unknown;
 
   return (
-    <View style={[styles.liveCard, { backgroundColor: colors.bg, borderColor: colors.border }]}>
-      <View style={styles.liveCardHeader}>
-        <View>
-          <Text style={[styles.wbName, { color: colors.text }]}>{wb.name}</Text>
-          {wb.location_label ? <Text style={styles.wbLocation}>{wb.location_label}</Text> : null}
+    <View style={[s.liveCard, { backgroundColor: sc.bg, borderColor: sc.border }]}>
+      <View style={s.liveCardHeader}>
+        <View style={{ flex: 1 }}>
+          <Text style={[s.wbName, { color: sc.text }]}>{wb.name}</Text>
+          {wb.location_label ? <Text style={s.wbLocation}>{wb.location_label}</Text> : null}
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: colors.border }]}>
-          <Text style={[styles.statusText, { color: colors.text }]}>{status}</Text>
+        <View style={[s.statusBadge, { backgroundColor: sc.border }]}>
+          <Text style={[s.statusText, { color: sc.text }]}>{status}</Text>
         </View>
       </View>
 
-      <Text style={[styles.weightValue, { color: colors.text }]}>
+      <Text style={[s.weightValue, { color: sc.text }]}>
         {kg.toLocaleString('en-IN')}
       </Text>
-      <Text style={[styles.weightUnit, { color: colors.text }]}>
+      <Text style={[s.weightUnit, { color: sc.text }]}>
         kg  ·  {(kg / 1000).toFixed(3)} MT
       </Text>
 
       {weight?.vehicle_number && (
-        <Text style={styles.vehicleLabel}>Vehicle: <Text style={styles.vehicleBold}>{weight.vehicle_number}</Text></Text>
+        <Text style={s.vehicleLabel}>
+          Vehicle: <Text style={s.vehicleBold}>{weight.vehicle_number}</Text>
+        </Text>
       )}
       {weight?.captured_at && (
-        <Text style={styles.timestamp}>{dayjs(weight.captured_at).format('HH:mm:ss')}</Text>
+        <Text style={s.timestamp}>{dayjs(weight.captured_at).format('HH:mm:ss')}</Text>
       )}
     </View>
   );
@@ -63,18 +65,18 @@ function LiveCard({ wb }: { wb: any }) {
 
 function TicketRow({ ticket }: { ticket: any }) {
   return (
-    <View style={styles.ticketRow}>
+    <View style={s.ticketRow}>
       <View style={{ flex: 1 }}>
-        <Text style={styles.ticketNumber}>{ticket.ticket_number}</Text>
-        <Text style={styles.ticketSub}>{ticket.vehicle_number || '—'} · {ticket.party_name || 'CASH'}</Text>
-        <Text style={styles.ticketTime}>{dayjs(ticket.created_at).format('DD/MM/YY HH:mm')}</Text>
+        <Text style={s.ticketNumber}>{ticket.ticket_number}</Text>
+        <Text style={s.ticketSub}>{ticket.vehicle_number || '—'} · {ticket.party_name || 'CASH'}</Text>
+        <Text style={s.ticketTime}>{dayjs(ticket.created_at).format('DD/MM/YY HH:mm')}</Text>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
-        <Text style={styles.ticketNet}>{Number(ticket.net_weight_mt).toFixed(3)} MT</Text>
-        <Text style={styles.ticketNetKg}>{Number(ticket.net_weight_kg).toLocaleString('en-IN')} kg</Text>
+        <Text style={s.ticketNet}>{Number(ticket.net_weight_mt).toFixed(3)} MT</Text>
+        <Text style={s.ticketNetKg}>{Number(ticket.net_weight_kg).toLocaleString('en-IN')} kg</Text>
         {ticket.sale_id && (
-          <View style={styles.linkedBadge}>
-            <Text style={styles.linkedText}>Linked</Text>
+          <View style={s.linkedBadge}>
+            <Text style={s.linkedText}>Linked</Text>
           </View>
         )}
       </View>
@@ -84,6 +86,7 @@ function TicketRow({ ticket }: { ticket: any }) {
 
 export default function WeighbridgeScreen() {
   useEffect(() => { log.screen('Weighbridge'); }, []);
+
   const { data: weighbridges = [], isLoading: wbLoading, refetch: refetchWb } = useQuery({
     queryKey: ['weighbridges-mobile'],
     queryFn: () => api.get('/weighbridge').then(r => r.data),
@@ -103,39 +106,39 @@ export default function WeighbridgeScreen() {
 
   return (
     <ScrollView
-      style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a3c5e" />}
+      style={s.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.goldLight} />}
     >
-      <Text style={styles.sectionTitle}>Live Scales</Text>
+      <Text style={s.sectionTitle}>Live Scales</Text>
 
       {wbLoading ? (
-        <ActivityIndicator color="#1a3c5e" style={{ marginVertical: 20 }} />
+        <ActivityIndicator color={colors.goldLight} style={{ marginVertical: 20 }} />
       ) : (weighbridges as any[]).length === 0 ? (
-        <View style={styles.empty}>
-          <Ionicons name="scale-outline" size={36} color="#9ca3af" />
-          <Text style={styles.emptyText}>No weighbridges configured</Text>
+        <View style={s.empty}>
+          <Ionicons name="scale-outline" size={36} color={colors.textDim} />
+          <Text style={s.emptyText}>No weighbridges configured</Text>
         </View>
       ) : (
-        <View style={styles.liveGrid}>
+        <View style={s.liveGrid}>
           {(weighbridges as any[]).map((wb: any) => (
             <LiveCard key={wb.id} wb={wb} />
           ))}
         </View>
       )}
 
-      <View style={styles.ticketsHeader}>
-        <Text style={styles.sectionTitle}>Recent Tickets</Text>
-        <TouchableOpacity onPress={() => refetchTickets()} style={styles.refreshBtn}>
-          <Ionicons name="refresh-outline" size={18} color="#1a3c5e" />
+      <View style={s.ticketsHeader}>
+        <Text style={s.sectionTitle}>Recent Tickets</Text>
+        <TouchableOpacity onPress={() => refetchTickets()} style={s.refreshBtn} activeOpacity={0.7}>
+          <Ionicons name="refresh-outline" size={18} color={colors.goldLight} />
         </TouchableOpacity>
       </View>
 
       {ticketsLoading ? (
-        <ActivityIndicator color="#1a3c5e" style={{ marginVertical: 20 }} />
+        <ActivityIndicator color={colors.goldLight} style={{ marginVertical: 20 }} />
       ) : (tickets as any[]).length === 0 ? (
-        <Text style={styles.noTickets}>No tickets today</Text>
+        <Text style={s.noTickets}>No tickets today</Text>
       ) : (
-        <View style={styles.ticketsList}>
+        <View style={s.ticketsList}>
           {(tickets as any[]).map((t: any) => <TicketRow key={t.id} ticket={t} />)}
         </View>
       )}
@@ -145,33 +148,33 @@ export default function WeighbridgeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#1a3c5e', marginHorizontal: 16, marginTop: 20, marginBottom: 10 },
-  liveGrid: { paddingHorizontal: 16, gap: 12 },
-  liveCard: { borderWidth: 1.5, borderRadius: 16, padding: 16, gap: 4 },
-  liveCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-  wbName: { fontSize: 15, fontWeight: '700' },
-  wbLocation: { fontSize: 12, color: '#6b7280', marginTop: 2 },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  statusText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
-  weightValue: { fontSize: 42, fontWeight: '800', fontVariant: ['tabular-nums'], textAlign: 'center', marginVertical: 4 },
-  weightUnit: { fontSize: 16, textAlign: 'center', opacity: 0.7 },
-  vehicleLabel: { fontSize: 12, color: '#6b7280', textAlign: 'center', marginTop: 8 },
-  vehicleBold: { fontWeight: '700', color: '#374151' },
-  timestamp: { fontSize: 10, color: '#9ca3af', textAlign: 'center', marginTop: 4 },
-  ticketsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: 16 },
-  refreshBtn: { padding: 4 },
-  ticketsList: { marginHorizontal: 16, gap: 8 },
-  ticketRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, padding: 12, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
-  ticketNumber: { fontSize: 13, fontWeight: '700', color: '#1a3c5e' },
-  ticketSub: { fontSize: 11, color: '#6b7280', marginTop: 2 },
-  ticketTime: { fontSize: 10, color: '#9ca3af', marginTop: 2 },
-  ticketNet: { fontSize: 16, fontWeight: '800', color: '#111827' },
-  ticketNetKg: { fontSize: 11, color: '#6b7280', marginTop: 1 },
-  linkedBadge: { backgroundColor: '#dcfce7', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, marginTop: 4 },
-  linkedText: { fontSize: 10, color: '#16a34a', fontWeight: '600' },
-  empty: { alignItems: 'center', padding: 40, gap: 8 },
-  emptyText: { color: '#9ca3af', fontSize: 14 },
-  noTickets: { textAlign: 'center', color: '#9ca3af', marginTop: 16, fontSize: 14 },
+const s = StyleSheet.create({
+  container:       { flex: 1, backgroundColor: colors.brandDeep },
+  sectionTitle:    { fontSize: 16, fontWeight: '700', color: colors.white, marginHorizontal: 16, marginTop: 20, marginBottom: 10 },
+  liveGrid:        { paddingHorizontal: 16, gap: 12 },
+  liveCard:        { borderWidth: 1.5, borderRadius: radius.xl, padding: 16, gap: 4 },
+  liveCardHeader:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
+  wbName:          { fontSize: 15, fontWeight: '700' },
+  wbLocation:      { fontSize: 12, color: colors.textDim, marginTop: 2 },
+  statusBadge:     { paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.full },
+  statusText:      { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
+  weightValue:     { fontSize: 42, fontWeight: '800', fontVariant: ['tabular-nums'], textAlign: 'center', marginVertical: 4 },
+  weightUnit:      { fontSize: 16, textAlign: 'center', opacity: 0.7 },
+  vehicleLabel:    { fontSize: 12, color: colors.textMid, textAlign: 'center', marginTop: 8 },
+  vehicleBold:     { fontWeight: '700', color: colors.white },
+  timestamp:       { fontSize: 10, color: colors.textFaint, textAlign: 'center', marginTop: 4 },
+  ticketsHeader:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: 16 },
+  refreshBtn:      { padding: 6 },
+  ticketsList:     { marginHorizontal: 16, gap: 8 },
+  ticketRow:       { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceCard, borderRadius: radius.lg, padding: 12, borderWidth: 1, borderColor: colors.border, ...shadows.card },
+  ticketNumber:    { fontSize: 13, fontWeight: '700', color: colors.white },
+  ticketSub:       { fontSize: 11, color: colors.textMid, marginTop: 2 },
+  ticketTime:      { fontSize: 10, color: colors.textFaint, marginTop: 2 },
+  ticketNet:       { fontSize: 16, fontWeight: '800', color: colors.goldLight },
+  ticketNetKg:     { fontSize: 11, color: colors.textDim, marginTop: 1 },
+  linkedBadge:     { backgroundColor: 'rgba(52,211,153,0.15)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: radius.full, marginTop: 4, borderWidth: 1, borderColor: 'rgba(52,211,153,0.30)' },
+  linkedText:      { fontSize: 10, color: '#34d399', fontWeight: '600' },
+  empty:           { alignItems: 'center', padding: 40, gap: 8 },
+  emptyText:       { color: colors.textDim, fontSize: 14 },
+  noTickets:       { textAlign: 'center', color: colors.textDim, marginTop: 16, fontSize: 14 },
 });
