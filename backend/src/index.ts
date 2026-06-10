@@ -27,6 +27,7 @@ import { notificationsRouter } from './routes/notifications';
 import { weighbridgeRouter } from './routes/weighbridge';
 import { camerasRouter } from './routes/cameras';
 import { crushersRouter } from './routes/crushers';
+import { platformRouter } from './routes/platform';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -58,6 +59,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/weighbridge', weighbridgeRouter);
 app.use('/api/cameras', camerasRouter);
 app.use('/api/crushers', crushersRouter);
+app.use('/api/platform', platformRouter);
 
 app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString(), version: process.env.npm_package_version || 'unknown' }));
 

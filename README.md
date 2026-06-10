@@ -41,7 +41,8 @@ API: `https://api.bluemetalpro.in`
 
 | Role | Access |
 |---|---|
-| `admin` | Full access |
+| `platform_admin` | Cross-crusher platform management — `/platform` dashboard |
+| `admin` | Full access to a crusher |
 | `sales_operator` | Sales, vehicles, parties |
 | `accounts` | Sales, purchases, ledger, wages |
 | `report_viewer` | Read-only reports |
@@ -50,14 +51,26 @@ API: `https://api.bluemetalpro.in`
 
 ## Test Accounts
 
-| Email | Password | Role |
-|---|---|---|
-| admin@bluemetal.local | Admin@123 | admin |
-| sales@bluemetal.local | Sales@123 | sales_operator |
-| accounts@bluemetal.local | Accounts@123 | accounts |
-| reports@bluemetal.local | Reports@123 | report_viewer |
-| vehicle@bluemetal.local | Vehicle@123 | vehicle_manager |
-| quarry@bluemetal.local | Quarry@123 | quarry_operator |
+| Email | Password | Role | Notes |
+|---|---|---|---|
+| platform@bluemetal.local | Platform@123 | platform_admin | Super admin — lands on `/platform`, no crusher selection |
+| admin@bluemetal.local | Admin@123 | admin | Access to both demo units |
+| sales@bluemetal.local | Sales@123 | sales_operator | Access to both demo units |
+| accounts@bluemetal.local | Accounts@123 | accounts | Access to both demo units |
+| reports@bluemetal.local | Reports@123 | report_viewer | |
+| vehicle@bluemetal.local | Vehicle@123 | vehicle_manager | |
+| quarry@bluemetal.local | Quarry@123 | quarry_operator | |
+
+## Demo Data
+
+Two demo crusher units are seeded by `007_seed_test_data.sql`:
+
+| Unit | Location | Products | Parties | Workers |
+|---|---|---|---|---|
+| BlueMetal Quarry Unit 1 | Hosur, TN | M-Sand, P-Sand, 20mm, 40mm, 6mm | 6 | 5 |
+| BlueMetal Quarry Unit 2 | Salem, TN | M-Sand, P-Sand, 20mm, 40mm, Quarry Dust | 6 | 4 |
+
+Each unit has 3 months of sales, purchases, quarry sales, maintenance records, wages, attendance, and ledger entries.
 
 ## CI/CD Pipelines
 

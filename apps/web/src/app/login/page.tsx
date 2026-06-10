@@ -31,7 +31,13 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
-      if (data.temp_token && Array.isArray(data.crushers)) {
+      if (data.platform_admin && data.token) {
+        // Platform admin bypasses crusher selection
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        log.action('Platform admin login', {});
+        router.push('/platform');
+      } else if (data.temp_token && Array.isArray(data.crushers)) {
         localStorage.setItem('token', data.temp_token);
         localStorage.setItem('user', JSON.stringify(data.user));
         if (data.crushers.length === 1) {

@@ -46,6 +46,27 @@ authRouter.post('/login', async (req, res) => {
       );
     }
 
+    // platform_admin bypasses crusher selection — issue a full token immediately
+    if (user.role === 'platform_admin') {
+      const platformToken = jwt.sign(
+        { id: user.id, name: user.name, email: user.email, role: user.role },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      );
+      await query(
+        `INSERT INTO user_sessions (user_id, token_hash, expires_at)
+         VALUES ($1, $2, now() + interval '7 days') ON CONFLICT DO NOTHING`,
+        [user.id, platformToken.slice(-20)]
+      );
+      logAction('user.login.platform_admin', { email: user.email, ip: req.ip });
+      return res.json({
+        token: platformToken,
+        user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        crushers: [],
+        platform_admin: true,
+      });
+    }
+
     logAction('user.login', { email: user.email, role: user.role, crusher_count: crushers.length, ip: req.ip });
     res.json({
       temp_token: tempToken,

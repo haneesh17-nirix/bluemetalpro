@@ -106,3 +106,13 @@ export const updateCrusher = (id: string, data: any) => api.put(`/crushers/${id}
 export const getCrusherUsers = (id: string) => api.get(`/crushers/${id}/users`).then(r => r.data);
 export const grantCrusherAccess = (id: string, data: any) => api.post(`/crushers/${id}/users`, data).then(r => r.data);
 export const revokeCrusherAccess = (id: string, userId: string) => api.delete(`/crushers/${id}/users/${userId}`).then(r => r.data);
+
+// Platform admin
+export const getPlatformOverview = () => api.get('/platform/overview').then(r => r.data);
+export const getPlatformUsers = () => api.get('/platform/users').then(r => r.data);
+export const platformCreateCrusher = (data: any) => api.post('/platform/crushers', data).then(r => r.data);
+export const getPlatformCrusherUsers = (id: string) => api.get(`/platform/crushers/${id}/users`).then(r => r.data);
+export const platformAddUserToCrusher = (id: string, data: any) => api.post(`/platform/crushers/${id}/users`, data).then(r => r.data);
+export const platformRemoveUserFromCrusher = (crusherId: string, userId: string) => api.delete(`/platform/crushers/${crusherId}/users/${userId}`).then(r => r.data);
+export const platformSetCrusherStatus = (id: string, is_active: boolean) => api.patch(`/platform/crushers/${id}/status`, { is_active }).then(r => r.data);
+export const platformCreateUser = (data: any) => api.post('/platform/users', data).then(r => r.data);
