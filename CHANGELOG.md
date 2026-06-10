@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0] — 2026-06-10
+
+
+### Features
+
+- `ui` lapis rock texture from logo — dark facets + gold veins ([6746b59])
+
 ## [1.17.0] — 2026-06-10
 
 
