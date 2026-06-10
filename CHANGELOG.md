@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.7] — 2026-06-10
+
+
+### Bug Fixes
+
+- `login` full inline-style rewrite — zero Tailwind layout classes ([fcd4576])
+
 ## [1.10.6] — 2026-06-10
 
 
