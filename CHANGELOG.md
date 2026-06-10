@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.9] — 2026-06-10
+
+
+### Other Changes
+
+- muted gold palette, login-style depth on all inner pages ([a41aa2b])
+
 ## [1.10.8] — 2026-06-10
 
 
