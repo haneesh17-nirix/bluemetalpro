@@ -29,6 +29,9 @@ export const login = (email: string, password: string, fcm_token?: string) =>
 export const selectCrusher = (crusher_id: string) =>
   api.post('/auth/select-crusher', { crusher_id }).then(r => r.data);
 
+export const getUserCrushers = () =>
+  api.get('/crushers').then(r => r.data);
+
 export const getSales = (params?: any) => api.get('/sales', { params }).then(r => r.data);
 export const createSale = (data: any) => api.post('/sales', data).then(r => r.data);
 export const getParties = (params?: any) => api.get('/parties', { params }).then(r => r.data);

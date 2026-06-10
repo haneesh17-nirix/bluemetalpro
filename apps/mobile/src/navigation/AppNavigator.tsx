@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,6 +18,7 @@ import WeighbridgeScreen from '../screens/WeighbridgeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import CrusherSelectScreen from '../screens/CrusherSelectScreen';
 import { useAuth } from '../hooks/useAuth';
+import { getUserCrushers } from '../lib/api';
 import { colors, radius } from '../theme';
 
 const Tab = createBottomTabNavigator();
@@ -48,11 +49,35 @@ function MoreStack() {
       <Stack.Screen name="Vehicles" component={VehiclesScreen} options={{ title: 'Vehicles' }} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
       <Stack.Screen name="Weighbridge" component={WeighbridgeScreen} options={{ title: 'Weighbridge' }} />
+      <Stack.Screen name="SelectCrusher" component={CrusherSelectScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
 
 function MoreMenuScreen({ navigation }: any) {
+  const { user, signOut } = useAuth();
+  const [switching, setSwitching] = useState(false);
+
+  const handleSwitchPlant = async () => {
+    setSwitching(true);
+    try {
+      const crushers = await getUserCrushers();
+      if (!crushers || crushers.length === 0) {
+        Alert.alert('No Access', 'No active plants found for your account.');
+        return;
+      }
+      if (crushers.length === 1) {
+        Alert.alert('Only One Plant', `You only have access to "${crushers[0].name}".`);
+        return;
+      }
+      navigation.navigate('SelectCrusher', { crushers, user });
+    } catch {
+      Alert.alert('Error', 'Could not fetch plant list. Please try again.');
+    } finally {
+      setSwitching(false);
+    }
+  };
+
   const items = [
     { label: 'Vehicles',          screen: 'Vehicles',      icon: 'car-outline',           color: colors.brandBright },
     { label: 'Maintenance',       screen: 'Maintenance',   icon: 'construct-outline',     color: '#7c3aed' },
@@ -60,6 +85,7 @@ function MoreMenuScreen({ navigation }: any) {
     { label: 'Notifications',     screen: 'Notifications', icon: 'notifications-outline', color: colors.goldDark },
     { label: 'Weighbridge',       screen: 'Weighbridge',   icon: 'scale-outline',         color: '#0891b2' },
   ];
+
   return (
     <View style={more.root}>
       <StatusBar barStyle="light-content" backgroundColor={colors.brandDeep} />
@@ -73,6 +99,39 @@ function MoreMenuScreen({ navigation }: any) {
           <Ionicons name="chevron-forward" size={16} color={colors.textDim} />
         </TouchableOpacity>
       ))}
+
+      {/* Switch Plant */}
+      <TouchableOpacity
+        onPress={handleSwitchPlant}
+        disabled={switching}
+        style={[more.row, { marginTop: 8, borderColor: `${colors.brandBright}40` }]}
+        activeOpacity={0.75}
+      >
+        <View style={[more.iconBox, { backgroundColor: `${colors.brandBright}20` }]}>
+          {switching
+            ? <ActivityIndicator size="small" color={colors.brandBright} />
+            : <Ionicons name="swap-horizontal-outline" size={20} color={colors.brandBright} />
+          }
+        </View>
+        <Text style={more.label}>Switch Plant</Text>
+        <Ionicons name="chevron-forward" size={16} color={colors.textDim} />
+      </TouchableOpacity>
+
+      {/* Sign Out */}
+      <TouchableOpacity
+        onPress={() => Alert.alert('Sign Out', 'Are you sure?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Sign Out', style: 'destructive', onPress: signOut },
+        ])}
+        style={[more.row, { marginTop: 8, borderColor: 'rgba(248,113,113,0.25)' }]}
+        activeOpacity={0.75}
+      >
+        <View style={[more.iconBox, { backgroundColor: 'rgba(248,113,113,0.12)' }]}>
+          <Ionicons name="log-out-outline" size={20} color="#f87171" />
+        </View>
+        <Text style={[more.label, { color: '#f87171' }]}>Sign Out</Text>
+        <Ionicons name="chevron-forward" size={16} color={colors.textDim} />
+      </TouchableOpacity>
     </View>
   );
 }
