@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.30] — 2026-06-10
+
+
+### Other Changes
+
+- center branding on left pane, match card border to logo ring gold ([0368232])
+
 ## [1.21.29] — 2026-06-10
 
 
