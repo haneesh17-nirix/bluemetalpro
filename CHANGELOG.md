@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0] — 2026-06-10
+
+
+### Features
+
+- `mobile` crusher switch flow — Switch Plant in More menu ([c9700ac])
+
 ## [1.11.0] — 2026-06-10
 
 
