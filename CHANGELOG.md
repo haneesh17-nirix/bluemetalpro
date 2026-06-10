@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.1] — 2026-06-10
+
+
+### Other Changes
+
+- Update colour theme to match BlueMetal Pro logo palette ([cdf325e])
+
 ## [1.21.0] — 2026-06-10
 
 
