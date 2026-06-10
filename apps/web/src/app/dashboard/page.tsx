@@ -77,9 +77,9 @@ export default function DashboardPage() {
   useEffect(() => { log.page('Dashboard'); }, []);
   const { crusher } = useCrusher();
 
-  const { data, isLoading } = useQuery({ queryKey: ['dashboard', crusher?.id], queryFn: getDashboard, enabled: !!crusher?.id });
-  const { data: maintenance } = useQuery({ queryKey: ['upcoming-maintenance', crusher?.id], queryFn: getUpcomingMaintenance, enabled: !!crusher?.id });
-  const { data: trend = [] } = useQuery({ queryKey: ['monthly-trend', crusher?.id], queryFn: getMonthlyTrend, enabled: !!crusher?.id });
+  const { data, isLoading } = useQuery({ queryKey: ['dashboard', crusher?.id], queryFn: getDashboard });
+  const { data: maintenance } = useQuery({ queryKey: ['upcoming-maintenance', crusher?.id], queryFn: getUpcomingMaintenance });
+  const { data: trend = [] } = useQuery({ queryKey: ['monthly-trend', crusher?.id], queryFn: getMonthlyTrend });
 
   const todaySales  = Number(data?.today_sales?.total  || 0);
   const todayCount  = Number(data?.today_sales?.count  || 0);
