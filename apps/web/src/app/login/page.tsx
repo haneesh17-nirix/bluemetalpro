@@ -153,14 +153,14 @@ export default function LoginPage() {
           <div style={{
             borderRadius: 20,
             padding: '32px 28px',
-            background: 'linear-gradient(175deg, #0f2048 0%, #0a1830 55%, #071228 100%)',
-            border: '1.5px solid rgba(120,85,14,0.55)',
+            background: 'linear-gradient(175deg, #1e2d3d 0%, #172330 55%, #111c28 100%)',
+            border: '1.5px solid rgba(80,110,150,0.35)',
             boxShadow: [
-              '0 0 0 1px rgba(100,70,10,0.12)',
-              '0 0 28px rgba(110,78,12,0.16)',
-              '0 24px 64px rgba(0,0,0,0.6)',
-              'inset 0 1px 0 rgba(160,118,24,0.11)',
-              'inset 0 -1px 0 rgba(0,0,20,0.5)',
+              '0 0 0 1px rgba(60,90,130,0.12)',
+              '0 0 28px rgba(30,60,100,0.22)',
+              '0 24px 64px rgba(0,0,0,0.55)',
+              'inset 0 1px 0 rgba(120,160,200,0.1)',
+              'inset 0 -1px 0 rgba(0,0,20,0.4)',
             ].join(', '),
           }}>
 
