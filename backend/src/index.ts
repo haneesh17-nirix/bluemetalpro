@@ -61,7 +61,7 @@ app.use('/api/cameras', camerasRouter);
 app.use('/api/crushers', crushersRouter);
 app.use('/api/platform', platformRouter);
 
-app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString(), version: process.env.npm_package_version || 'unknown' }));
+app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date().toISOString(), version: process.env.npm_package_version || 'unknown', auth: 'two-step' }));
 
 app.listen(PORT, () => logger.info({ port: PORT }, `Server running on port ${PORT}`));
 export default app;
