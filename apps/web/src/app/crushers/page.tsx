@@ -161,8 +161,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
       <tr className="border-b border-surface-border hover:bg-white/2 transition-colors">
         <td className="px-4 py-3">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-              style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.2)' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.2)' }}>
               {crusher.logo_url
                 ? <img src={crusher.logo_url} alt={crusher.name} className="w-7 h-7 object-contain rounded" />
                 : <span className="text-gold text-sm font-bold">{crusher.name?.charAt(0)}</span>
@@ -205,8 +204,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
             ) : (
               <div className="space-y-2">
                 {users.map((u: any) => (
-                  <div key={u.user_id || u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderRadius: 12 }}
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div key={u.user_id || u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <div>
                       <p className="text-sm text-white font-medium">{u.name || u.user_name}</p>
                       <p className="text-xs text-white/40">{u.email} · <span className="text-gold/70">{u.role}</span></p>

@@ -139,8 +139,7 @@ export default function PartiesPage() {
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div
-                          style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 12, fontWeight: 700 }}
-                          style={{ background: 'rgba(201,168,76,0.15)', color: '#e8c96a', border: '1px solid rgba(201,168,76,0.25)' }}
+                          style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 12, fontWeight: 700, background: 'rgba(201,168,76,0.15)', color: '#e8c96a', border: '1px solid rgba(201,168,76,0.25)' }}
                         >
                           {initials}
                         </div>
