@@ -153,6 +153,7 @@ REQUIRED=(
   database/migrations/006_notifications_v2.sql
   database/migrations/007_seed_test_data.sql
   database/migrations/008_platform_admin.sql
+  database/migrations/009_more_test_data.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
