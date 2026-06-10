@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.10] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` sidebar + topbar — 100% inline styles, no Tailwind layout classes ([f17e9e4])
+
 ## [1.10.9] — 2026-06-10
 
 
