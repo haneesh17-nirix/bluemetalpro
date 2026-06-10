@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.25] — 2026-06-10
+
+
+### Other Changes
+
+- add Assigned-to-me and My-submissions panels with pastel attention headers; pastelise login, sidebar, select-crusher and logo colours at 50% ([469f785])
+
 ## [1.21.24] — 2026-06-10
 
 
