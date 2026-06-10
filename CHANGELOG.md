@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.2] — 2026-06-10
+
+
+### Refactoring
+
+- update all role references to 4-role system ([1fdf38d])
+
 ## [1.14.1] — 2026-06-10
 
 
