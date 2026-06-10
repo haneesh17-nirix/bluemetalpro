@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.13] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` panel spacing, users role sidebar, all space-y purge fixes ([f88256e])
+
 ## [1.10.12] — 2026-06-10
 
 
