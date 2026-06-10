@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0] — 2026-06-10
+
+
+### Features
+
+- `ui` full professional redesign — AppLayout + all pages ([6f3d53c])
+
 ## [1.8.2] — 2026-06-09
 
 
