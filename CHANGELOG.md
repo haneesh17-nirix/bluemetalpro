@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.6] — 2026-06-10
+
+
+### Other Changes
+
+- Size up logo + branding; matte unpolished gold ring ([fd4db88])
+
 ## [1.21.5] — 2026-06-10
 
 
