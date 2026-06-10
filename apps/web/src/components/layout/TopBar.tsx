@@ -125,32 +125,51 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
     setUnread(u => Math.max(0, u - 1));
   };
 
+  const crusherStr = typeof window !== 'undefined' ? localStorage.getItem('crusher') : null;
+  const crusherName = crusherStr ? (() => { try { return JSON.parse(crusherStr)?.name; } catch { return null; } })() : null;
+
   return (
     <header
-      className="flex items-center justify-between px-6 py-4 flex-shrink-0 relative"
       style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '12px 24px', flexShrink: 0, position: 'relative',
         borderBottom: '1px solid #1f3659',
+        boxShadow: '0 1px 0 rgba(201,168,76,0.08)',
         background: 'rgba(9,22,40,0.85)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         zIndex: 40,
       }}
     >
-      <div>
-        <h1 className="text-xl font-bold text-white leading-none tracking-tight">{title}</h1>
-        {subtitle && (
-          <p className="text-xs mt-1 font-medium" style={{ color: 'rgba(200,212,232,0.55)' }}>
-            {subtitle}
-          </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div>
+          <h1 className="text-xl font-bold text-white leading-none tracking-tight">{title}</h1>
+          {subtitle && (
+            <p className="text-xs mt-1 font-medium" style={{ color: 'rgba(200,212,232,0.55)' }}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+        {crusherName && (
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            padding: '3px 10px', borderRadius: 20,
+            background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)',
+            fontSize: 11, fontWeight: 600, color: '#e8c96a',
+          }}>
+            {crusherName}
+          </div>
         )}
       </div>
 
-      <div className="flex items-center gap-3" ref={panelRef}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} ref={panelRef}>
         {/* Bell button */}
         <button
           onClick={openPanel}
-          className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150"
           style={{
+            position: 'relative', width: 38, height: 38, borderRadius: 12,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.15s', cursor: 'pointer',
             background: open ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.06)',
             border: open ? '1px solid rgba(201,168,76,0.3)' : '1px solid #2a4570',
           }}

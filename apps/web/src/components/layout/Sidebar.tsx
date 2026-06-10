@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShoppingCart, Truck, Package, Users, FileText,
@@ -9,21 +8,21 @@ import {
 } from 'lucide-react';
 
 const nav = [
-  { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','sales_operator','report_viewer','accounts','quarry_operator','partner'] },
-  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','sales_operator','accounts','partner'] },
-  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','accounts','partner'] },
-  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','quarry_operator','accounts'] },
-  { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['admin','sales_operator','accounts','quarry_operator'] },
-  { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['admin','sales_operator','accounts'] },
-  { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','vehicle_manager','sales_operator'] },
-  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','accounts','partner'] },
-  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','report_viewer','accounts','partner'] },
-  { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['admin','vehicle_manager'] },
-  { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','vehicle_manager'] },
-  { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','accounts'] },
-  { href: '/users',       label: 'Users',         icon: Users,           roles: ['admin'] },
-  { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'] },
-  { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'] },
+  { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','sales_operator','report_viewer','accounts','quarry_operator','partner'], admin: false },
+  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','sales_operator','accounts','partner'], admin: false },
+  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','accounts','partner'], admin: false },
+  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','quarry_operator','accounts'], admin: false },
+  { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['admin','sales_operator','accounts','quarry_operator'], admin: false },
+  { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['admin','sales_operator','accounts'], admin: false },
+  { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','vehicle_manager','sales_operator'], admin: false },
+  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','accounts','partner'], admin: false },
+  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','report_viewer','accounts','partner'], admin: false },
+  { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['admin','vehicle_manager'], admin: false },
+  { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','vehicle_manager'], admin: false },
+  { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','accounts'], admin: false },
+  { href: '/users',       label: 'Users',         icon: Users,           roles: ['admin'], admin: true },
+  { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'], admin: true },
+  { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'], admin: true },
 ];
 
 const ROLE_LABELS: Record<string, string> = {
@@ -36,11 +35,62 @@ const ROLE_LABELS: Record<string, string> = {
   partner:          'Partner',
 };
 
+function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) {
+  const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+
+  const activeStyle: React.CSSProperties = {
+    background: 'linear-gradient(135deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.07) 100%)',
+    border: '1px solid rgba(201,168,76,0.25)',
+    color: '#f0d878',
+    borderLeft: '3px solid #e8c96a',
+    paddingLeft: 10,
+  };
+  const inactiveStyle: React.CSSProperties = {
+    border: '1px solid transparent',
+    color: 'rgba(200,212,232,0.65)',
+  };
+
+  return (
+    <Link
+      href={item.href}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '10px 12px', borderRadius: 12,
+        fontSize: 13, fontWeight: 500, textDecoration: 'none',
+        transition: 'all 0.15s',
+        position: 'relative',
+        ...(active ? activeStyle : inactiveStyle),
+      }}
+      onMouseEnter={e => {
+        if (!active) {
+          (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
+          (e.currentTarget as HTMLAnchorElement).style.color = '#fff';
+        }
+      }}
+      onMouseLeave={e => {
+        if (!active) {
+          (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+          (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(200,212,232,0.65)';
+        }
+      }}
+    >
+      <item.icon size={15} style={{ color: active ? '#e8c96a' : 'rgba(200,212,232,0.5)', flexShrink: 0 }} />
+      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+      {active && <ChevronRight size={12} style={{ color: 'rgba(201,168,76,0.6)', flexShrink: 0 }} />}
+    </Link>
+  );
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
   const user = userStr ? JSON.parse(userStr) : null;
+  const crusherStr = typeof window !== 'undefined' ? localStorage.getItem('crusher') : null;
+  const crusherName = crusherStr ? (() => { try { return JSON.parse(crusherStr)?.name; } catch { return null; } })() : null;
   const filtered = nav.filter(item => !user || item.roles.includes(user.role));
+
+  const mainItems = filtered.filter(item => !item.admin);
+  const adminItems = filtered.filter(item => item.admin);
 
   const logout = () => {
     ['token', 'user', 'crusher', 'crushers_list'].forEach(k => localStorage.removeItem(k));
@@ -97,50 +147,35 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* ── Navigation ────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-0.5">
-        {filtered.map(item => {
-          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group relative select-none"
-              style={
-                active
-                  ? {
-                      background: 'linear-gradient(135deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.07) 100%)',
-                      border: '1px solid rgba(201,168,76,0.25)',
-                      color: '#f0d878',
-                    }
-                  : {
-                      border: '1px solid transparent',
-                      color: 'rgba(200,212,232,0.65)',
-                    }
-              }
-            >
-              {/* Active left accent */}
-              {active && (
-                <span
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
-                  style={{ background: 'linear-gradient(180deg, #f0d878, #c9a84c)' }}
-                />
-              )}
+      {/* ── Crusher badge ─────────────────────────── */}
+      {crusherName && (
+        <div style={{ padding: '8px 16px 0' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '4px 10px', borderRadius: 20,
+            background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)',
+            fontSize: 11, fontWeight: 600, color: '#e8c96a',
+            maxWidth: '100%',
+          }}>
+            <Factory size={11} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{crusherName}</span>
+          </div>
+        </div>
+      )}
 
-              <item.icon
-                size={16}
-                style={{ color: active ? '#e8c96a' : 'rgba(200,212,232,0.5)', flexShrink: 0 }}
-                className="transition-colors group-hover:!text-white/80"
-              />
-              <span className="flex-1 truncate font-medium group-hover:text-white transition-colors">
-                {item.label}
-              </span>
-              {active && (
-                <ChevronRight size={12} style={{ color: 'rgba(201,168,76,0.6)', flexShrink: 0 }} />
-              )}
-            </Link>
-          );
-        })}
+      {/* ── Navigation ────────────────────────────── */}
+      <nav style={{ flex: 1, overflowY: 'auto', padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {mainItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
+
+        {adminItems.length > 0 && (
+          <>
+            <div style={{ margin: '10px 4px 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(200,212,232,0.3)', textTransform: 'uppercase' }}>Admin</span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(42,69,112,0.6)' }} />
+            </div>
+            {adminItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
+          </>
+        )}
       </nav>
 
       {/* ── User profile ──────────────────────────── */}

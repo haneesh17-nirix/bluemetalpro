@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -20,6 +20,11 @@ export default function LoginPage() {
   const { setCrusher } = useCrusher();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
+
+  useEffect(() => {
+    // Pre-warm the backend connection while user fills form
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`).catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,11 +198,23 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-primary w-full" style={{ padding: '12px', marginTop: 4 }}>
-                {loading
-                  ? <><Loader2 size={16} className="animate-spin" /> Signing in…</>
-                  : <>Sign In <ArrowRight size={16} /></>}
-              </button>
+              <div>
+                <button type="submit" disabled={loading} className="btn-primary w-full" style={{ padding: '12px', marginTop: 4 }}>
+                  {loading
+                    ? <><Loader2 size={16} className="animate-spin" /> Signing in…</>
+                    : <>Sign In <ArrowRight size={16} /></>}
+                </button>
+                {loading && (
+                  <div style={{ height: 2, borderRadius: 1, background: 'rgba(255,255,255,0.08)', overflow: 'hidden', marginTop: 8 }}>
+                    <div style={{
+                      height: '100%', width: '60%', borderRadius: 1,
+                      background: 'linear-gradient(90deg, transparent, #e8c96a, transparent)',
+                      animation: 'shimmer 1.2s infinite',
+                      backgroundSize: '200% 100%',
+                    }} />
+                  </div>
+                )}
+              </div>
             </form>
 
             <div className="gold-divider" style={{ margin: '28px 0 20px' }} />

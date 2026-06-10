@@ -139,7 +139,7 @@ export default function DashboardPage() {
       <div className="space-y-6">
 
           {/* ── KPI Cards ─────────────────────────────── */}
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {kpis.map((k, i) => (
               <div key={k.label} className="stat-card" style={{ animationDelay: `${i * 60}ms` }}>
                 <div className="stat-icon" style={{ background: k.grad, boxShadow: `0 6px 20px ${k.glow}` }}>
@@ -187,10 +187,10 @@ export default function DashboardPage() {
           )}
 
           {/* ── Monthly Trend + Top Products ─────────── */}
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Area chart — 12-month trend */}
-            <div className="card p-5 xl:col-span-3">
+            <div className="card p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold text-white">Monthly Revenue</h2>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Top Products bar — right panel */}
-            <div className="card p-5 xl:col-span-2 flex flex-col">
+            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold text-white">Top Products</h2>
@@ -265,10 +265,10 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Recent Sales + Maintenance ────────────── */}
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Recent sales */}
-            <div className="card p-5 xl:col-span-3 flex flex-col">
+            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold text-white">Recent Sales</h2>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Upcoming Maintenance */}
-            <div className="card p-5 xl:col-span-2 flex flex-col">
+            <div className="card p-5" style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold text-white">Maintenance Due</h2>
@@ -366,7 +366,7 @@ export default function DashboardPage() {
           {/* ── Quick Actions ─────────────────────────── */}
           <div className="card p-5">
             <h2 className="font-semibold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {quickActions.map(a => (
                 <Link key={a.href} href={a.href}
                   className="flex items-center gap-3 p-4 rounded-xl border border-surface-border hover:border-gold/30 hover:bg-surface-hover transition-all duration-150 group">
