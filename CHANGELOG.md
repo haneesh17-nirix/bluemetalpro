@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0] — 2026-06-10
+
+
+### Features
+
+- dense two-week test data (May 27 – Jun 10 2026) ([0c2c1d1])
+
 ## [1.12.2] — 2026-06-10
 
 
