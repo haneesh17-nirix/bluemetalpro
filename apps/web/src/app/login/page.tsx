@@ -9,11 +9,14 @@ import { Lock, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
 const features = [
-  'GST-ready tax invoices',
-  'Multi-crusher operations',
-  'Live weighbridge integration',
-  'Real-time reports & analytics',
-  'Payroll & attendance tracking',
+  'GST invoicing & filing',
+  'Multi-plant operations',
+  'Live weighbridge',
+  'Real-time dashboards',
+  'Payroll & attendance',
+  'Ledger & party mgmt',
+  'Maintenance alerts',
+  'Vehicle fleet tracking',
 ];
 
 export default function LoginPage() {
@@ -128,14 +131,14 @@ export default function LoginPage() {
 
         {/* Features + stats */}
         <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'inline-flex', flexDirection: 'column', gap: 10, alignSelf: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', alignSelf: 'center' }}>
             {features.map(f => (
-              <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <CheckCircle size={15} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(220,230,245,0.95)' }}>{f}</span>
-              </li>
+              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <CheckCircle size={13} style={{ color: '#c9a84c', flexShrink: 0 }} />
+                <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(220,230,245,0.92)' }}>{f}</span>
+              </div>
             ))}
-          </ul>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
             {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
               <div key={s.label} style={{ textAlign: 'center', padding: '14px 12px', borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
