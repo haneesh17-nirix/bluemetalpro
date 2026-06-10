@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.3] — 2026-06-10
+
+
+### Other Changes
+
+- Add notification preferences panel and full notifications page ([52ab269])
+
 ## [1.21.2] — 2026-06-10
 
 
