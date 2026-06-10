@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0] — 2026-06-10
+
+
+### Features
+
+- `ui` stone-grain panel backgrounds, gold tiles, matte-gold cost tiles ([2fcc653])
+
 ## [1.14.16] — 2026-06-10
 
 
