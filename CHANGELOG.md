@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.26] — 2026-06-10
+
+
+### Other Changes
+
+- Revert pastel colour changes on login, sidebar, select-crusher and logo ([ab2ee30])
+
 ## [1.21.25] — 2026-06-10
 
 
