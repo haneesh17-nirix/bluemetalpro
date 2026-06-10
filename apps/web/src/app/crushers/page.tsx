@@ -105,7 +105,7 @@ function GrantModal({ crusherId, onClose }: { crusherId: string; onClose: () => 
           <h2 className="text-base font-bold text-white">Grant Access</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={16} /></button>
         </div>
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label className="label">User</label>
             <select className="input" value={userId} onChange={e => setUserId(e.target.value)}>
@@ -202,7 +202,7 @@ function CrusherRow({ crusher }: { crusher: any }) {
             {users.length === 0 ? (
               <p className="text-white/30 text-sm py-2">No users assigned</p>
             ) : (
-              <div className="space-y-2">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {users.map((u: any) => (
                   <div key={u.user_id || u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <div>

@@ -47,7 +47,7 @@ export default function SelectCrusherPage() {
           <p className="text-white/50 text-sm">Choose the crushing plant you want to manage</p>
         </div>
 
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {crushers.map((c) => (
             <button key={c.id} onClick={() => handleSelect(c)} disabled={!!selecting}
               className="w-full card-gold flex items-center gap-4 p-5 text-left transition-all hover:scale-[1.01] disabled:opacity-50">

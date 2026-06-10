@@ -270,7 +270,7 @@ export default function WagesPage() {
                 <h2 className="font-semibold text-white mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Calculator size={18} className="text-[#c9a84c]" /> Calculate Wages
                 </h2>
-                <div className="space-y-4">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label className="label">Worker</label>
                     <select value={payrollWorker} onChange={e => { setPayrollWorker(e.target.value); setPayrollResult(null); }} className="select">

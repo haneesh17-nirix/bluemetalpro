@@ -56,7 +56,7 @@ export default function SettingsPage() {
 
   return (
     <AppLayout title="Settings" subtitle="Company configuration and preferences" actions={saveAction}>
-      <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} className="space-y-5">
+      <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* Company Info */}
         <div className="card p-6">

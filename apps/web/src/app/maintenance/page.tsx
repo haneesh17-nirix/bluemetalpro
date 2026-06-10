@@ -269,7 +269,7 @@ export default function MaintenancePage() {
               <h2 className="text-lg font-bold text-white">{editRecord ? 'Update Record' : 'New Maintenance Record'}</h2>
               <button onClick={() => setShowRecordForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
-            <form onSubmit={e => { e.preventDefault(); recordMutation.mutate({ ...recordForm, cost: Number(recordForm.cost) || 0 }); }} className="space-y-4">
+            <form onSubmit={e => { e.preventDefault(); recordMutation.mutate({ ...recordForm, cost: Number(recordForm.cost) || 0 }); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 <div>
                   <label className="label">Asset Type</label>
@@ -340,7 +340,7 @@ export default function MaintenancePage() {
               <h2 className="text-lg font-bold text-white">Add Asset</h2>
               <button onClick={() => setShowAssetForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
-            <form onSubmit={e => { e.preventDefault(); assetMutation.mutate({ ...assetForm, purchase_cost: Number(assetForm.purchase_cost) || 0 }); }} className="space-y-4">
+            <form onSubmit={e => { e.preventDefault(); assetMutation.mutate({ ...assetForm, purchase_cost: Number(assetForm.purchase_cost) || 0 }); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 <div>
                   <label className="label">Asset Type</label>

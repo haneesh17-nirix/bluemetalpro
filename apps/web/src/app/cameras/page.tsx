@@ -80,7 +80,7 @@ function AddCameraModal({ onClose }: { onClose: () => void }) {
           <h2 className="font-semibold text-[#1a3c5e]">Add Camera</h2>
           <button onClick={onClose}><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
+        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
             <label className="label">Camera Name *</label>
             <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="input" placeholder="e.g. Entrance Gate" />

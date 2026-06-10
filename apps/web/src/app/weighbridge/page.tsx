@@ -221,7 +221,7 @@ export default function WeighbridgePage() {
           {/* Recent tickets */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-semibold text-[#1a3c5e] mb-4">Recent Tickets</h2>
-            <div className="space-y-3" style={{ maxHeight: 480, overflowY: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }} style={{ maxHeight: 480, overflowY: 'auto' }}>
               {(tickets as any[]).map((t: any) => (
                 <div key={t.id} className="bg-gray-50 rounded-lg border border-gray-100" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
                   <div>

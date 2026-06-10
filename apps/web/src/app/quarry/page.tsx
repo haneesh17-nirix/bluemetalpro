@@ -58,7 +58,7 @@ function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-xl font-bold text-white">New Quarry Entry</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
+        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             <div>
               <label className="label">Date *</label>

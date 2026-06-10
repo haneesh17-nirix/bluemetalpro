@@ -17,8 +17,7 @@ export default function AppLayout({ title, subtitle, actions, children, noPaddin
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <TopBar title={title} subtitle={subtitle} actions={actions} />
         <main
-          style={{ flex: 1, overflowY: 'auto', padding: noPadding ? 0 : '24px' }}
-          className="space-y-5"
+          style={{ flex: 1, overflowY: 'auto', padding: noPadding ? 0 : '24px', display: 'flex', flexDirection: 'column', gap: 20 }}
         >
           {children}
         </main>

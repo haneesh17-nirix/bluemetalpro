@@ -35,7 +35,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-xl font-bold text-white">Record Receipt</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
+        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label className="label">Party (Customer) *</label>
             <select required value={form.party_id} onChange={e => setForm(f => ({ ...f, party_id: e.target.value }))} className="select">
@@ -121,7 +121,7 @@ function PartyLedgerDrawer({ partyId, partyName, onClose }: { partyId: string; p
             <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input" style={{ width: 144 }} />
           </div>
         </div>
-        <div className="space-y-2" style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
           {!(txns as any[]).length ? (
             <p className="text-center text-white/30 py-10 text-sm">No transactions in this period</p>
           ) : (txns as any[]).map((t: any) => (

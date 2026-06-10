@@ -136,7 +136,7 @@ export default function DashboardPage() {
       title="Dashboard"
       subtitle={crusher ? (crusher.legal_name || crusher.name) + (crusher.city ? ' · ' + crusher.city : '') : 'Loading...'}
     >
-      <div className="space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* ── KPI Cards ─────────────────────────────── */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
@@ -145,13 +145,13 @@ export default function DashboardPage() {
                 <div className="stat-icon" style={{ background: k.grad, boxShadow: `0 6px 20px ${k.glow}` }}>
                   <k.icon size={20} className="text-white" />
                 </div>
-                <div className="min-w-0 flex-1">
+                <div style={{ minWidth: 0, flex: 1 }}>
                   {isLoading
                     ? <div className="skeleton h-6 w-24 mb-1" />
                     : <p className="text-xl font-bold text-white leading-none">{k.value}</p>
                   }
                   <p className="text-xs font-medium text-white/70 mt-1">{k.label}</p>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                     <p className="text-[11px] text-white/40">{k.sub}</p>
                     {!isLoading && k.delta}
                   </div>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
               padding: '12px 20px',
               display: 'flex', alignItems: 'center', gap: 16,
             }} className="text-sm">
-              <div className="flex-1 flex flex-wrap gap-x-6 gap-y-1">
+              <div style={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '4px 24px' }}>
                 {crusher.gstin && (
                   <span className="text-white/50">
                     GSTIN: <span className="text-white/80 font-mono tracking-wide">{crusher.gstin}</span>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Area chart — 12-month trend */}
-            <div className="card overflow-hidden">
+            <div className="card" style={{ overflow: 'hidden' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Monthly Revenue</h2>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Top Products bar — right panel */}
-            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Top Products</h2>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex-1 flex items-center justify-center">
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <p className="text-white/30 text-sm">No data yet</p>
                 </div>
               ))}
@@ -276,7 +276,7 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
             {/* Recent sales */}
-            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Recent Sales</h2>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
               </div>
               <div className="panel-body" style={{ flex: 1 }}>
               {isLoading ? (
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-12 w-full" />)}
                 </div>
               ) : data?.recent_sales?.length ? (
@@ -323,7 +323,7 @@ export default function DashboardPage() {
                   </table>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center py-8 gap-2">
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', gap: 8 }}>
                   <FileText size={28} className="text-white/15" />
                   <p className="text-white/30 text-sm">No sales recorded yet</p>
                 </div>
@@ -332,7 +332,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Upcoming Maintenance */}
-            <div className="card overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card" style={{ overflow: 'hidden' }} style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title">Maintenance Due</h2>
@@ -341,17 +341,16 @@ export default function DashboardPage() {
                 <Link href="/maintenance" className="btn-ghost text-xs py-1 px-3">All <ArrowUpRight size={12} /></Link>
               </div>
               <div className="panel-body" style={{ flex: 1 }}>
-              <div className="space-y-2 overflow-y-auto">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto' }}>
                 {maintenance?.length ? maintenance.map((m: any) => (
                   <div key={m.id}
-                    className="flex items-start justify-between p-3 rounded-xl"
-                    style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.15)' }}
+                    style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: 12, borderRadius: 12, background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.15)' }}
                   >
-                    <div className="min-w-0 flex-1">
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <p className="font-medium text-sm text-white truncate">{m.asset_name}</p>
                       <p className="text-xs text-white/50 truncate">{m.title}</p>
                     </div>
-                    <div className="ml-3 text-right flex-shrink-0">
+                    <div style={{ marginLeft: 12, textAlign: 'right', flexShrink: 0 }}>
                       <span className={m.asset_type === 'vehicle' ? 'badge-blue' : 'badge-gray'}>
                         {m.asset_type}
                       </span>
@@ -361,7 +360,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 )) : (
-                  <div className="flex-1 flex flex-col items-center justify-center py-8 gap-2">
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', gap: 8 }}>
                     <Wrench size={28} className="text-white/15" />
                     <p className="text-white/30 text-sm">No upcoming maintenance</p>
                   </div>
@@ -372,7 +371,7 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Quick Actions ─────────────────────────── */}
-          <div className="card overflow-hidden">
+          <div className="card" style={{ overflow: 'hidden' }}>
             <div className="panel-header">
               <h2 className="panel-title">Quick Actions</h2>
             </div>

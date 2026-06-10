@@ -58,7 +58,7 @@ export default function ReportsPage() {
 
           {/* Item-wise */}
           {tab === 'item-wise' && (
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div className="card p-6">
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={itemWise as any[]}>

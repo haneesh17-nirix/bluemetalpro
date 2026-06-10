@@ -115,29 +115,11 @@ export default function UsersPage() {
     <AppLayout title="Users" subtitle="Team accounts and access control" actions={pageActions}>
       <StatsRow stats={userStats} />
 
-      {/* Role reference cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {roleGroups.map(([role, cfg]) => (
-              <div key={role} className="card" style={{ padding: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                  <ShieldCheck size={15} className="text-[#c9a84c]" />
-                  <span className={cfg.badge}>{cfg.label}</span>
-                  <span className="text-xs text-white/30 ml-auto">
-                    {(users as any[]).filter((u: any) => u.role === role && u.is_active).length} active
-                  </span>
-                </div>
-                <ul className="space-y-1">
-                  {cfg.permissions.map(p => (
-                    <li key={p} className="text-xs text-white/50" style={{ display: 'flex', gap: 6 }}>
-                      <span className="text-emerald-400 mt-0.5">✓</span>{p}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+      {/* Table + Role docs side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 20, alignItems: 'start' }}>
 
-          {/* Users table */}
+        {/* Users table */}
+        <div className="card" style={{ overflow: 'hidden' }}>
           <div className="table-wrapper">
             <table className="w-full text-sm">
               <thead>
@@ -181,6 +163,32 @@ export default function UsersPage() {
             </table>
             {!(users as any[]).length && <p className="text-center text-white/30 py-10">No users found</p>}
           </div>
+        </div>
+
+        {/* Role reference — right sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(184,149,62,0.5)', textTransform: 'uppercase', marginBottom: 2 }}>Role Permissions</p>
+          {roleGroups.map(([role, cfg]) => (
+            <div key={role} className="card" style={{ padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <ShieldCheck size={13} style={{ color: '#c9a84c', flexShrink: 0 }} />
+                <span className={cfg.badge} style={{ fontSize: 11 }}>{cfg.label}</span>
+                <span style={{ fontSize: 10, color: 'rgba(200,212,232,0.3)', marginLeft: 'auto' }}>
+                  {(users as any[]).filter((u: any) => u.role === role && u.is_active).length} active
+                </span>
+              </div>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {cfg.permissions.map(p => (
+                  <li key={p} style={{ display: 'flex', gap: 6, fontSize: 11, color: 'rgba(200,212,232,0.45)' }}>
+                    <span style={{ color: '#34d399', flexShrink: 0 }}>✓</span>{p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+      </div>
 
       {/* Add/Edit User modal */}
       {showForm && (
@@ -191,7 +199,7 @@ export default function UsersPage() {
               <button onClick={() => setShowForm(false)} className="text-white/50 hover:text-white transition-colors"><X size={20} /></button>
             </div>
             <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }}>
-              <div className="space-y-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
                   <label className="label">Full Name *</label>
                   <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="input" />

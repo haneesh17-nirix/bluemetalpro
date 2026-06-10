@@ -60,7 +60,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-xl font-bold text-white">New Purchase Bill</h2>
           <button onClick={onClose} className="btn-ghost p-2"><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
+        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Header fields */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
@@ -101,7 +101,7 @@ function NewPurchaseModal({ onClose }: { onClose: () => void }) {
               <button type="button" onClick={() => setItems(p => [...p, emptyItem()])}
                 className="btn-ghost text-xs px-3 py-1.5">+ Add item</button>
             </div>
-            <div className="space-y-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {items.map((item, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 8, alignItems: 'flex-end', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8 }}>
                   <div style={{ gridColumn: 'span 4' }}>
