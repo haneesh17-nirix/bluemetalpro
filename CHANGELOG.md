@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ci` use root lockfile in Docker job — backend/package-lock.json lacks transitive deps ([8f39bb8])
+
 ## [1.10.0] — 2026-06-10
 
 
