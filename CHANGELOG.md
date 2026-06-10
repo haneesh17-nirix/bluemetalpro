@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.14] — 2026-06-10
+
+
+### Documentation
+
+- update all URLs to bluemetalpro.in custom domain ([b4d8761])
+
 ## [1.10.13] — 2026-06-10
 
 
