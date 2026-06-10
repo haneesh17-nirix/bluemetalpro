@@ -17,10 +17,10 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 const ROLE_LABELS: Record<string, string> = {
-  platform_admin: 'Platform Admin',
-  admin: 'Administrator',
-  operations: 'Operations',
-  report_viewer: 'Report Viewer',
+  platform_admin: 'Super Admin',
+  admin: 'Admin',
+  operations: 'Operator',
+  report_viewer: 'Partner',
 };
 
 interface TopBarProps {

@@ -9,18 +9,20 @@ import {
 import LogoIcon from '@/components/ui/LogoIcon';
 
 const nav = [
+  // ── Operator: full data-entry access ─────────────────────────────────────
   { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['admin','operations'], admin: false },
-  { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['admin','operations'], admin: false },
-  { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','operations'], admin: false },
-  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','operations','report_viewer'], admin: false },
-  { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['admin','operations'], admin: false },
-  { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','operations'], admin: false },
-  { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','operations'], admin: false },
+  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['operations','report_viewer'], admin: false },
+  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['operations'], admin: false },
+  { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['operations'], admin: false },
+  { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['operations'], admin: false },
+  { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['operations'], admin: false },
+  { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['operations'], admin: false },
+  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['operations','report_viewer'], admin: false },
+  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['operations','report_viewer'], admin: false },
+  { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['operations'], admin: false },
+  { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['operations'], admin: false },
+  { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['operations'], admin: false },
+  // ── Admin: technical config only ─────────────────────────────────────────
   { href: '/users',       label: 'Users',         icon: Users,           roles: ['admin'], admin: true },
   { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'], admin: true },
   { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'], admin: true },
