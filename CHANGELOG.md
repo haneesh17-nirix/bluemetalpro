@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.11.0] — 2026-06-10
+
+
+### Features
+
+- P&L / Opex financial report — backend endpoint + reports tab ([7e0c93b])
+- add demo data for two crusher units and platform admin super admin ([2ab2682])
+
+### Bug Fixes
+
+- correct seed migration column names and mobile nav broken routes ([d5d2f73])
+
+### Chores
+
+- sync required-file list for new migrations and platform routes ([98fdeff])
+
 ## [1.10.15] — 2026-06-10
 
 
