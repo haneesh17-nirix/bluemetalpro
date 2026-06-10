@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.12] — 2026-06-10
+
+
+### Bug Fixes
+
+- auto-select crusher on legacy single-step auth login ([b20e9da])
+
 ## [1.14.11] — 2026-06-10
 
 
