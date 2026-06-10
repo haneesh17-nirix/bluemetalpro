@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.20] — 2026-06-10
+
+
+### Other Changes
+
+- shield-navy form, matching gold ring gradient, thinner logo ring; dedup crushers list ([ec71921])
+
 ## [1.21.19] — 2026-06-10
 
 
