@@ -100,38 +100,57 @@ export default function LoginPage() {
   });
 
   return (
-    <div style={{
+    <div className="login-page" style={{
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'row',
       background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
     }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .login-page        { flex-direction: column !important; }
+          .login-left        { width: 100% !important; min-width: unset !important;
+                               padding: 28px 24px 20px !important; flex-shrink: 0 !important;
+                               justify-content: flex-start !important; align-items: center !important; }
+          .login-blobs       { display: none !important; }
+          .login-branding    { gap: 12px !important; }
+          .login-branding-logo { filter: drop-shadow(0 6px 18px rgba(160,112,20,0.5)) !important; }
+          .login-features    { display: none !important; }
+          .login-stats       { display: none !important; }
+          .login-right       { padding: 12px 16px 32px !important; align-items: flex-start !important; }
+          .login-title       { font-size: 26px !important; }
+          .login-subtitle    { font-size: 11px !important; }
+        }
+        @media (min-width: 768px) {
+          .login-mobile-logo { display: none !important; }
+        }
+      `}</style>
 
       {/* ── Left branding panel ── */}
-      <div style={{
+      <div className="login-left" style={{
         width: '46%', minWidth: '420px',
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         padding: '48px', position: 'relative', overflow: 'hidden', flexShrink: 0,
       }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div className="login-blobs" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           <div style={{ position: 'absolute', width: 560, height: 560, borderRadius: '50%', top: -80, left: -160, background: 'radial-gradient(circle, rgba(37,99,168,0.22) 0%, transparent 65%)' }} />
           <div style={{ position: 'absolute', width: 440, height: 440, borderRadius: '50%', bottom: -60, right: -80, background: 'radial-gradient(circle, rgba(184,149,62,0.14) 0%, transparent 65%)' }} />
         </div>
 
         {/* Logo + branding */}
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-          <div style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
+        <div className="login-branding" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+          <div className="login-branding-logo" style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
             <LogoIcon size={148} />
           </div>
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontWeight: 900, fontSize: 34, color: '#fff', lineHeight: 1, margin: 0, letterSpacing: '-0.02em' }}>BlueMetal Pro</p>
-            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8, background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUSINESS INTELLIGENCE</p>
+            <p className="login-title" style={{ fontWeight: 900, fontSize: 34, color: '#fff', lineHeight: 1, margin: 0, letterSpacing: '-0.02em' }}>BlueMetal Pro</p>
+            <p className="login-subtitle" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8, background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUSINESS INTELLIGENCE</p>
           </div>
         </div>
 
         {/* Features + stats */}
         <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', alignSelf: 'center' }}>
+          <div className="login-features" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', alignSelf: 'center' }}>
             {features.map(f => (
               <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <CheckCircle size={13} style={{ color: '#c9a84c', flexShrink: 0 }} />
@@ -139,7 +158,7 @@ export default function LoginPage() {
               </div>
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <div className="login-stats" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
             {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
               <div key={s.label} style={{ textAlign: 'center', padding: '14px 12px', borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
@@ -151,7 +170,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right login panel ── */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div className="login-right" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <div style={{
             borderRadius: 20,
