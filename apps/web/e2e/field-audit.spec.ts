@@ -17,7 +17,7 @@ const USERS = [
   { label: 'operations',    email: 'operator1@bluemetal.local', role: 'operations' },
   { label: 'report_viewer', email: 'reports@bluemetal.local',   role: 'report_viewer' },
 ];
-const PASSWORD = 'Test@1234';
+const PASSWORD = process.env.TEST_PASSWORD || 'Test@1234';
 
 // ── Page definitions: panels → what to check ─────────────────────────────────
 //

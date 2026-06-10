@@ -156,6 +156,7 @@ REQUIRED=(
   database/migrations/009_more_test_data.sql
   database/migrations/010_simplify_roles.sql
   database/migrations/011_fix_test_passwords.sql
+  database/migrations/012_cleanup_duplicate_crushers.sql
   # Backend
   backend/src/index.ts
   backend/.env.example

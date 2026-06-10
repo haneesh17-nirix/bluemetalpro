@@ -43,7 +43,7 @@ desktop.ini
 *.swo
 
 # Mobile — sensitive files (never commit)
-apps/mobile/google-services.json
+# google-services.json is a placeholder stub — real creds go in EAS credentials
 apps/mobile/GoogleService-Info.plist
 apps/mobile/android/
 apps/mobile/ios/

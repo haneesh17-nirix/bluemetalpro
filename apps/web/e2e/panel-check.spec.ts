@@ -12,10 +12,11 @@ const BASE = process.env.BASE_URL || 'https://www.bluemetalpro.in';
 const API  = process.env.API_URL  || 'https://api.bluemetalpro.in';
 
 // ── Test accounts ────────────────────────────────────────────────────────────
+const PW = process.env.TEST_PASSWORD || 'Test@1234';
 const USERS = [
-  { label: 'admin',         email: 'admin@bluemetal.local',    password: 'Test@1234', role: 'admin' },
-  { label: 'operations',    email: 'operator1@bluemetal.local', password: 'Test@1234', role: 'operations' },
-  { label: 'report_viewer', email: 'reports@bluemetal.local',  password: 'Test@1234', role: 'report_viewer' },
+  { label: 'admin',         email: 'admin@bluemetal.local',    password: PW, role: 'admin' },
+  { label: 'operations',    email: 'operator1@bluemetal.local', password: PW, role: 'operations' },
+  { label: 'report_viewer', email: 'reports@bluemetal.local',  password: PW, role: 'report_viewer' },
 ];
 
 // ── Pages each role should see with data ────────────────────────────────────
