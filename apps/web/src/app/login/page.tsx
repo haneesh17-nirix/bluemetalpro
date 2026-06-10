@@ -154,11 +154,18 @@ export default function LoginPage() {
             borderRadius: 20,
             padding: '32px 28px',
             background: 'linear-gradient(175deg, #1e2d3d 0%, #172330 55%, #111c28 100%)',
-            border: '1.5px solid rgba(80,110,150,0.35)',
+            border: '3px solid transparent',
+            backgroundClip: 'padding-box',
+            outline: '3px solid transparent',
             boxShadow: [
-              '0 0 0 1px rgba(60,90,130,0.12)',
-              '0 0 28px rgba(30,60,100,0.22)',
-              '0 24px 64px rgba(0,0,0,0.55)',
+              /* rugged matte gold outer ring */
+              '0 0 0 3px #6a4808',
+              '0 0 0 4px #3e2604',
+              '0 0 0 5.5px #8a5e12',
+              '0 0 0 7px #4a3008',
+              /* ambient glow */
+              '0 0 22px rgba(100,68,10,0.45)',
+              '0 28px 60px rgba(0,0,0,0.6)',
               'inset 0 1px 0 rgba(120,160,200,0.1)',
               'inset 0 -1px 0 rgba(0,0,20,0.4)',
             ].join(', '),
