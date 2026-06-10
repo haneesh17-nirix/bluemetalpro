@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.9] — 2026-06-10
+
+
+### Other Changes
+
+- centre-align features list to match logo/branding axis ([0c0a30b])
+
 ## [1.21.8] — 2026-06-10
 
 
