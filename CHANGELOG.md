@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.22] — 2026-06-10
+
+
+### Other Changes
+
+- deduplicate crushers in login response using DISTINCT ON ([1c854b8])
+
 ## [1.21.21] — 2026-06-10
 
 
