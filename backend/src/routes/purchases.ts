@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
+import { fanOut } from '../services/notifyService';
 import { logger, logAction } from '../utils/logger';
 
 export const purchasesRouter = Router();
@@ -53,6 +54,15 @@ purchasesRouter.post('/', async (req, res) => {
     }
     await client.query('COMMIT');
     logAction('purchase.created', { bill: bill_number, party: party_name, amount: grand_total, items: items.length, by: req.user!.email, crusher_id: cid });
+
+    // Real-time SSE fan-out (fire-and-forget)
+    fanOut(cid, {
+      type: 'purchase',
+      title: `Purchase Recorded — ${party_name}`,
+      body: `₹${grand_total.toLocaleString('en-IN')} · ${bill_number}`,
+      reference_id: p.rows[0].id,
+    }).catch(() => {});
+
     res.status(201).json(p.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');

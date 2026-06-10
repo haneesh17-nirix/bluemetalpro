@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
+import { fanOut } from '../services/notifyService';
 import { logger, logAction } from '../utils/logger';
 
 export const wagesRouter = Router();
@@ -94,11 +95,21 @@ wagesRouter.post('/calculate', authorize('admin', 'accounts'), async (req, res) 
 });
 
 wagesRouter.post('/pay', authorize('admin', 'accounts'), async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const { worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes } = req.body;
   const p = await queryOne(
     `INSERT INTO wage_payments (worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes, created_by)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
     [worker_id, period_from, period_to, days_worked, gross_wages, deductions || 0, advances_deducted || 0, net_wages, payment_date, payment_mode, notes, req.user!.id]
   );
+
+  // Real-time SSE fan-out (fire-and-forget)
+  const period = `${period_from} – ${period_to}`;
+  fanOut(cid, {
+    type: 'wages',
+    title: `Wages Processed`,
+    body: `₹${Number(net_wages).toLocaleString('en-IN')} · ${period}`,
+  }).catch(() => {});
+
   res.status(201).json(p);
 });

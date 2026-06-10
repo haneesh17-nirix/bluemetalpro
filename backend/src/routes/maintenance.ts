@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
+import { fanOut } from '../services/notifyService';
 import { logger, logAction } from '../utils/logger';
 
 export const maintenanceRouter = Router();
@@ -54,6 +55,15 @@ maintenanceRouter.post('/records', authorize('admin', 'vehicle_manager'), async 
     [asset_id, asset_type, title, description, scheduled_date, cost || 0, vendor_name, vendor_phone, parts_replaced, next_service_date, req.user!.id, cid]
   );
   logAction('maintenance.record_created', { assetId: req.body.asset_id, title: req.body.title, scheduledDate: req.body.scheduled_date, by: req.user!.email });
+
+  // Real-time SSE fan-out (fire-and-forget)
+  fanOut(cid, {
+    type: 'maintenance',
+    title: `Maintenance Logged — ${title}`,
+    body: `${description ?? ''} · ₹${(cost || 0).toLocaleString('en-IN')} · scheduled`,
+    reference_id: (r as any)?.id,
+  }).catch(() => {});
+
   res.status(201).json(r);
 });
 

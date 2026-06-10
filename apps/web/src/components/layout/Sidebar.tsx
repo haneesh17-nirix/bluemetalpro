@@ -9,15 +9,15 @@ import {
 } from 'lucide-react';
 
 const nav = [
-  { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','sales_operator','report_viewer','accounts','quarry_operator'] },
-  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','sales_operator','accounts'] },
-  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','accounts'] },
+  { href: '/dashboard',   label: 'Dashboard',     icon: LayoutDashboard, roles: ['admin','sales_operator','report_viewer','accounts','quarry_operator','partner'] },
+  { href: '/sales',       label: 'Sales',         icon: ShoppingCart,    roles: ['admin','sales_operator','accounts','partner'] },
+  { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ['admin','accounts','partner'] },
   { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ['admin','quarry_operator','accounts'] },
   { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ['admin','sales_operator','accounts','quarry_operator'] },
   { href: '/parties',     label: 'Parties',       icon: Users,           roles: ['admin','sales_operator','accounts'] },
   { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ['admin','vehicle_manager','sales_operator'] },
-  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','accounts'] },
-  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','report_viewer','accounts'] },
+  { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ['admin','accounts','partner'] },
+  { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ['admin','report_viewer','accounts','partner'] },
   { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ['admin','vehicle_manager'] },
   { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ['admin','vehicle_manager'] },
   { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ['admin','accounts'] },
@@ -33,6 +33,7 @@ const ROLE_LABELS: Record<string, string> = {
   report_viewer:    'Report Viewer',
   vehicle_manager:  'Vehicle Manager',
   quarry_operator:  'Quarry Operator',
+  partner:          'Partner',
 };
 
 export default function Sidebar() {

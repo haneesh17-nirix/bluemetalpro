@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { sendSaleNotification } from '../services/notifications';
+import { fanOut } from '../services/notifyService';
 import { generateInvoiceNumber } from '../utils/invoiceNumber';
 import { logger, logAction } from '../utils/logger';
 
@@ -120,6 +121,15 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
 
     // Send push notification async
     sendSaleNotification(created).catch(console.error);
+
+    // Real-time SSE fan-out (fire-and-forget)
+    fanOut(cid, {
+      type: 'sale',
+      title: `New Sale — ${invoice_number}`,
+      body: `₹${grand_total.toLocaleString('en-IN')} · ${party_name} · ${processedItems.length} item(s)`,
+      reference_id: created.id,
+      metadata: { amount: grand_total, party: party_name },
+    }).catch(() => {});
 
     logAction('sale.created', { invoice: invoice_number, party: party_name, amount: grand_total, items: processedItems.length, by: req.user!.email, crusher_id: cid });
     res.status(201).json({ ...created, items: processedItems });

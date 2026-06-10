@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
+import { fanOut } from '../services/notifyService';
 import { generateQuarryInvoiceNumber } from '../utils/invoiceNumber';
 import { logger, logAction } from '../utils/logger';
 
@@ -48,6 +49,15 @@ quarryRouter.post('/', async (req, res) => {
     );
     await client.query('COMMIT');
     logAction('quarry_sale.created', { invoice: invoice_number, party: party_name, product: product_name, quantity, amount: grand_total, by: req.user!.email, crusher_id: cid });
+
+    // Real-time SSE fan-out (fire-and-forget)
+    fanOut(cid, {
+      type: 'quarry',
+      title: `Quarry Entry — ${product_name}`,
+      body: `${quantity} ${unit} · ₹${grand_total.toLocaleString('en-IN')}`,
+      reference_id: qs.rows[0].id,
+    }).catch(() => {});
+
     res.status(201).json(qs.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');
