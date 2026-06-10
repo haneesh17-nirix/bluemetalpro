@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Bell, CheckCheck, X } from 'lucide-react';
-import { api } from '@/lib/api';
+import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -41,7 +41,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (!token) return;
 
-    api.get('/notifications/unread-count').then(r => setUnread(r.data.count)).catch(() => {});
+    api.get('/notifications/unread-count').then((r: { data: { count: number } }) => setUnread(r.data.count)).catch(() => {});
 
     let aborted = false;
     const controller = new AbortController();
