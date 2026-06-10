@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.14] — 2026-06-10
+
+
+### Bug Fixes
+
+- exclude e2e dir from web tsconfig; fix waitForURL URL object bug ([e6e8849])
+
 ## [1.14.13] — 2026-06-10
 
 
