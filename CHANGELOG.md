@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.3] — 2026-06-10
+
+
+### Bug Fixes
+
+- revert old-role values in 001/003/007/009 migrations ([effccd8])
+
 ## [1.14.2] — 2026-06-10
 
 
