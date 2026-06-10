@@ -75,7 +75,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                   setUnread(u => u + data.notifications.length);
                   toast(data.notifications[0].title, {
                     icon: '🔔',
-                    style: { background: '#172d54', color: '#e8edf5', border: '1px solid rgba(42,69,112,0.8)' },
+                    style: { background: '#121e30', color: '#e8edf5', border: '1px solid rgba(26,53,112,0.55)' },
                   });
                   setItems(prev => prev.length ? [...data.notifications, ...prev] : prev);
                 }
@@ -128,9 +128,9 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
     <header style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '12px 24px', flexShrink: 0, position: 'relative',
-      background: 'rgba(5,14,30,0.92)', backdropFilter: 'blur(20px)',
+      background: 'rgba(11,15,20,0.94)', backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
-      borderBottom: '1px solid rgba(30,52,88,0.9)',
+      borderBottom: '1px solid rgba(26,53,112,0.45)',
       boxShadow: '0 1px 0 rgba(184,149,62,0.06), 0 4px 24px rgba(0,0,0,0.35)',
       zIndex: 40,
     }}>
@@ -165,7 +165,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', transition: 'all 0.15s',
             background: notifOpen ? 'rgba(184,149,62,0.12)' : 'rgba(255,255,255,0.05)',
-            border: notifOpen ? '1px solid rgba(184,149,62,0.3)' : '1px solid rgba(42,69,112,0.6)',
+            border: notifOpen ? '1px solid rgba(184,149,62,0.3)' : '1px solid rgba(26,53,112,0.55)',
           }}>
             <Bell size={15} style={{ color: notifOpen ? '#c9a84c' : 'rgba(200,212,232,0.65)' }} />
             {unread > 0 && (
@@ -186,11 +186,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
               position: 'absolute', top: 'calc(100% + 8px)', right: 0,
               width: 360, borderRadius: 14, overflow: 'hidden',
               background: 'linear-gradient(160deg, #172d54 0%, #102241 100%)',
-              border: '1px solid rgba(42,69,112,0.8)',
+              border: '1px solid rgba(26,53,112,0.55)',
               boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
               zIndex: 50,
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid rgba(42,69,112,0.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid rgba(26,53,112,0.4)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Bell size={13} style={{ color: '#c9a84c' }} />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#e8edf5' }}>Notifications</span>
@@ -241,7 +241,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
             display: 'flex', alignItems: 'center', gap: 8, padding: '5px 10px 5px 6px',
             borderRadius: 10, cursor: 'pointer', transition: 'all 0.15s',
             background: userOpen ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
-            border: userOpen ? '1px solid rgba(42,69,112,0.8)' : '1px solid rgba(42,69,112,0.4)',
+            border: userOpen ? '1px solid rgba(26,53,112,0.55)' : '1px solid rgba(26,53,112,0.35)',
           }}>
             <div style={{
               width: 28, height: 28, borderRadius: 8, flexShrink: 0,
@@ -260,11 +260,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
               position: 'absolute', top: 'calc(100% + 8px)', right: 0,
               width: 200, borderRadius: 12, overflow: 'hidden',
               background: 'linear-gradient(160deg, #172d54 0%, #102241 100%)',
-              border: '1px solid rgba(42,69,112,0.8)',
+              border: '1px solid rgba(26,53,112,0.55)',
               boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
               zIndex: 50,
             }}>
-              <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(42,69,112,0.5)' }}>
+              <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(26,53,112,0.4)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#0c1f3d', background: 'linear-gradient(135deg, #7a5e22, #c9a84c)' }}>{initials}</div>
                   <div style={{ minWidth: 0 }}>

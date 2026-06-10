@@ -94,8 +94,8 @@ export default function DashboardPage() {
       value: inr(todaySales),
       sub: `${todayCount} invoices`,
       icon: ShoppingCart,
-      grad: 'linear-gradient(135deg, #1e4976, #2563a8)',
-      glow: 'rgba(37,99,168,0.35)',
+      grad: 'linear-gradient(135deg, #1a3570, #2e58a8)',
+      glow: 'rgba(26,53,112,0.5)',
       delta: <Delta now={todaySales} prev={yesterdaySales} />,
     },
     {
@@ -103,8 +103,8 @@ export default function DashboardPage() {
       value: inr(monthSales),
       sub: `${data?.month_sales?.count || 0} invoices`,
       icon: TrendingUp,
-      grad: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-      glow: 'rgba(184,149,62,0.35)',
+      grad: 'linear-gradient(135deg, #7a5e18, #c89018)',
+      glow: 'rgba(200,144,24,0.4)',
       delta: null,
     },
     {
@@ -112,8 +112,8 @@ export default function DashboardPage() {
       value: inr(monthPurchases),
       sub: 'Total procurement',
       icon: Package,
-      grad: 'linear-gradient(135deg, #1f5c3b, #3da066)',
-      glow: 'rgba(46,125,82,0.35)',
+      grad: 'linear-gradient(135deg, #1e6830, #2a8040)',
+      glow: 'rgba(42,128,64,0.4)',
       delta: null,
     },
     {
@@ -121,17 +121,17 @@ export default function DashboardPage() {
       value: inr(pending),
       sub: 'Outstanding balance',
       icon: AlertTriangle,
-      grad: pending > 0 ? 'linear-gradient(135deg, #7f1d1d, #ef4444)' : 'linear-gradient(135deg, #1f5c3b, #3da066)',
-      glow: pending > 0 ? 'rgba(239,68,68,0.3)' : 'rgba(46,125,82,0.35)',
+      grad: pending > 0 ? 'linear-gradient(135deg, #7f1d1d, #ef4444)' : 'linear-gradient(135deg, #1e6830, #2a8040)',
+      glow: pending > 0 ? 'rgba(239,68,68,0.3)' : 'rgba(42,128,64,0.4)',
       delta: null,
     },
   ];
 
   const quickActions = [
-    { label: 'New Sale',     href: '/sales',       icon: ShoppingCart, color: '#2563a8' },
-    { label: 'Add Vehicle',  href: '/vehicles',    icon: Truck,        color: '#2e7d52' },
-    { label: 'New Purchase', href: '/purchases',   icon: Package,      color: '#8a6a28' },
-    { label: 'Maintenance',  href: '/maintenance', icon: Wrench,       color: '#7f1d1d' },
+    { label: 'New Sale',     href: '/sales',       icon: ShoppingCart, color: '#2e58a8' },
+    { label: 'Add Vehicle',  href: '/vehicles',    icon: Truck,        color: '#2a8040' },
+    { label: 'New Purchase', href: '/purchases',   icon: Package,      color: '#c89018' },
+    { label: 'Maintenance',  href: '/maintenance', icon: Wrench,       color: '#c04040' },
   ];
 
   return (

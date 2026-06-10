@@ -297,22 +297,22 @@
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
   thead tr {
-    border-bottom: 1px solid rgba(75,108,148,0.35);
-    background: rgba(255,255,255,0.025);
+    border-bottom: 1px solid rgba(42,78,138,0.35);
+    background: rgba(255,255,255,0.02);
   }
   thead th {
     padding: 12px 16px;
     text-align: left;
     font-size: 11px;
     font-weight: 600;
-    color: rgba(155,190,225,0.55);
+    color: rgba(140,178,220,0.6);
     text-transform: uppercase;
     letter-spacing: 0.07em;
     white-space: nowrap;
   }
 
   tbody tr {
-    border-bottom: 1px solid rgba(70,105,145,0.22);
+    border-bottom: 1px solid rgba(42,78,138,0.2);
     transition: background 0.12s;
   }
   tbody tr:last-child { border-bottom: none; }
@@ -339,10 +339,10 @@
     letter-spacing: 0.02em;
     white-space: nowrap;
   }
-  .badge-gold   { background: rgba(184,149,62,0.15);  color: #d4aa52; border: 1px solid rgba(184,149,62,0.25); }
-  .badge-gem    { background: rgba(46,125,82,0.2);    color: #5fd98a; border: 1px solid rgba(46,125,82,0.35); }
-  .badge-green  { background: rgba(74,222,128,0.12);  color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
-  .badge-blue   { background: rgba(96,165,250,0.12);  color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+  .badge-gold   { background: rgba(200,144,24,0.15);  color: #d4a828; border: 1px solid rgba(200,144,24,0.28); }
+  .badge-gem    { background: rgba(42,128,64,0.18);   color: #3ec86a; border: 1px solid rgba(42,128,64,0.32); }
+  .badge-green  { background: rgba(42,168,72,0.14);   color: #4ade80; border: 1px solid rgba(42,168,72,0.25); }
+  .badge-blue   { background: rgba(26,53,112,0.28);   color: #7aacec; border: 1px solid rgba(46,88,168,0.4); }
   .badge-red    { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
   .badge-yellow { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
   .badge-gray   { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.15); }
@@ -408,7 +408,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(75,108,148,0.35);
+    border-bottom: 1px solid rgba(42,78,138,0.38);
   }
   .panel-title {
     font-size: 14px;

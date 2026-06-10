@@ -88,14 +88,14 @@ export default function Sidebar() {
     <aside style={{
       width: 256, minWidth: 256, display: 'flex', flexDirection: 'column',
       height: '100vh', position: 'sticky', top: 0, flexShrink: 0, overflow: 'hidden',
-      background: 'linear-gradient(180deg, #050e1e 0%, #081525 50%, #0a1c35 100%)',
-      borderRight: '1px solid rgba(30,52,88,0.8)',
+      background: 'linear-gradient(180deg, #0c1118 0%, #0e1420 50%, #0c1118 100%)',
+      borderRight: '1px solid rgba(26,53,112,0.45)',
     }}>
 
       {/* ── Logo ── */}
       <div style={{
         padding: '20px 20px 18px', display: 'flex', alignItems: 'center', gap: 12,
-        flexShrink: 0, borderBottom: '1px solid rgba(30,52,88,0.8)',
+        flexShrink: 0, borderBottom: '1px solid rgba(26,53,112,0.45)',
       }}>
         <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 12px rgba(180,140,20,0.35))' }}>
           <LogoIcon size={40} />
