@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2] — 2026-06-10
+
+
+### Bug Fixes
+
+- `mobile` WeighbridgeScreen dark theme — replace light #f8fafc background ([71ef5ae])
+
 ## [1.12.1] — 2026-06-10
 
 
