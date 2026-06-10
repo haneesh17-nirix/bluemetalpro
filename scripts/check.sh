@@ -151,6 +151,8 @@ REQUIRED=(
   database/migrations/004_crushers.sql
   database/migrations/005_seed_crusher_access.sql
   database/migrations/006_notifications_v2.sql
+  database/migrations/007_seed_test_data.sql
+  database/migrations/008_platform_admin.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
@@ -163,6 +165,7 @@ REQUIRED=(
   backend/src/routes/maintenance.ts
   backend/src/routes/notifications.ts
   backend/src/routes/parties.ts
+  backend/src/routes/platform.ts
   backend/src/routes/products.ts
   backend/src/routes/purchases.ts
   backend/src/routes/quarry.ts
@@ -192,6 +195,7 @@ REQUIRED=(
   apps/web/src/app/maintenance/page.tsx
   apps/web/src/app/page.tsx
   apps/web/src/app/parties/page.tsx
+  apps/web/src/app/platform/page.tsx
   apps/web/src/app/purchases/page.tsx
   apps/web/src/app/quarry/page.tsx
   apps/web/src/app/reports/page.tsx
