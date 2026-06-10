@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.32] — 2026-06-10
+
+
+### Other Changes
+
+- show all pages to all roles — no nav hiding ([afc5ee7])
+
 ## [1.21.31] — 2026-06-10
 
 
