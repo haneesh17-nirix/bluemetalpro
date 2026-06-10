@@ -83,12 +83,12 @@ BEGIN
   END IF;
   IF u_sales IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role) VALUES
-      (u_sales, c1, 'operations'), (u_sales, c2, 'operations')
+      (u_sales, c1, 'sales_operator'), (u_sales, c2, 'sales_operator')
     ON CONFLICT (user_id, crusher_id) DO NOTHING;
   END IF;
   IF u_accounts IS NOT NULL THEN
     INSERT INTO user_crusher_access (user_id, crusher_id, role) VALUES
-      (u_accounts, c1, 'operations'), (u_accounts, c2, 'operations')
+      (u_accounts, c1, 'accounts'), (u_accounts, c2, 'accounts')
     ON CONFLICT (user_id, crusher_id) DO NOTHING;
   END IF;
 
