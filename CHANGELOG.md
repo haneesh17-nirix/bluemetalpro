@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.21.33] — 2026-06-10
+
+
+### Other Changes
+
+- UI cleanup: sidebar, crushers page, dashboard ([7617cb7])
+- Add tenant layer above crushers ([7444570])
+
 ## [1.21.32] — 2026-06-10
 
 
