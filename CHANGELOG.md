@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0] — 2026-06-10
+
+
+### Features
+
+- `ui` lapis lazuli cartoon panels — ultramarine + pyrite veins + iOS glass ([0dc40eb])
+
 ## [1.16.0] — 2026-06-10
 
 
