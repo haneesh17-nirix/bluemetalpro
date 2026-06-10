@@ -54,7 +54,7 @@ jobs:
           path: |
             backend/dist
             backend/package.json
-            backend/package-lock.json
+            package-lock.json
             backend/Dockerfile
           retention-days: 1
 
@@ -77,7 +77,9 @@ jobs:
 
       - name: Restore production dependencies
         working-directory: deploy
-        run: npm ci --omit=dev
+        # Use the root workspace lockfile (has all transitive deps).
+        # npm ci picks up package-lock.json from cwd; the root lock is uploaded alongside.
+        run: npm ci --omit=dev --ignore-scripts
 
       - name: Set image tag
         id: meta
