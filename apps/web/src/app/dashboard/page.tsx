@@ -151,11 +151,11 @@ export default function DashboardPage() {
                 <div style={{ minWidth: 0, flex: 1 }}>
                   {isLoading
                     ? <div className="skeleton" style={{ height: 24, width: 96, marginBottom: 4 }} />
-                    : <p className="text-xl font-bold text-white leading-none">{k.value}</p>
+                    : <p className="text-xl font-bold leading-none" style={{ color: '#d4a84a' }}>{k.value}</p>
                   }
-                  <p className="text-xs font-medium text-white/70 mt-1">{k.label}</p>
+                  <p className="text-xs font-medium mt-1" style={{ color: 'rgba(215,175,80,0.6)' }}>{k.label}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                    <p className="text-[11px] text-white/40">{k.sub}</p>
+                    <p className="text-[11px]" style={{ color: 'rgba(195,150,55,0.45)' }}>{k.sub}</p>
                     {!isLoading && k.delta}
                   </div>
                 </div>

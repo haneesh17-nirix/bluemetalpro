@@ -15,11 +15,15 @@ type ReportTab = 'item-wise' | 'party-wise' | 'gst' | 'trend' | 'pl';
 
 // ── P&L helpers ───────────────────────────────────────────────────────────────
 function KpiBox({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
+  const isCost = value.includes('₹') || value.startsWith('Rs');
+  const tileClass = isCost ? 'cost-tile' : 'gold-tile';
+  const valueColor = color || (isCost ? '#d4a84a' : '#e8c96a');
   return (
-    <div className="card" style={{ padding: '18px 20px' }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(200,212,232,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{label}</p>
-      <p style={{ fontSize: 22, fontWeight: 800, color: color || '#e8edf5', margin: 0 }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 4 }}>{sub}</p>}
+    <div className={tileClass} style={{ padding: '18px 20px' }}>
+      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase',
+        color: isCost ? 'rgba(200,160,65,0.55)' : 'rgba(215,175,75,0.55)', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontSize: 22, fontWeight: 800, color: valueColor, margin: 0, lineHeight: 1 }}>{value}</p>
+      {sub && <p style={{ fontSize: 10, color: isCost ? 'rgba(185,140,50,0.45)' : 'rgba(195,155,55,0.45)', marginTop: 5 }}>{sub}</p>}
     </div>
   );
 }
