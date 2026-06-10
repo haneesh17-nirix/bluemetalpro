@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.10] — 2026-06-10
+
+
+### Other Changes
+
+- add inner amber backlight, brighten image; login: lift features text brightness ([4a4263f])
+
 ## [1.21.9] — 2026-06-10
 
 
