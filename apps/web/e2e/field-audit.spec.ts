@@ -185,7 +185,7 @@ async function loginAndSelectCrusher(page: Page, email: string) {
       // fallback: click the second button (first is usually a back/cancel)
       await page.locator('button').nth(1).click();
     }
-    await page.waitForURL(u => u.includes('dashboard'), { timeout: 15000 });
+    await page.waitForURL(u => u.href.includes('dashboard'), { timeout: 15000 });
   }
 }
 
