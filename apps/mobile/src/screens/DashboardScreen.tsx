@@ -38,10 +38,10 @@ export default function DashboardScreen({ navigation }: any) {
   ];
 
   const quickActions = [
-    { label: 'New Sale',     screen: 'NewSale',         icon: 'receipt-outline',      color: colors.brandBright },
-    { label: 'Quarry',       screen: 'NewQuarrySale',   icon: 'mountain-outline',     color: colors.gem },
-    { label: 'Attendance',   screen: 'Attendance',      icon: 'people-outline',       color: colors.goldDark },
-    { label: 'Maintenance',  screen: 'Maintenance',     icon: 'construct-outline',    color: '#7c3aed' },
+    { label: 'New Sale',    screen: 'NewSale',      icon: 'receipt-outline',   color: colors.brandBright },
+    { label: 'Quarry',      screen: 'Quarry',       icon: 'mountain-outline',  color: colors.gem },
+    { label: 'Attendance',  screen: 'Wages',        icon: 'people-outline',    color: colors.goldDark },
+    { label: 'Maintenance', screen: 'Maintenance',  icon: 'construct-outline', color: '#7c3aed' },
   ];
 
   return (

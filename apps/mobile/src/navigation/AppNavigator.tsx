@@ -14,6 +14,7 @@ import MaintenanceScreen from '../screens/MaintenanceScreen';
 import WagesScreen from '../screens/WagesScreen';
 import VehiclesScreen from '../screens/VehiclesScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import WeighbridgeScreen from '../screens/WeighbridgeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import CrusherSelectScreen from '../screens/CrusherSelectScreen';
 import { useAuth } from '../hooks/useAuth';
@@ -46,6 +47,7 @@ function MoreStack() {
       <Stack.Screen name="Wages" component={WagesScreen} options={{ title: 'Wages & Attendance' }} />
       <Stack.Screen name="Vehicles" component={VehiclesScreen} options={{ title: 'Vehicles' }} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
+      <Stack.Screen name="Weighbridge" component={WeighbridgeScreen} options={{ title: 'Weighbridge' }} />
     </Stack.Navigator>
   );
 }
@@ -56,6 +58,7 @@ function MoreMenuScreen({ navigation }: any) {
     { label: 'Maintenance',       screen: 'Maintenance',   icon: 'construct-outline',     color: '#7c3aed' },
     { label: 'Wages & Attendance',screen: 'Wages',         icon: 'people-outline',        color: colors.gem },
     { label: 'Notifications',     screen: 'Notifications', icon: 'notifications-outline', color: colors.goldDark },
+    { label: 'Weighbridge',       screen: 'Weighbridge',   icon: 'scale-outline',         color: '#0891b2' },
   ];
   return (
     <View style={more.root}>
