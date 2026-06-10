@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.6] — 2026-06-10
+
+
+### Bug Fixes
+
+- dashboard data + executive invoice redesign ([f238d7f])
+
 ## [1.14.5] — 2026-06-10
 
 
