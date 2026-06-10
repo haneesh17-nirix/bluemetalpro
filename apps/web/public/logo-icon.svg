@@ -1,64 +1,119 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 132" width="120" height="132">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 560">
   <defs>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0c83a"/>
-      <stop offset="35%" stop-color="#d4a020"/>
-      <stop offset="65%" stop-color="#c89018"/>
-      <stop offset="100%" stop-color="#a87010"/>
+    <linearGradient id="gold-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f5d858"/>
+      <stop offset="25%" stop-color="#e0a818"/>
+      <stop offset="60%" stop-color="#c48a10"/>
+      <stop offset="100%" stop-color="#9a6a08"/>
     </linearGradient>
     <linearGradient id="gold-v" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#e8b828"/>
-      <stop offset="50%" stop-color="#c48c14"/>
+      <stop offset="0%" stop-color="#f0c838"/>
+      <stop offset="40%" stop-color="#d09818"/>
+      <stop offset="100%" stop-color="#8c6008"/>
+    </linearGradient>
+    <linearGradient id="gold-bevel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae070"/>
+      <stop offset="50%" stop-color="#d4a020"/>
       <stop offset="100%" stop-color="#9a6808"/>
     </linearGradient>
-    <linearGradient id="shield-fill" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#1e3f7a"/>
-      <stop offset="100%" stop-color="#132a5a"/>
+    <linearGradient id="shield-bg" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#1e4898"/>
+      <stop offset="40%" stop-color="#1a3c82"/>
+      <stop offset="100%" stop-color="#112258"/>
     </linearGradient>
-    <linearGradient id="green" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#1e6830"/>
-      <stop offset="100%" stop-color="#2ea848"/>
+    <linearGradient id="shield-left-bevel" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3060b8"/>
+      <stop offset="100%" stop-color="#1a3c82" stop-opacity="0"/>
     </linearGradient>
-    <clipPath id="b-upper-inner">
-      <path d="M36 22 Q68 22 68 38 Q68 52 36 52 Z"/>
+    <linearGradient id="green-v" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#196028"/>
+      <stop offset="100%" stop-color="#28c040"/>
+    </linearGradient>
+    <linearGradient id="b-spine-bevel" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fae070"/>
+      <stop offset="35%" stop-color="#d4a020"/>
+      <stop offset="80%" stop-color="#b07810"/>
+      <stop offset="100%" stop-color="#7a5008"/>
+    </linearGradient>
+    <clipPath id="upper-bowl-clip">
+      <path d="M148 68 Q316 68 316 152 Q316 236 148 236 Z"/>
     </clipPath>
-    <clipPath id="b-lower-inner">
-      <path d="M36 56 Q74 56 74 72 Q74 88 36 88 Z"/>
+    <clipPath id="lower-bowl-clip">
+      <path d="M148 246 Q336 246 336 330 Q336 414 148 414 Z"/>
     </clipPath>
   </defs>
 
-  <!-- Shield body -->
-  <path d="M60 4 L110 20 L110 72 Q110 108 60 126 Q10 108 10 72 L10 20 Z" fill="url(#shield-fill)"/>
-  <!-- Shield border gold -->
-  <path d="M60 4 L110 20 L110 72 Q110 108 60 126 Q10 108 10 72 L10 20 Z" fill="none" stroke="url(#gold)" stroke-width="2.5"/>
-  <!-- Shield inner highlight -->
-  <path d="M60 10 L104 24 L104 72 Q104 104 60 120 Q16 104 16 72 L16 24 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <!-- ── Shield body ── -->
+  <path d="M250 12 L468 72 L468 272 Q468 420 250 532 Q32 420 32 272 L32 72 Z" fill="url(#shield-bg)"/>
+  <!-- Shield left bevel highlight -->
+  <path d="M250 12 L32 72 L32 272 Q32 420 250 532" fill="none" stroke="url(#shield-left-bevel)" stroke-width="18" stroke-linecap="round"/>
+  <!-- Shield gold border -->
+  <path d="M250 12 L468 72 L468 272 Q468 420 250 532 Q32 420 32 272 L32 72 Z" fill="none" stroke="url(#gold-bevel)" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Shield inner gloss line -->
+  <path d="M250 28 L450 80 L450 272 Q450 405 250 512 Q50 405 50 272 L50 80 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
 
-  <!-- B left spine (gold) -->
-  <rect x="24" y="18" width="12" height="74" rx="3" fill="url(#gold-v)"/>
+  <!-- ── B left spine ── -->
+  <!-- Spine bevel left edge (brightest) -->
+  <rect x="82" y="62" width="16" height="292" rx="6" fill="#f0d050"/>
+  <!-- Spine main body -->
+  <rect x="98" y="62" width="50" height="292" fill="url(#b-spine-bevel)"/>
+  <!-- Spine right shadow -->
+  <rect x="142" y="62" width="10" height="292" fill="rgba(0,0,0,0.30)"/>
 
-  <!-- B upper bump outer (gold) -->
-  <path d="M36 18 Q74 18 74 36 Q74 54 36 54 Z" fill="url(#gold)"/>
-  <!-- B upper bump inner cutout (navy) — mountain area -->
-  <path d="M36 23 Q68 23 68 37 Q68 50 36 50 Z" fill="#152e68"/>
-  <!-- Mountain silhouette inside upper B -->
-  <g clip-path="url(#b-upper-inner)">
-    <!-- Rocky mountain peaks — dark navy against lighter showing through -->
-    <polygon points="36,50 44,38 48,42 53,32 58,36 62,28 68,38 68,50" fill="#1a3a7a"/>
-    <polygon points="53,32 58,28 64,32 68,32 68,28 62,22 56,26 50,22 44,30 48,34" fill="#1e4488"/>
-    <!-- Snow/highlight tips -->
-    <polygon points="62,22 58,28 65,28" fill="rgba(255,255,255,0.15)"/>
-    <polygon points="50,22 46,28 53,26" fill="rgba(255,255,255,0.10)"/>
-  </g>
-  <!-- Mountain bottom fill for depth -->
-  <path d="M36 44 Q68 44 68 50 L36 50 Z" fill="#0f2255" opacity="0.6"/>
+  <!-- ── B upper arch outer (gold bowl) ── -->
+  <path d="M148 62 Q330 62 330 152 Q330 242 148 242 Z" fill="url(#gold-v)"/>
+  <!-- Upper arch bevel top-left edge -->
+  <path d="M148 62 Q330 62 330 90" fill="none" stroke="rgba(255,240,100,0.6)" stroke-width="5"/>
+  <!-- Upper arch inner cavity -->
+  <path d="M148 78 Q306 78 306 152 Q306 226 148 226 Z" fill="#142860"/>
 
-  <!-- B lower bump outer (gold, larger) -->
-  <path d="M36 56 Q78 56 78 72 Q78 90 36 90 Z" fill="url(#gold)"/>
-  <!-- B lower bump inner cutout (navy) — bars area -->
-  <path d="M36 61 Q72 61 72 72 Q72 85 36 85 Z" fill="#152e68"/>
-  <!-- Green bar chart bars -->
-  <rect x="43" y="73" width="7" height="11" rx="1.5" fill="url(#green)"/>
-  <rect x="52" y="67" width="7" height="17" rx="1.5" fill="url(#green)"/>
-  <rect x="61" y="70" width="7" height="14" rx="1.5" fill="url(#green)"/>
+  <!-- ── Low-poly GOLD mountains inside upper arch ── -->
+  <!-- Base dark sky -->
+  <path d="M148 78 Q306 78 306 152 Q306 226 148 226 Z" fill="#142860"/>
+  <!-- Mountain fill bottom layer -->
+  <polygon points="148,226 172,178 195,198 218,158 242,182 262,148 284,172 306,152 306,226" fill="#1a3270"/>
+  <!-- Mountain facets — lit faces (bright gold/amber) -->
+  <polygon points="218,158 242,182 250,168 262,148" fill="#e0a818"/>
+  <polygon points="262,148 284,172 295,158 306,152 295,142 280,138" fill="#d49010"/>
+  <polygon points="218,158 195,198 210,188 225,172 242,182" fill="#c88810"/>
+  <polygon points="172,178 148,210 165,200 185,192 195,198" fill="#b87808"/>
+  <!-- Sunlit faces (brightest) -->
+  <polygon points="262,148 250,138 240,145 242,158 250,168" fill="#f0c030"/>
+  <polygon points="218,158 225,145 238,148 242,158 230,168" fill="#e8b828"/>
+  <polygon points="284,138 280,138 295,142 306,145 306,136 294,130" fill="#f0c030"/>
+  <!-- Dark shadow faces -->
+  <polygon points="195,198 172,178 165,200 185,192" fill="#9a7010" opacity="0.8"/>
+  <polygon points="242,182 250,168 258,178 255,190 245,196" fill="#a07808" opacity="0.8"/>
+  <polygon points="284,172 295,158 303,168 306,178 306,188" fill="#8a6808" opacity="0.75"/>
+  <!-- Peak snow highlights -->
+  <polygon points="262,148 258,152 262,150 267,153" fill="rgba(255,255,255,0.28)"/>
+  <polygon points="218,158 215,163 218,161 222,163" fill="rgba(255,255,255,0.22)"/>
+  <polygon points="295,140 292,144 295,142 298,144" fill="rgba(255,255,255,0.20)"/>
+  <!-- Horizon shadow base -->
+  <rect x="148" y="210" width="158" height="16" fill="#0e1e50" opacity="0.7"/>
+
+  <!-- ── B upper arch inner shadow line (3D depth) ── -->
+  <path d="M148 226 Q306 226 306 152" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="3"/>
+
+  <!-- ── B lower arch outer (gold bowl, larger) ── -->
+  <path d="M148 248 Q348 248 348 334 Q348 420 148 420 Z" fill="url(#gold-v)"/>
+  <!-- Lower arch bevel top-left edge -->
+  <path d="M148 248 Q348 248 348 278" fill="none" stroke="rgba(255,240,100,0.5)" stroke-width="5"/>
+  <!-- Lower arch inner cavity navy -->
+  <path d="M148 264 Q324 264 324 334 Q324 404 148 404 Z" fill="#142860"/>
+
+  <!-- ── Green bar chart bars ── -->
+  <rect x="195" y="334" width="30" height="62" rx="5" fill="url(#green-v)"/>
+  <rect x="234" y="304" width="30" height="92" rx="5" fill="url(#green-v)"/>
+  <rect x="273" y="316" width="30" height="80" rx="5" fill="url(#green-v)"/>
+  <!-- Bar chart top highlights -->
+  <rect x="195" y="334" width="30" height="8" rx="5" fill="rgba(255,255,255,0.15)"/>
+  <rect x="234" y="304" width="30" height="8" rx="5" fill="rgba(255,255,255,0.15)"/>
+  <rect x="273" y="316" width="30" height="8" rx="5" fill="rgba(255,255,255,0.15)"/>
+
+  <!-- ── B lower arch inner shadow ── -->
+  <path d="M148 404 Q324 404 324 334" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="3"/>
+
+  <!-- ── B spine bottom cap ── -->
+  <rect x="82" y="348" width="66" height="6" rx="2" fill="rgba(0,0,0,0.2)"/>
 </svg>
