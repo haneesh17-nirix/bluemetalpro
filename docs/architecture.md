@@ -1,5 +1,5 @@
 # BlueMetal Pro — Architecture Guide
-<!-- version: 1.14.6 -->
+<!-- version: 1.14.7 -->
 
 ## Overview
 

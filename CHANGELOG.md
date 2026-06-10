@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.7] — 2026-06-10
+
+
+### Other Changes
+
+- Fix role access: report_viewer can view purchases/quarry; all test accounts use Test@1234 ([bb516ff])
+
 ## [1.14.6] — 2026-06-10
 
 
