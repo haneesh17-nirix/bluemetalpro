@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.7] — 2026-06-10
+
+
+### Other Changes
+
+- Login page: centre logo+branding block, increase to 148px, larger text ([694c868])
+
 ## [1.21.6] — 2026-06-10
 
 
