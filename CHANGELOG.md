@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.23] — 2026-06-10
+
+
+### Other Changes
+
+- Migration 012: re-home FK references before deleting duplicate crushers ([c557c1a])
+
 ## [1.21.22] — 2026-06-10
 
 
