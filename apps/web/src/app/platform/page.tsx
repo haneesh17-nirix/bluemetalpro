@@ -1,278 +1,142 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import {
-  Building2, Users, Plus, X, ChevronRight, ToggleLeft, ToggleRight,
-  LogOut, Shield, Loader2, TrendingUp, IndianRupee, MapPin, CheckCircle, BarChart2,
-  UserPlus, Trash2, AlertCircle,
+  Building2, Factory, Plus, X, LogOut, Loader2, ChevronRight,
+  ToggleLeft, ToggleRight, Edit2, Users, MapPin, TrendingUp, IndianRupee,
 } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 import {
-  getPlatformOverview, getPlatformUsers, platformCreateCrusher,
-  getPlatformCrusherUsers, platformAddUserToCrusher, platformRemoveUserFromCrusher,
-  platformSetCrusherStatus, platformCreateUser,
+  getPlatformTenants, platformCreateTenant, platformUpdateTenant,
+  platformSetTenantStatus, getPlatformTenantCrushers, platformAddCrusherToTenant,
 } from '@/lib/api';
 
-const ROLES = ['admin', 'operations', 'report_viewer'];
-const ROLE_LABELS: Record<string, string> = {
-  admin: 'Admin', operations: 'Operations', report_viewer: 'Reports',
-  platform_admin: 'Platform Admin',
-};
-const ROLE_COLORS: Record<string, string> = {
-  admin: '#c9a84c', operations: '#4caf8c', report_viewer: '#9c88d4',
-  platform_admin: '#e0bc60',
+const PLAN_COLORS: Record<string, string> = {
+  standard: '#4ade80', pro: '#60a5fa', enterprise: '#c9a84c',
 };
 
 function fmt(n: number) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 }
 
-type Crusher = {
+type Tenant = {
   id: string; name: string; legal_name: string; city: string; state: string;
-  gstin: string; phone: string; email: string; is_active: boolean;
-  user_count: number; sale_count: number; total_revenue: number; created_at: string;
-};
-type PlatformUser = {
-  id: string; name: string; email: string; role: string; is_active: boolean;
-  crusher_access: { crusher_id: string; crusher_name: string; role: string }[];
+  gstin: string; phone: string; email: string; plan: string; logo_url: string;
+  is_active: boolean; crusher_count: number; user_count: number;
+  total_revenue: number; created_at: string;
 };
 
-// ── Create Crusher Modal ──────────────────────────────────────────────────
-function CreateCrusherModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [step, setStep] = useState<'details' | 'admin'>('details');
+// ── Tenant Form Modal ─────────────────────────────────────────────────────────
+function TenantModal({ tenant, onClose, onSaved }: {
+  tenant?: Tenant | null; onClose: () => void; onSaved: () => void;
+}) {
+  const isEdit = !!tenant;
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name: '', legal_name: '', gstin: '', city: '', state: 'Tamil Nadu',
-    address: '', pincode: '', phone: '', email: '',
-    bank_name: '', bank_account: '', bank_ifsc: '', invoice_prefix: '', quarry_invoice_prefix: '',
+    name: tenant?.name || '', legal_name: tenant?.legal_name || '',
+    gstin: tenant?.gstin || '', city: tenant?.city || '',
+    state: tenant?.state || 'Tamil Nadu', phone: tenant?.phone || '',
+    email: tenant?.email || '', plan: tenant?.plan || 'standard',
+    // First crusher fields (create only)
+    crusher_name: '', crusher_city: '', crusher_gstin: '',
+    crusher_invoice_prefix: 'INV', crusher_quarry_prefix: 'QRY',
+    // Admin user fields (create only)
     admin_name: '', admin_email: '', admin_password: '',
   });
-
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
   const save = async () => {
-    if (!form.name) return toast.error('Crusher name is required');
+    if (!form.name) return toast.error('Company name is required');
     setSaving(true);
     try {
-      await platformCreateCrusher(form);
-      toast.success(`${form.name} created successfully`);
-      onCreated();
-      onClose();
+      if (isEdit) {
+        await platformUpdateTenant(tenant!.id, form);
+        toast.success('Tenant updated');
+      } else {
+        await platformCreateTenant(form);
+        toast.success(`${form.name} created`);
+      }
+      onSaved(); onClose();
     } catch (e: any) {
-      toast.error(e?.response?.data?.error || 'Failed to create crusher');
-    } finally {
-      setSaving(false);
-    }
+      toast.error(e?.response?.data?.error || 'Failed to save');
+    } finally { setSaving(false); }
   };
 
-  const field = (label: string, key: string, placeholder?: string, half?: boolean) => (
-    <div style={{ gridColumn: half ? 'span 1' : 'span 2' }}>
-      <label className="label">{label}</label>
-      <input className="input" placeholder={placeholder || label}
-        value={(form as any)[key]} onChange={e => set(key, e.target.value)} />
+  const field = (label: string, key: string, type = 'text', placeholder = '') => (
+    <div>
+      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</label>
+      <input type={type} placeholder={placeholder || label}
+        value={(form as any)[key]} onChange={e => set(key, e.target.value)}
+        style={{ width: '100%', background: 'rgba(3,9,24,0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#dde6f4', outline: 'none', boxSizing: 'border-box' }} />
     </div>
   );
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="card" style={{ width: 600, maxHeight: '90vh', overflowY: 'auto', padding: 32 }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ width: 580, maxHeight: '90vh', overflowY: 'auto', background: 'linear-gradient(160deg, #0d1830 0%, #091420 100%)', border: '1px solid rgba(26,53,112,0.55)', borderRadius: 20, padding: 32, boxShadow: '0 32px 80px rgba(0,0,0,0.7)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e8edf5', margin: 0 }}>New Crusher Unit</h2>
-            <p style={{ fontSize: 12, color: 'rgba(200,212,232,0.5)', margin: '4px 0 0' }}>
-              {step === 'details' ? 'Step 1 of 2 — Unit details' : 'Step 2 of 2 — Admin account'}
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: '#e8edf5', margin: 0 }}>
+              {isEdit ? 'Edit Company' : 'New Company'}
+            </h2>
+            <p style={{ fontSize: 12, color: 'rgba(180,200,230,0.4)', margin: '4px 0 0' }}>
+              {isEdit ? 'Update tenant details' : 'Provision a new crusher company'}
             </p>
           </div>
-          <button className="btn-ghost" onClick={onClose}><X size={16} /></button>
-        </div>
-
-        {/* Step indicator */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-          {(['details', 'admin'] as const).map((s, i) => (
-            <div key={s} style={{
-              flex: 1, height: 3, borderRadius: 2,
-              background: step === s || (s === 'details') ? '#c9a84c' : 'rgba(255,255,255,0.12)',
-              opacity: step === 'admin' && s === 'details' ? 1 : step === s ? 1 : 0.3,
-            }} />
-          ))}
-        </div>
-
-        {step === 'details' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            {field('Crusher Name *', 'name', 'e.g. BlueMetal Quarry Unit 3')}
-            {field('Legal Name', 'legal_name', 'As per GST registration', true)}
-            {field('GSTIN', 'gstin', '33AAAAA0000A1Z5', true)}
-            {field('City', 'city', 'Hosur', true)}
-            {field('State', 'state', 'Tamil Nadu', true)}
-            {field('Address', 'address')}
-            {field('Pincode', 'pincode', '635109', true)}
-            {field('Phone', 'phone', '9876543210', true)}
-            {field('Email', 'email', 'unit@bluemetal.in')}
-            {field('Bank Name', 'bank_name', 'State Bank of India', true)}
-            {field('Account Number', 'bank_account', '', true)}
-            {field('IFSC Code', 'bank_ifsc', 'SBIN0005612', true)}
-            {field('Invoice Prefix', 'invoice_prefix', 'INV', true)}
-            {field('Quarry Invoice Prefix', 'quarry_invoice_prefix', 'QRY', true)}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{
-              padding: 12, borderRadius: 10,
-              background: 'rgba(184,149,62,0.08)', border: '1px solid rgba(184,149,62,0.2)',
-            }}>
-              <p style={{ fontSize: 12, color: 'rgba(200,212,232,0.7)', margin: 0 }}>
-                Optionally create the first admin user for this crusher. You can skip this and add users later.
-              </p>
-            </div>
-            <div>
-              <label className="label">Admin Full Name</label>
-              <input className="input" placeholder="e.g. Ramesh Kumar"
-                value={form.admin_name} onChange={e => set('admin_name', e.target.value)} />
-            </div>
-            <div>
-              <label className="label">Admin Email</label>
-              <input className="input" type="email" placeholder="admin@unit3.in"
-                value={form.admin_email} onChange={e => set('admin_email', e.target.value)} />
-            </div>
-            <div>
-              <label className="label">Temporary Password</label>
-              <input className="input" type="text" placeholder="Will be asked to change on first login"
-                value={form.admin_password} onChange={e => set('admin_password', e.target.value)} />
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
-          {step === 'admin' && (
-            <button className="btn-secondary" onClick={() => setStep('details')}>Back</button>
-          )}
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          {step === 'details' ? (
-            <button className="btn-primary" onClick={() => { if (form.name) setStep('admin'); else toast.error('Crusher name is required'); }}>
-              Next <ChevronRight size={14} />
-            </button>
-          ) : (
-            <button className="btn-primary" onClick={save} disabled={saving}>
-              {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={14} />}
-              Create Crusher
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Add User to Crusher Modal ─────────────────────────────────────────────
-function AddUserModal({ crusher, allUsers, onClose, onAdded }: {
-  crusher: Crusher; allUsers: PlatformUser[];
-  onClose: () => void; onAdded: () => void;
-}) {
-  const [mode, setMode] = useState<'existing' | 'new'>('existing');
-  const [saving, setSaving] = useState(false);
-  const [selectedUser, setSelectedUser] = useState('');
-  const [role, setRole] = useState('operations');
-  const [newForm, setNewForm] = useState({ name: '', email: '', password: '', role: 'operations' });
-
-  const save = async () => {
-    setSaving(true);
-    try {
-      if (mode === 'existing') {
-        if (!selectedUser) return toast.error('Select a user');
-        await platformAddUserToCrusher(crusher.id, { user_id: selectedUser, role });
-      } else {
-        if (!newForm.name || !newForm.email || !newForm.password) return toast.error('All fields required');
-        await platformCreateUser({ ...newForm, crusher_id: crusher.id, crusher_role: newForm.role });
-      }
-      toast.success('User added successfully');
-      onAdded();
-      onClose();
-    } catch (e: any) {
-      toast.error(e?.response?.data?.error || 'Failed to add user');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="card" style={{ width: 460, padding: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e8edf5', margin: 0 }}>Add User to {crusher.name}</h3>
-          <button className="btn-ghost" onClick={onClose}><X size={14} /></button>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-          {(['existing', 'new'] as const).map(m => (
-            <button key={m} onClick={() => setMode(m)} style={{
-              flex: 1, padding: '8px 12px', borderRadius: 10, fontSize: 12, fontWeight: 600,
-              cursor: 'pointer', border: 'none',
-              background: mode === m ? 'rgba(184,149,62,0.2)' : 'rgba(255,255,255,0.05)',
-              color: mode === m ? '#c9a84c' : 'rgba(200,212,232,0.6)',
-            }}>
-              {m === 'existing' ? 'Existing user' : 'Create new user'}
-            </button>
-          ))}
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(180,200,230,0.5)', padding: 4 }}><X size={18} /></button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {mode === 'existing' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ gridColumn: 'span 2' }}>{field('Company Name', 'name')}</div>
+            {field('Legal Name', 'legal_name')}
+            {field('GSTIN', 'gstin')}
+            {field('City', 'city')}
+            {field('State', 'state')}
+            {field('Phone', 'phone', 'tel')}
+            {field('Email', 'email', 'email')}
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Plan</label>
+              <select value={form.plan} onChange={e => set('plan', e.target.value)}
+                style={{ width: '100%', background: 'rgba(3,9,24,0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#dde6f4', outline: 'none' }}>
+                <option value="standard">Standard</option>
+                <option value="pro">Pro</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
+            </div>
+          </div>
+
+          {!isEdit && (
             <>
-              <div>
-                <label className="label">Select User</label>
-                <select className="select" value={selectedUser} onChange={e => setSelectedUser(e.target.value)}>
-                  <option value="">— choose user —</option>
-                  {allUsers.filter(u => !u.crusher_access.find(a => a.crusher_id === crusher.id)).map(u => (
-                    <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
-                  ))}
-                </select>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(184,149,62,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 12px' }}>First Plant (optional)</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ gridColumn: 'span 2' }}>{field('Plant Name', 'crusher_name', 'text', 'e.g. Unit 1 — Hosur')}</div>
+                  {field('City', 'crusher_city')}
+                  {field('GSTIN', 'crusher_gstin')}
+                  {field('Invoice Prefix', 'crusher_invoice_prefix', 'text', 'INV')}
+                  {field('Quarry Prefix', 'crusher_quarry_prefix', 'text', 'QRY')}
+                </div>
               </div>
-              <div>
-                <label className="label">Role in this crusher</label>
-                <select className="select" value={role} onChange={e => setRole(e.target.value)}>
-                  {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
-                </select>
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <label className="label">Full Name</label>
-                <input className="input" placeholder="Ramesh Kumar"
-                  value={newForm.name} onChange={e => setNewForm(f => ({ ...f, name: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">Email</label>
-                <input className="input" type="email" placeholder="user@company.in"
-                  value={newForm.email} onChange={e => setNewForm(f => ({ ...f, email: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">Password</label>
-                <input className="input" type="text"
-                  value={newForm.password} onChange={e => setNewForm(f => ({ ...f, password: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">Role</label>
-                <select className="select" value={newForm.role} onChange={e => setNewForm(f => ({ ...f, role: e.target.value }))}>
-                  {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
-                </select>
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(184,149,62,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 12px' }}>Admin Account (optional)</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {field('Admin Name', 'admin_name')}
+                  {field('Admin Email', 'admin_email', 'email')}
+                  <div style={{ gridColumn: 'span 2' }}>{field('Password', 'admin_password', 'password')}</div>
+                </div>
               </div>
             </>
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginTop: 20, justifyContent: 'flex-end' }}>
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" onClick={save} disabled={saving}>
-            {saving ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <UserPlus size={13} />}
-            Add User
+        <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', color: 'rgba(180,200,230,0.6)', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={save} disabled={saving} style={{ flex: 2, padding: '10px 16px', borderRadius: 10, border: '1px solid rgba(120,80,15,0.7)', background: 'linear-gradient(160deg, #6a4808, #8a5e12)', color: '#d4a838', fontSize: 13, fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            {saving ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : (isEdit ? 'Save Changes' : 'Create Company')}
           </button>
         </div>
       </div>
@@ -280,384 +144,290 @@ function AddUserModal({ crusher, allUsers, onClose, onAdded }: {
   );
 }
 
-// ── Crusher Detail Panel ──────────────────────────────────────────────────
-function CrusherDetail({ crusher, allUsers, onBack, onRefresh }: {
-  crusher: Crusher; allUsers: PlatformUser[];
-  onBack: () => void; onRefresh: () => void;
+// ── Add Crusher Modal ─────────────────────────────────────────────────────────
+function AddCrusherModal({ tenantId, onClose, onSaved }: {
+  tenantId: string; onClose: () => void; onSaved: () => void;
 }) {
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showAddUser, setShowAddUser] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ name: '', legal_name: '', gstin: '', city: '', state: 'Tamil Nadu', invoice_prefix: 'INV', quarry_invoice_prefix: 'QRY' });
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-  useEffect(() => {
-    getPlatformCrusherUsers(crusher.id).then(setUsers).finally(() => setLoading(false));
-  }, [crusher.id]);
-
-  const removeUser = async (userId: string, name: string) => {
-    if (!confirm(`Remove ${name} from ${crusher.name}?`)) return;
-    await platformRemoveUserFromCrusher(crusher.id, userId);
-    setUsers(us => us.filter(u => u.id !== userId));
-    toast.success('Access revoked');
-  };
-
-  const toggleStatus = async () => {
-    await platformSetCrusherStatus(crusher.id, !crusher.is_active);
-    toast.success(crusher.is_active ? 'Crusher deactivated' : 'Crusher activated');
-    onRefresh();
+  const save = async () => {
+    if (!form.name) return toast.error('Plant name is required');
+    setSaving(true);
+    try {
+      await platformAddCrusherToTenant(tenantId, form);
+      toast.success(`${form.name} added`);
+      onSaved(); onClose();
+    } catch (e: any) {
+      toast.error(e?.response?.data?.error || 'Failed to add plant');
+    } finally { setSaving(false); }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Back header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button className="btn-ghost" onClick={onBack} style={{ padding: '6px 10px' }}>
-          ← Back
-        </button>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e8edf5', margin: 0 }}>{crusher.name}</h2>
-        <span style={{
-          marginLeft: 4, padding: '3px 10px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-          background: crusher.is_active ? 'rgba(76,175,140,0.15)' : 'rgba(220,70,70,0.15)',
-          color: crusher.is_active ? '#4caf8c' : '#e05555',
-        }}>{crusher.is_active ? 'Active' : 'Inactive'}</span>
-      </div>
-
-      {/* Crusher info card */}
-      <div className="card" style={{ padding: 24 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20, marginBottom: 20 }}>
-          {[
-            { label: 'Total Revenue', value: fmt(crusher.total_revenue), icon: <IndianRupee size={18} color="#c9a84c" /> },
-            { label: 'Total Sales', value: crusher.sale_count.toString(), icon: <TrendingUp size={18} color="#4caf8c" /> },
-            { label: 'Active Users', value: crusher.user_count.toString(), icon: <Users size={18} color="#6c9ddc" /> },
-            { label: 'Location', value: crusher.city || '—', icon: <MapPin size={18} color="#9c88d4" /> },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign: 'center' }}>
-              <div style={{ marginBottom: 4 }}>{s.icon}</div>
-              <div style={{ fontSize: 20, fontWeight: 700, color: '#e8edf5' }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.5)' }}>{s.label}</div>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ width: 460, background: 'linear-gradient(160deg, #0d1830, #091420)', border: '1px solid rgba(26,53,112,0.55)', borderRadius: 20, padding: 28, boxShadow: '0 32px 80px rgba(0,0,0,0.7)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e8edf5', margin: 0 }}>Add Crushing Plant</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(180,200,230,0.5)' }}><X size={16} /></button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {(['name','legal_name','gstin','city'] as const).map(k => (
+            <div key={k}>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'rgba(170,190,220,0.55)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k.replace(/_/g, ' ')}</label>
+              <input value={form[k]} onChange={e => set(k, e.target.value)}
+                style={{ width: '100%', background: 'rgba(3,9,24,0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#dde6f4', outline: 'none', boxSizing: 'border-box' }} />
             </div>
           ))}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 16 }}>
-          {crusher.gstin && <div><span style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>GSTIN</span><br /><span style={{ fontSize: 13, color: '#c8d4e8' }}>{crusher.gstin}</span></div>}
-          {crusher.phone && <div><span style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>Phone</span><br /><span style={{ fontSize: 13, color: '#c8d4e8' }}>{crusher.phone}</span></div>}
-          {crusher.email && <div><span style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>Email</span><br /><span style={{ fontSize: 13, color: '#c8d4e8' }}>{crusher.email}</span></div>}
-        </div>
-        <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
-          <button className="btn-secondary" onClick={toggleStatus} style={{ fontSize: 12 }}>
-            {crusher.is_active ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
-            {crusher.is_active ? 'Deactivate Crusher' : 'Activate Crusher'}
-          </button>
-        </div>
-      </div>
-
-      {/* Users */}
-      <div className="card" style={{ padding: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: '#c8d4e8', margin: 0 }}>Users</h3>
-          <button className="btn-primary" style={{ fontSize: 12, padding: '7px 14px' }} onClick={() => setShowAddUser(true)}>
-            <UserPlus size={13} /> Add User
-          </button>
-        </div>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: 32, color: 'rgba(200,212,232,0.4)' }}>
-            <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
-          </div>
-        ) : users.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 32, color: 'rgba(200,212,232,0.4)', fontSize: 13 }}>
-            No users yet — add the first user to get started.
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {users.map(u => (
-              <div key={u.id} style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '10px 14px', borderRadius: 10,
-                background: 'rgba(255,255,255,0.04)',
-              }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: 8,
-                  background: `${ROLE_COLORS[u.role] || '#6c9ddc'}22`,
-                  border: `1px solid ${ROLE_COLORS[u.role] || '#6c9ddc'}44`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, fontWeight: 700, color: ROLE_COLORS[u.role] || '#6c9ddc',
-                  flexShrink: 0,
-                }}>
-                  {u.name.split(' ').map((p: string) => p[0]).join('').slice(0, 2).toUpperCase()}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#e8edf5' }}>{u.name}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.5)' }}>{u.email}</div>
-                </div>
-                <span style={{
-                  padding: '3px 10px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                  background: `${ROLE_COLORS[u.role] || '#6c9ddc'}18`,
-                  color: ROLE_COLORS[u.role] || '#6c9ddc',
-                }}>
-                  {ROLE_LABELS[u.role] || u.role}
-                </span>
-                <button className="btn-ghost" style={{ color: '#e05555', padding: '5px 8px' }}
-                  onClick={() => removeUser(u.id, u.name)}>
-                  <Trash2 size={13} />
-                </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {(['invoice_prefix','quarry_invoice_prefix'] as const).map(k => (
+              <div key={k}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'rgba(170,190,220,0.55)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k.replace(/_/g, ' ')}</label>
+                <input value={form[k]} onChange={e => set(k, e.target.value)}
+                  style={{ width: '100%', background: 'rgba(3,9,24,0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#dde6f4', outline: 'none', boxSizing: 'border-box' }} />
               </div>
             ))}
           </div>
-        )}
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', color: 'rgba(180,200,230,0.6)', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={save} disabled={saving} style={{ flex: 2, padding: '10px', borderRadius: 10, border: '1px solid rgba(120,80,15,0.7)', background: 'linear-gradient(160deg, #6a4808, #8a5e12)', color: '#d4a838', fontSize: 13, fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            {saving ? <><Loader2 size={14} className="animate-spin" /> Adding…</> : 'Add Plant'}
+          </button>
+        </div>
       </div>
-
-      {showAddUser && (
-        <AddUserModal crusher={crusher} allUsers={allUsers} onClose={() => setShowAddUser(false)}
-          onAdded={() => {
-            getPlatformCrusherUsers(crusher.id).then(setUsers);
-            onRefresh();
-          }} />
-      )}
     </div>
   );
 }
 
-// ── Main Platform Page ────────────────────────────────────────────────────
+// ── Main Platform Admin Page ──────────────────────────────────────────────────
 export default function PlatformPage() {
   const router = useRouter();
-  const [crushers, setCrushers] = useState<Crusher[]>([]);
-  const [allUsers, setAllUsers] = useState<PlatformUser[]>([]);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCrusher, setSelectedCrusher] = useState<Crusher | null>(null);
-  const [showCreate, setShowCreate] = useState(false);
-  const [tab, setTab] = useState<'crushers' | 'users'>('crushers');
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.role !== 'platform_admin') { router.replace('/login'); return; }
-    load();
-  }, []);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const [c, u] = await Promise.all([getPlatformOverview(), getPlatformUsers()]);
-      setCrushers(c);
-      setAllUsers(u);
-    } catch {
-      toast.error('Failed to load platform data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+  const [tenantCrushers, setTenantCrushers] = useState<any[]>([]);
+  const [showTenantModal, setShowTenantModal] = useState(false);
+  const [editTenant, setEditTenant] = useState<Tenant | null>(null);
+  const [showAddCrusher, setShowAddCrusher] = useState(false);
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    ['token', 'user', 'tenant', 'crusher', 'tenants_list', 'crushers_list'].forEach(k => localStorage.removeItem(k));
     router.push('/login');
   };
 
-  const totalRevenue = crushers.reduce((s, c) => s + Number(c.total_revenue), 0);
-  const totalSales = crushers.reduce((s, c) => s + Number(c.sale_count), 0);
-  const activeCount = crushers.filter(c => c.is_active).length;
+  const load = async () => {
+    try { setTenants(await getPlatformTenants()); }
+    catch { toast.error('Failed to load tenants'); }
+    finally { setLoading(false); }
+  };
+
+  const selectTenantDetail = async (t: Tenant) => {
+    setSelectedTenant(t);
+    try { setTenantCrushers(await getPlatformTenantCrushers(t.id)); }
+    catch { setTenantCrushers([]); }
+  };
+
+  const toggleStatus = async (t: Tenant) => {
+    try {
+      await platformSetTenantStatus(t.id, !t.is_active);
+      toast.success(t.is_active ? `${t.name} deactivated` : `${t.name} activated`);
+      load();
+      if (selectedTenant?.id === t.id) setSelectedTenant({ ...t, is_active: !t.is_active });
+    } catch { toast.error('Failed'); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const user = (() => { try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; } })();
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
-      color: '#e8edf5',
-    }}>
-      {/* Top bar */}
-      <div style={{
-        height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 28px',
-        background: 'rgba(12,31,61,0.95)',
-        borderBottom: '1px solid rgba(42,69,112,0.6)',
-        position: 'sticky', top: 0, zIndex: 100,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ filter: 'drop-shadow(0 3px 8px rgba(180,140,20,0.4))' }}>
-            <LogoIcon size={52} />
-          </div>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #07090f 0%, #0b1220 50%, #07090f 100%)', display: 'flex', flexDirection: 'column' }}>
+
+      {/* Header */}
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 28px', borderBottom: '1px solid rgba(26,53,112,0.45)', background: 'rgba(7,9,15,0.9)', backdropFilter: 'blur(20px)', flexShrink: 0, zIndex: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ filter: 'drop-shadow(0 3px 12px rgba(160,112,20,0.45))' }}><LogoIcon size={40} /></div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#e8edf5', lineHeight: 1.2 }}>BlueMetal Pro</div>
-            <div style={{ fontSize: 10, color: '#c9a84c', fontWeight: 600, letterSpacing: '0.08em' }}>PLATFORM ADMIN</div>
+            <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.01em' }}>BlueMetal Pro</p>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', margin: '2px 0 0', background: 'linear-gradient(135deg, #b8953e, #d4aa52)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SUPER ADMIN</p>
           </div>
         </div>
-        <button className="btn-ghost" onClick={logout} style={{ gap: 6 }}>
-          <LogOut size={14} /> Sign out
-        </button>
-      </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ fontSize: 12, color: 'rgba(180,200,230,0.5)', textAlign: 'right' }}>
+            <div style={{ fontWeight: 600, color: '#e8edf5' }}>{user?.name || 'Super Admin'}</div>
+            <div>Platform Administrator</div>
+          </div>
+          <button onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', color: 'rgba(200,212,232,0.6)', fontSize: 12, cursor: 'pointer' }}>
+            <LogOut size={13} /> Sign out
+          </button>
+        </div>
+      </header>
 
-      {/* Page content */}
-      <div style={{ padding: 28, maxWidth: 1200, margin: '0 auto' }}>
-        {selectedCrusher ? (
-          <CrusherDetail
-            crusher={selectedCrusher} allUsers={allUsers}
-            onBack={() => { setSelectedCrusher(null); load(); }}
-            onRefresh={load}
-          />
-        ) : (
-          <>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24 }}>
-              <div>
-                <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0, color: '#e8edf5' }}>Platform Dashboard</h1>
-                <p style={{ fontSize: 13, color: 'rgba(200,212,232,0.5)', margin: '4px 0 0' }}>
-                  Manage all crusher units and users from one place
-                </p>
-              </div>
-              <button className="btn-primary" onClick={() => setShowCreate(true)}>
-                <Plus size={14} /> New Crusher
-              </button>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+
+        {/* Left: tenant list */}
+        <div style={{ width: 340, borderRight: '1px solid rgba(26,53,112,0.35)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(26,53,112,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 700, color: '#e8edf5', margin: 0 }}>Companies</p>
+              <p style={{ fontSize: 11, color: 'rgba(180,200,230,0.4)', margin: '2px 0 0' }}>{tenants.length} tenants</p>
             </div>
+            <button onClick={() => { setEditTenant(null); setShowTenantModal(true); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 9, border: '1px solid rgba(120,80,15,0.5)', background: 'rgba(184,149,62,0.08)', color: '#c9a84c', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              <Plus size={13} /> New
+            </button>
+          </div>
 
-            {/* KPI strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 28 }}>
-              {[
-                { label: 'Total Crushers', value: crushers.length, sub: `${activeCount} active`, color: '#c9a84c' },
-                { label: 'Platform Revenue', value: fmt(totalRevenue), sub: 'all units combined', color: '#4caf8c' },
-                { label: 'Total Sales', value: totalSales, sub: 'across all units', color: '#6c9ddc' },
-                { label: 'Total Users', value: allUsers.filter(u => u.role !== 'platform_admin').length, sub: 'across platform', color: '#9c88d4' },
-              ].map(k => (
-                <div key={k.label} className="card" style={{ padding: 20 }}>
-                  <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-                    {k.label}
-                  </div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: k.color }}>{k.value}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.4)', marginTop: 4 }}>{k.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Tabs */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
-              {(['crushers', 'users'] as const).map(t => (
-                <button key={t} onClick={() => setTab(t)} style={{
-                  padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', border: 'none',
-                  background: tab === t ? 'rgba(184,149,62,0.15)' : 'transparent',
-                  color: tab === t ? '#c9a84c' : 'rgba(200,212,232,0.55)',
-                  borderBottom: tab === t ? '2px solid #c9a84c' : '2px solid transparent',
-                }}>
-                  {t === 'crushers' ? <><Building2 size={13} style={{ marginRight: 6, verticalAlign: 'middle' }} />Crusher Units</> : <><Users size={13} style={{ marginRight: 6, verticalAlign: 'middle' }} />All Users</>}
-                </button>
-              ))}
-            </div>
-
+          <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: 60, color: 'rgba(200,212,232,0.4)' }}>
-                <Loader2 size={28} style={{ animation: 'spin 1s linear infinite' }} />
+              <div style={{ padding: 40, textAlign: 'center' }}><Loader2 size={20} style={{ color: '#c9a84c', animation: 'spin 0.8s linear infinite' }} /></div>
+            ) : tenants.length === 0 ? (
+              <div style={{ padding: 32, textAlign: 'center' }}>
+                <Building2 size={24} style={{ color: 'rgba(200,212,232,0.15)', display: 'block', margin: '0 auto 8px' }} />
+                <p style={{ fontSize: 13, color: 'rgba(200,212,232,0.3)' }}>No companies yet</p>
               </div>
-            ) : tab === 'crushers' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
-                {crushers.map(c => (
-                  <div key={c.id} className="card" style={{ padding: 22, cursor: 'pointer' }}
-                    onClick={() => setSelectedCrusher(c)}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{
-                          width: 38, height: 38, borderRadius: 10,
-                          background: 'linear-gradient(135deg, #7a5e22 0%, #c9a84c55 100%)',
-                          border: '1px solid rgba(184,149,62,0.3)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                          <Building2 size={18} color="#c9a84c" />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: '#e8edf5' }}>{c.name}</div>
-                          {c.city && <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.45)' }}>{c.city}, {c.state}</div>}
-                        </div>
-                      </div>
-                      <span style={{
-                        padding: '3px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700,
-                        background: c.is_active ? 'rgba(76,175,140,0.15)' : 'rgba(220,70,70,0.15)',
-                        color: c.is_active ? '#4caf8c' : '#e05555',
-                      }}>
-                        {c.is_active ? 'Active' : 'Inactive'}
-                      </span>
+            ) : tenants.map(t => (
+              <button key={t.id} onClick={() => selectTenantDetail(t)}
+                style={{
+                  width: '100%', padding: '12px 14px', borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+                  background: selectedTenant?.id === t.id ? 'rgba(184,149,62,0.1)' : 'transparent',
+                  border: selectedTenant?.id === t.id ? '1px solid rgba(184,149,62,0.25)' : '1px solid transparent',
+                  transition: 'all 0.15s',
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(184,149,62,0.1)', border: '1px solid rgba(184,149,62,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Building2 size={14} style={{ color: '#c9a84c' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: selectedTenant?.id === t.id ? '#d4aa52' : '#e8edf5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, background: `${PLAN_COLORS[t.plan] || '#4ade80'}18`, color: PLAN_COLORS[t.plan] || '#4ade80', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>{t.plan}</span>
                     </div>
+                    <div style={{ fontSize: 11, color: 'rgba(180,200,230,0.4)', marginTop: 2 }}>
+                      {t.crusher_count} plant{t.crusher_count !== 1 ? 's' : ''} · {t.city || '—'}
+                    </div>
+                  </div>
+                  <div style={{ flexShrink: 0 }}>
+                    {t.is_active
+                      ? <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.6)' }} />
+                      : <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'rgba(200,212,232,0.2)' }} />
+                    }
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 14 }}>
-                      <div style={{ textAlign: 'center', padding: '8px 0', borderRadius: 8, background: 'rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#c9a84c' }}>{fmt(c.total_revenue).replace('₹', '').replace(',00,000', 'L')}</div>
-                        <div style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>Revenue</div>
-                      </div>
-                      <div style={{ textAlign: 'center', padding: '8px 0', borderRadius: 8, background: 'rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#4caf8c' }}>{c.sale_count}</div>
-                        <div style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>Sales</div>
-                      </div>
-                      <div style={{ textAlign: 'center', padding: '8px 0', borderRadius: 8, background: 'rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#6c9ddc' }}>{c.user_count}</div>
-                        <div style={{ fontSize: 10, color: 'rgba(200,212,232,0.4)' }}>Users</div>
-                      </div>
-                    </div>
+        {/* Right: tenant detail */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: 28 }}>
+          {!selectedTenant ? (
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <Building2 size={36} style={{ color: 'rgba(200,212,232,0.1)' }} />
+              <p style={{ fontSize: 14, color: 'rgba(200,212,232,0.3)', fontWeight: 500 }}>Select a company to view details</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 900 }}>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      {c.gstin && <span style={{ fontSize: 10, color: 'rgba(200,212,232,0.35)', fontFamily: 'monospace' }}>{c.gstin}</span>}
-                      <span style={{ fontSize: 11, color: '#c9a84c', marginLeft: 'auto' }}>
-                        Manage <ChevronRight size={12} style={{ verticalAlign: 'middle' }} />
-                      </span>
+              {/* Tenant header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                    <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>{selectedTenant.name}</h1>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 5, background: `${PLAN_COLORS[selectedTenant.plan] || '#4ade80'}18`, color: PLAN_COLORS[selectedTenant.plan] || '#4ade80', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{selectedTenant.plan}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 5, background: selectedTenant.is_active ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.05)', color: selectedTenant.is_active ? '#4ade80' : 'rgba(200,212,232,0.3)', textTransform: 'uppercase' }}>
+                      {selectedTenant.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'rgba(180,200,230,0.45)' }}>
+                    {selectedTenant.legal_name && <span>{selectedTenant.legal_name}</span>}
+                    {selectedTenant.city && <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{selectedTenant.city}, {selectedTenant.state}</span>}
+                    {selectedTenant.gstin && <span>GSTIN: {selectedTenant.gstin}</span>}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => { setEditTenant(selectedTenant); setShowTenantModal(true); }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 13px', borderRadius: 9, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(200,212,232,0.7)', fontSize: 12, cursor: 'pointer' }}>
+                    <Edit2 size={12} /> Edit
+                  </button>
+                  <button onClick={() => toggleStatus(selectedTenant)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 13px', borderRadius: 9, border: `1px solid ${selectedTenant.is_active ? 'rgba(239,68,68,0.3)' : 'rgba(74,222,128,0.3)'}`, background: selectedTenant.is_active ? 'rgba(239,68,68,0.06)' : 'rgba(74,222,128,0.06)', color: selectedTenant.is_active ? '#fca5a5' : '#4ade80', fontSize: 12, cursor: 'pointer' }}>
+                    {selectedTenant.is_active ? <ToggleRight size={13} /> : <ToggleLeft size={13} />}
+                    {selectedTenant.is_active ? 'Deactivate' : 'Activate'}
+                  </button>
+                </div>
+              </div>
+
+              {/* KPI cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                {[
+                  { label: 'Plants', value: selectedTenant.crusher_count, icon: Factory, color: '#c9a84c' },
+                  { label: 'Users', value: selectedTenant.user_count, icon: Users, color: '#60a5fa' },
+                  { label: 'Revenue', value: fmt(selectedTenant.total_revenue || 0), icon: IndianRupee, color: '#4ade80' },
+                ].map(k => (
+                  <div key={k.label} style={{ padding: '16px 18px', borderRadius: 14, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                      <k.icon size={14} style={{ color: k.color }} />
+                      <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(180,200,230,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k.label}</span>
                     </div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>{k.value}</div>
                   </div>
                 ))}
               </div>
-            ) : (
-              /* Users tab */
-              <div className="card" style={{ overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ background: 'rgba(255,255,255,0.04)' }}>
-                      {['User', 'Role', 'Crusher Access', 'Status'].map(h => (
-                        <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'rgba(200,212,232,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allUsers.filter(u => u.role !== 'platform_admin').map((u, i) => (
-                      <tr key={u.id} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: '#e8edf5' }}>{u.name}</div>
-                          <div style={{ fontSize: 11, color: 'rgba(200,212,232,0.45)' }}>{u.email}</div>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span style={{
-                            padding: '3px 10px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                            background: `${ROLE_COLORS[u.role] || '#6c9ddc'}18`,
-                            color: ROLE_COLORS[u.role] || '#6c9ddc',
-                          }}>{ROLE_LABELS[u.role] || u.role}</span>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {u.crusher_access.length === 0 ? (
-                              <span style={{ fontSize: 11, color: 'rgba(200,212,232,0.35)' }}>No access</span>
-                            ) : u.crusher_access.map(a => (
-                              <span key={a.crusher_id} style={{
-                                padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                                background: 'rgba(255,255,255,0.06)', color: 'rgba(200,212,232,0.7)',
-                              }}>
-                                {a.crusher_name} · {ROLE_LABELS[a.role] || a.role}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span style={{
-                            padding: '3px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700,
-                            background: u.is_active ? 'rgba(76,175,140,0.15)' : 'rgba(220,70,70,0.15)',
-                            color: u.is_active ? '#4caf8c' : '#e05555',
-                          }}>{u.is_active ? 'Active' : 'Inactive'}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+              {/* Crushers section */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Factory size={14} style={{ color: '#c9a84c' }} />
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#e8edf5' }}>Crushing Plants</span>
+                  </div>
+                  <button onClick={() => setShowAddCrusher(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 8, border: '1px solid rgba(120,80,15,0.45)', background: 'rgba(184,149,62,0.07)', color: '#c9a84c', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+                    <Plus size={12} /> Add Plant
+                  </button>
+                </div>
+                {tenantCrushers.length === 0 ? (
+                  <div style={{ padding: '28px 20px', textAlign: 'center', fontSize: 13, color: 'rgba(200,212,232,0.3)' }}>No plants yet</div>
+                ) : tenantCrushers.map(c => (
+                  <div key={c.id} style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(184,149,62,0.08)', border: '1px solid rgba(184,149,62,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 12, flexShrink: 0 }}>
+                      <Factory size={14} style={{ color: '#c9a84c' }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#e8edf5' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: 'rgba(180,200,230,0.4)', marginTop: 1 }}>
+                        {c.city && `${c.city} · `}{c.gstin || 'No GSTIN'} · {c.sale_count || 0} sales
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#c9a84c', fontWeight: 600 }}>{fmt(c.total_revenue || 0)}</div>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', marginLeft: 14, background: c.is_active ? '#4ade80' : 'rgba(200,212,232,0.2)', boxShadow: c.is_active ? '0 0 6px rgba(74,222,128,0.6)' : 'none' }} />
+                  </div>
+                ))}
               </div>
-            )}
-          </>
-        )}
+
+            </div>
+          )}
+        </div>
       </div>
 
-      {showCreate && (
-        <CreateCrusherModal onClose={() => setShowCreate(false)} onCreated={load} />
+      {showTenantModal && (
+        <TenantModal
+          tenant={editTenant}
+          onClose={() => { setShowTenantModal(false); setEditTenant(null); }}
+          onSaved={() => { load(); if (editTenant && selectedTenant?.id === editTenant.id) getPlatformTenantCrushers(editTenant.id).then(setTenantCrushers).catch(() => {}); }}
+        />
       )}
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      {showAddCrusher && selectedTenant && (
+        <AddCrusherModal
+          tenantId={selectedTenant.id}
+          onClose={() => setShowAddCrusher(false)}
+          onSaved={() => { selectTenantDetail(selectedTenant); load(); }}
+        />
+      )}
     </div>
   );
 }

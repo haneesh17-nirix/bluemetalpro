@@ -6,6 +6,8 @@ export interface AuthUser {
   name: string;
   email: string;
   role: string;
+  tenant_id?: string;
+  tenant_name?: string;
   crusher_id?: string;
   crusher_name?: string;
 }
@@ -40,10 +42,16 @@ export function authorize(...roles: string[]) {
   };
 }
 
-// Ensures the request has a crusher selected (token includes crusher_id)
 export function requireCrusher(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.crusher_id) {
     return res.status(400).json({ error: 'No crusher selected. Call /auth/select-crusher first.' });
+  }
+  next();
+}
+
+export function requireTenant(req: Request, res: Response, next: NextFunction) {
+  if (!req.user?.tenant_id) {
+    return res.status(400).json({ error: 'No tenant selected. Call /auth/select-tenant first.' });
   }
   next();
 }

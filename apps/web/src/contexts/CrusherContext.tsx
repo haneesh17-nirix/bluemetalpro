@@ -1,6 +1,15 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+export interface TenantInfo {
+  id: string;
+  name: string;
+  logo_url?: string;
+  legal_name?: string;
+  city?: string;
+  state?: string;
+}
+
 export interface CrusherInfo {
   id: string;
   name: string;
@@ -22,21 +31,37 @@ export interface CrusherInfo {
 }
 
 interface CrusherContextValue {
+  tenant: TenantInfo | null;
+  setTenant: (t: TenantInfo | null) => void;
   crusher: CrusherInfo | null;
   setCrusher: (c: CrusherInfo | null) => void;
 }
 
-const CrusherContext = createContext<CrusherContextValue>({ crusher: null, setCrusher: () => {} });
+const CrusherContext = createContext<CrusherContextValue>({
+  tenant: null, setTenant: () => {},
+  crusher: null, setCrusher: () => {},
+});
 
 export function CrusherProvider({ children }: { children: ReactNode }) {
+  const [tenant, setTenantState] = useState<TenantInfo | null>(null);
   const [crusher, setCrusherState] = useState<CrusherInfo | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('crusher');
-      if (stored) setCrusherState(JSON.parse(stored));
+      const storedTenant = localStorage.getItem('tenant');
+      if (storedTenant) setTenantState(JSON.parse(storedTenant));
+      const storedCrusher = localStorage.getItem('crusher');
+      if (storedCrusher) setCrusherState(JSON.parse(storedCrusher));
     }
   }, []);
+
+  const setTenant = (t: TenantInfo | null) => {
+    setTenantState(t);
+    if (typeof window !== 'undefined') {
+      if (t) localStorage.setItem('tenant', JSON.stringify(t));
+      else localStorage.removeItem('tenant');
+    }
+  };
 
   const setCrusher = (c: CrusherInfo | null) => {
     setCrusherState(c);
@@ -46,7 +71,11 @@ export function CrusherProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  return <CrusherContext.Provider value={{ crusher, setCrusher }}>{children}</CrusherContext.Provider>;
+  return (
+    <CrusherContext.Provider value={{ tenant, setTenant, crusher, setCrusher }}>
+      {children}
+    </CrusherContext.Provider>
+  );
 }
 
 export const useCrusher = () => useContext(CrusherContext);

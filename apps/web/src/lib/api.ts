@@ -95,7 +95,10 @@ export const updateConfig = (data: any) => api.put('/config', data).then(r => r.
 
 // Notifications (base — extended version at bottom of file)
 
-// Crusher selection & management
+// Tenant + crusher selection
+export const selectTenant = (tenant_id: string) =>
+  api.post('/auth/select-tenant', { tenant_id }).then(r => r.data);
+
 export const selectCrusher = (crusher_id: string) =>
   api.post('/auth/select-crusher', { crusher_id }).then(r => r.data);
 
@@ -110,7 +113,17 @@ export const revokeCrusherAccess = (id: string, userId: string) => api.delete(`/
 export const getPlReport = (params: { from: string; to: string }) =>
   api.get('/reports/pl', { params }).then(r => r.data);
 
-// Platform admin
+// Platform admin — tenant management
+export const getPlatformTenants = () => api.get('/platform/tenants').then(r => r.data);
+export const getPlatformTenant = (id: string) => api.get(`/platform/tenants/${id}`).then(r => r.data);
+export const platformCreateTenant = (data: any) => api.post('/platform/tenants', data).then(r => r.data);
+export const platformUpdateTenant = (id: string, data: any) => api.put(`/platform/tenants/${id}`, data).then(r => r.data);
+export const platformSetTenantStatus = (id: string, is_active: boolean) => api.patch(`/platform/tenants/${id}/status`, { is_active }).then(r => r.data);
+export const getPlatformTenantCrushers = (id: string) => api.get(`/platform/tenants/${id}/crushers`).then(r => r.data);
+export const platformAddCrusherToTenant = (tenantId: string, data: any) => api.post(`/platform/tenants/${tenantId}/crushers`, data).then(r => r.data);
+export const platformAddUserToTenant = (tenantId: string, data: any) => api.post(`/platform/tenants/${tenantId}/users`, data).then(r => r.data);
+
+// Platform admin — overview + users (kept for backward compat)
 export const getPlatformOverview = () => api.get('/platform/overview').then(r => r.data);
 export const getPlatformUsers = () => api.get('/platform/users').then(r => r.data);
 export const platformCreateCrusher = (data: any) => api.post('/platform/crushers', data).then(r => r.data);

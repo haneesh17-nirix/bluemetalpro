@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { login, selectCrusher, getCrushers } from '@/lib/api';
+import { login, selectCrusher } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, Shield, TrendingUp, Cpu, Globe } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
+import { selectTenant } from '@/lib/api';
 
 const features = [
   { icon: Shield,     label: 'Secure & Compliant',  sub: 'GST-ready, role-based access' },
@@ -17,7 +18,7 @@ const features = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setCrusher } = useCrusher();
+  const { setTenant, setCrusher } = useCrusher();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -32,46 +33,48 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
+
       if (data.platform_admin && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         log.action('Platform admin login', {});
         router.push('/platform');
-      } else if (data.temp_token && Array.isArray(data.crushers)) {
-        localStorage.setItem('token', data.temp_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        if (data.crushers.length === 1) {
-          const sel = await selectCrusher(data.crushers[0].id);
-          localStorage.setItem('token', sel.token);
-          localStorage.setItem('user', JSON.stringify(sel.user));
-          setCrusher(sel.crusher);
-          log.action('Login successful', { role: sel.user?.role });
-          router.push('/dashboard');
-        } else {
-          const unique = data.crushers.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i);
-          localStorage.setItem('crushers_list', JSON.stringify(unique));
-          router.push('/select-crusher');
-        }
-      } else if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        try {
-          const crushers = await getCrushers();
-          if (Array.isArray(crushers) && crushers.length > 0) {
-            const unique = crushers.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i);
-            if (unique.length === 1) {
-              setCrusher(unique[0]);
-              localStorage.setItem('crusher', JSON.stringify(unique[0]));
-            } else {
-              localStorage.setItem('crushers_list', JSON.stringify(unique));
-              router.push('/select-crusher');
-              return;
-            }
-          }
-        } catch { /* proceed */ }
+        return;
+      }
+
+      if (!data.temp_token) throw new Error('Unexpected login response');
+
+      localStorage.setItem('token', data.temp_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      const tenants: any[] = data.tenants ?? [];
+      if (tenants.length === 0) throw new Error('No company access found for this account');
+
+      if (tenants.length > 1) {
+        localStorage.setItem('tenants_list', JSON.stringify(tenants));
+        router.push('/select-tenant');
+        return;
+      }
+
+      // Single tenant — auto-select it
+      const tenantData = await selectTenant(tenants[0].id);
+      localStorage.setItem('token', tenantData.temp_token);
+      setTenant(tenantData.tenant);
+
+      const crushers: any[] = (tenantData.crushers ?? []).filter(
+        (c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i
+      );
+
+      if (crushers.length === 1) {
+        const sel = await selectCrusher(crushers[0].id);
+        localStorage.setItem('token', sel.token);
+        localStorage.setItem('user', JSON.stringify(sel.user));
+        setCrusher(sel.crusher);
+        log.action('Login successful', { role: sel.user?.role });
         router.push('/dashboard');
       } else {
-        throw new Error('Unexpected login response');
+        localStorage.setItem('crushers_list', JSON.stringify(crushers));
+        router.push('/select-crusher');
       }
     } catch (err: any) {
       log.error('Login failed', { message: err?.message });

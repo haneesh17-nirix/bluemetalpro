@@ -44,9 +44,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const initials = user?.name ? user.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'AU';
   const crusherStr = typeof window !== 'undefined' ? localStorage.getItem('crusher') : null;
   const crusherName = crusherStr ? (() => { try { return JSON.parse(crusherStr)?.name; } catch { return null; } })() : null;
+  const tenantStr = typeof window !== 'undefined' ? localStorage.getItem('tenant') : null;
+  const tenantName = tenantStr ? (() => { try { return JSON.parse(tenantStr)?.name; } catch { return null; } })() : null;
 
   const logout = () => {
-    ['token', 'user', 'crusher', 'crushers_list'].forEach(k => localStorage.removeItem(k));
+    ['token', 'user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/login';
   };
 
@@ -145,6 +147,14 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
             <p style={{ fontSize: 12, marginTop: 3, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{subtitle}</p>
           )}
         </div>
+        {tenantName && (
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0,
+            padding: '3px 10px', borderRadius: 20,
+            background: 'rgba(26,53,112,0.18)', border: '1px solid rgba(26,53,112,0.4)',
+            fontSize: 11, fontWeight: 600, color: 'rgba(180,200,230,0.7)',
+          }}>{tenantName}</div>
+        )}
         {crusherName && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0,
