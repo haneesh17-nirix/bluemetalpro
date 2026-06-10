@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.29] — 2026-06-10
+
+
+### Other Changes
+
+- remove hero headline, enlarge logo (120px) and wordmark ([ce002b9])
+
 ## [1.21.28] — 2026-06-10
 
 
