@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ci` copy root lockfile into backend before artifact upload ([e4e59c0])
+
 ## [1.10.1] — 2026-06-10
 
 
