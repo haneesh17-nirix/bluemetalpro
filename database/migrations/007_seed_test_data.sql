@@ -97,12 +97,12 @@ BEGIN
   -- ==============================================================
 
   -- Products
-  INSERT INTO products (name, hsn_code, unit, default_sale_price, default_purchase_price, gst_rate, crusher_id) VALUES
-    ('M-Sand',              '25171010', 'MT', 850,  420, 5, c1),
-    ('P-Sand',              '25171010', 'MT', 950,  460, 5, c1),
-    ('20mm Blue Metal',     '25171010', 'MT', 1100, 530, 5, c1),
-    ('40mm Blue Metal',     '25171010', 'MT', 980,  500, 5, c1),
-    ('6mm Chips',           '25171010', 'MT', 750,  380, 5, c1)
+  INSERT INTO products (name, hsn_code, category, unit, default_sale_price, default_purchase_price, gst_rate, crusher_id) VALUES
+    ('M-Sand',              '25171010', 'm_sand',     'MT', 850,  420, 5, c1),
+    ('P-Sand',              '25171010', 'p_sand',     'MT', 950,  460, 5, c1),
+    ('20mm Blue Metal',     '25171010', 'aggregates', 'MT', 1100, 530, 5, c1),
+    ('40mm Blue Metal',     '25171010', 'aggregates', 'MT', 980,  500, 5, c1),
+    ('6mm Chips',           '25171010', 'aggregates', 'MT', 750,  380, 5, c1)
   ON CONFLICT DO NOTHING;
   SELECT id INTO p1_msand FROM products WHERE name = 'M-Sand'          AND crusher_id = c1 LIMIT 1;
   SELECT id INTO p1_psand FROM products WHERE name = 'P-Sand'          AND crusher_id = c1 LIMIT 1;
@@ -420,12 +420,12 @@ BEGIN
   -- ==============================================================
 
   -- Products
-  INSERT INTO products (name, hsn_code, unit, default_sale_price, default_purchase_price, gst_rate, crusher_id) VALUES
-    ('M-Sand',          '25171010', 'MT', 870,  430, 5, c2),
-    ('P-Sand',          '25171010', 'MT', 970,  470, 5, c2),
-    ('20mm Blue Metal', '25171010', 'MT', 1120, 540, 5, c2),
-    ('40mm Blue Metal', '25171010', 'MT', 1000, 510, 5, c2),
-    ('Quarry Dust',     '25171010', 'MT', 600,  280, 5, c2)
+  INSERT INTO products (name, hsn_code, category, unit, default_sale_price, default_purchase_price, gst_rate, crusher_id) VALUES
+    ('M-Sand',          '25171010', 'm_sand',     'MT', 870,  430, 5, c2),
+    ('P-Sand',          '25171010', 'p_sand',     'MT', 970,  470, 5, c2),
+    ('20mm Blue Metal', '25171010', 'aggregates', 'MT', 1120, 540, 5, c2),
+    ('40mm Blue Metal', '25171010', 'aggregates', 'MT', 1000, 510, 5, c2),
+    ('Quarry Dust',     '25171010', 'dust',       'MT', 600,  280, 5, c2)
   ON CONFLICT DO NOTHING;
   SELECT id INTO p2_msand FROM products WHERE name = 'M-Sand'          AND crusher_id = c2 LIMIT 1;
   SELECT id INTO p2_psand FROM products WHERE name = 'P-Sand'          AND crusher_id = c2 LIMIT 1;
