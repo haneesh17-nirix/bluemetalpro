@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { login, selectCrusher } from '@/lib/api';
+import { login, selectCrusher, getCrushers } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 
@@ -52,8 +52,24 @@ export default function LoginPage() {
           router.push('/select-crusher');
         }
       } else if (data.token) {
+        // Legacy single-step auth (backend pre-v2): auto-select first accessible crusher
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        try {
+          const crushers = await getCrushers();
+          if (Array.isArray(crushers) && crushers.length > 0) {
+            if (crushers.length === 1) {
+              setCrusher(crushers[0]);
+              localStorage.setItem('crusher', JSON.stringify(crushers[0]));
+            } else {
+              localStorage.setItem('crushers_list', JSON.stringify(crushers));
+              router.push('/select-crusher');
+              return;
+            }
+          }
+        } catch {
+          // Crusher fetch failed — proceed to dashboard, crusher context will be null
+        }
         router.push('/dashboard');
       } else {
         throw new Error('Unexpected login response');
