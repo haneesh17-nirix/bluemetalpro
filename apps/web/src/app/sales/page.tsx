@@ -5,8 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { getSales, createSale, getParties, getProducts, getVehicles, downloadInvoice } from '@/lib/api';
 import api from '@/lib/api';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
 import {
   Plus, Download, X, Trash2, Search, FileText,
   TrendingUp, IndianRupee, CheckCircle2, AlertCircle,
@@ -157,20 +156,16 @@ export default function SalesPage() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Sales"
-          subtitle="Invoices & customer orders"
-          actions={
-            <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
-              <Plus size={16} /> New Sale
-            </button>
-          }
-        />
-
-        <main className="flex-1 overflow-y-auto p-6 space-y-5">
+    <AppLayout
+      title="Sales"
+      subtitle="Invoices & customer orders"
+      actions={
+        <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> New Sale
+        </button>
+      }
+    >
+      <div className="space-y-5">
 
           {/* ── Period summary strip ────────────────── */}
           <div className="grid grid-cols-3 gap-4">
@@ -310,8 +305,7 @@ export default function SalesPage() {
               </div>
             )}
           </div>
-        </main>
-      </div>
+        </div>
 
       {/* ── Cancel Confirmation Dialog ──────────────────── */}
       {cancelId && (
@@ -543,6 +537,6 @@ export default function SalesPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

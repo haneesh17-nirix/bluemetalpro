@@ -7,8 +7,7 @@ import {
   getCrushers, createCrusher, updateCrusher,
   getCrusherUsers, grantCrusherAccess, revokeCrusherAccess, getUsers,
 } from '@/lib/api';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
 import { Factory, Plus, Pencil, Users, X, Loader2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const FIELDS = [
@@ -233,12 +232,8 @@ export default function CrushersPage() {
   useEffect(() => { log.page('Crushers'); }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Crusher Management" subtitle="Manage crushing plants and user access" />
-
-        <main className="flex-1 overflow-y-auto p-6">
+    <AppLayout title="Crusher Management" subtitle="Manage crushing plants and user access">
+      <div>
           {addOpen && <CrusherModal crusher={null} onClose={() => setAddOpen(false)} />}
 
           <div className="card">
@@ -274,8 +269,7 @@ export default function CrushersPage() {
               </table>
             </div>
           </div>
-        </main>
       </div>
-    </div>
+    </AppLayout>
   );
 }

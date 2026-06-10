@@ -53,8 +53,16 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-64 flex flex-col h-screen sticky top-0 flex-shrink-0 overflow-hidden"
       style={{
+        width: '256px',
+        minWidth: '256px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+        flexShrink: 0,
+        overflow: 'hidden',
         background: 'linear-gradient(180deg, #060f20 0%, #091628 50%, #0c1f3d 100%)',
         borderRight: '1px solid #1f3659',
       }}

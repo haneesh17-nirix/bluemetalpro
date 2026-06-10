@@ -12,8 +12,7 @@ import {
   IndianRupee, Package, Truck, Wrench, ArrowUpRight,
   FileText, Minus,
 } from 'lucide-react';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
 import Link from 'next/link';
 import { useCrusher } from '@/contexts/CrusherContext';
 import dayjs from 'dayjs';
@@ -133,19 +132,11 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Dashboard"
-          subtitle={
-            crusher
-              ? (crusher.legal_name || crusher.name) + (crusher.city ? ' · ' + crusher.city : '')
-              : 'Loading...'
-          }
-        />
-
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+    <AppLayout
+      title="Dashboard"
+      subtitle={crusher ? (crusher.legal_name || crusher.name) + (crusher.city ? ' · ' + crusher.city : '') : 'Loading...'}
+    >
+      <div className="space-y-6">
 
           {/* ── KPI Cards ─────────────────────────────── */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
@@ -389,8 +380,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-        </main>
       </div>
-    </div>
+    </AppLayout>
   );
 }
