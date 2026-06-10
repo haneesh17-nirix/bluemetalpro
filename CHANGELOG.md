@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.11] — 2026-06-10
+
+
+### Other Changes
+
+- sci-fi vault opening animation, matte gold form border, navy blue form, gold-glow fields ([b7e3212])
+
 ## [1.21.10] — 2026-06-10
 
 
