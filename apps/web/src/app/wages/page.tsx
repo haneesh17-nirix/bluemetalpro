@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
+import TabBar from '@/components/ui/TabBar';
 import { getWorkers, getAttendance, submitAttendance } from '@/lib/api';
 import api from '@/lib/api';
-import { Plus, X, Save, Calculator } from 'lucide-react';
+import { Plus, X, Save, Calculator, Users, UserCheck, UserX, DollarSign } from 'lucide-react';
 import dayjs from 'dayjs';
 
 type WageType = 'daily' | 'monthly' | 'piece_rate' | 'hourly';
@@ -149,22 +150,32 @@ export default function WagesPage() {
     </div>
   ) : undefined;
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Wages" subtitle="Worker attendance and payroll management" actions={pageActions} />
-        <main className="flex-1 overflow-y-auto p-6">
+  const monthlyPayroll = (workers as any[]).reduce((s, w: any) => {
+    if (w.wage_type === 'daily') return s + Number(w.wage_rate || 0) * 26;
+    if (w.wage_type === 'monthly') return s + Number(w.wage_rate || 0);
+    return s;
+  }, 0);
 
-          {/* Tabs */}
-          <div className="flex gap-1 p-1 rounded-xl bg-surface-card border border-surface-border w-fit mb-6">
-            {[['attendance', 'Daily Attendance'], ['workers', 'Workers'], ['payroll', 'Payroll Calculator']].map(([k, l]) => (
-              <button key={k} onClick={() => setTab(k as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === k ? 'btn-primary' : 'text-white/50 hover:text-white'}`}>
-                {l}
-              </button>
-            ))}
-          </div>
+  const wageStats = [
+    { label: 'Total Workers', value: String((workers as any[]).length), icon: Users, color: '#60a5fa' },
+    { label: 'Present Today', value: String(summary.present), sub: `${summary.half_day} half-day`, icon: UserCheck, color: '#34d399' },
+    { label: 'Absent Today', value: String(summary.absent + summary.leave), sub: `${summary.leave} on leave`, icon: UserX, color: '#f87171' },
+    { label: 'Monthly Payroll Est.', value: `₹${monthlyPayroll.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, icon: DollarSign, color: '#e8c96a' },
+  ];
+
+  return (
+    <AppLayout title="Wages" subtitle="Worker attendance and payroll management" actions={pageActions}>
+      <StatsRow stats={wageStats} />
+
+      <TabBar
+        tabs={[
+          { key: 'attendance', label: 'Daily Attendance' },
+          { key: 'workers', label: 'Workers', count: (workers as any[]).length },
+          { key: 'payroll', label: 'Payroll Calculator' },
+        ]}
+        active={tab}
+        onChange={k => setTab(k as 'attendance' | 'workers' | 'payroll')}
+      />
 
           {/* ATTENDANCE TAB */}
           {tab === 'attendance' && (
@@ -370,6 +381,6 @@ export default function WagesPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

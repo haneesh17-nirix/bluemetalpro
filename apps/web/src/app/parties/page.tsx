@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getParties, createParty } from '@/lib/api';
 import api from '@/lib/api';
-import { Plus, X, Users, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, X, Users, TrendingUp, TrendingDown, Building2 } from 'lucide-react';
 
 type PartyType = 'customer' | 'supplier' | 'both';
 
@@ -72,125 +72,117 @@ export default function PartiesPage() {
   const totalReceivable = (parties as any[]).filter((p: any) => p.type !== 'supplier').reduce((s, p) => s + Math.max(0, Number(balanceMap[p.id] || 0)), 0);
   const totalPayable = (parties as any[]).filter((p: any) => p.type !== 'customer').reduce((s, p) => s + Math.max(0, -Number(balanceMap[p.id] || 0)), 0);
 
+  const customerCount = (parties as any[]).filter((p: any) => p.type === 'customer' || p.type === 'both').length;
+  const supplierCount = (parties as any[]).filter((p: any) => p.type === 'supplier' || p.type === 'both').length;
+
+  const stats = [
+    { label: 'Total Customers', value: String(customerCount), icon: Users, color: '#60a5fa' },
+    { label: 'Total Suppliers', value: String(supplierCount), icon: Building2, color: '#a78bfa' },
+    { label: 'Total Receivable', value: `₹${totalReceivable.toLocaleString('en-IN')}`, icon: TrendingUp, color: '#34d399' },
+    { label: 'Total Payable', value: `₹${totalPayable.toLocaleString('en-IN')}`, icon: TrendingDown, color: '#f87171' },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Parties"
-          subtitle="Customers, suppliers, and business contacts"
-          actions={
-            <button
-              onClick={() => { setEditParty(null); setForm(emptyForm); setShowForm(true); }}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus size={16} /> New Party
-            </button>
-          }
+    <AppLayout
+      title="Parties"
+      subtitle="Customers, suppliers, and business contacts"
+      actions={
+        <button
+          onClick={() => { setEditParty(null); setForm(emptyForm); setShowForm(true); }}
+          className="btn-primary flex items-center gap-2"
+        >
+          <Plus size={16} /> New Party
+        </button>
+      }
+    >
+      <StatsRow stats={stats} />
+
+      {/* Filters */}
+      <div className="flex gap-3">
+        <input
+          type="text"
+          placeholder="Search by name or phone…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="input w-64"
         />
-        <main className="flex-1 overflow-y-auto p-6">
+        <div className="flex gap-1 bg-[#0e2544]/60 border border-[#263d5e] p-1 rounded-lg">
+          {[['', 'All'], ['customer', 'Customers'], ['supplier', 'Suppliers'], ['both', 'Both']].map(([v, l]) => (
+            <button
+              key={v}
+              onClick={() => setTypeFilter(v)}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === v ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-white/50 hover:text-white/80'}`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
 
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-5 mb-6">
-            <div className="card p-5 flex items-center gap-4">
-              <div className="bg-blue-500/20 w-11 h-11 rounded-lg flex items-center justify-center">
-                <Users size={22} className="text-blue-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{(parties as any[]).length}</p>
-                <p className="text-sm text-white/50">Total Parties</p>
-              </div>
-            </div>
-            <div className="card p-5 flex items-center gap-4">
-              <div className="bg-emerald-500/20 w-11 h-11 rounded-lg flex items-center justify-center">
-                <TrendingUp size={22} className="text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">₹{totalReceivable.toLocaleString('en-IN')}</p>
-                <p className="text-sm text-white/50">Total Receivable</p>
-              </div>
-            </div>
-            <div className="card p-5 flex items-center gap-4">
-              <div className="bg-red-500/20 w-11 h-11 rounded-lg flex items-center justify-center">
-                <TrendingDown size={22} className="text-red-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">₹{totalPayable.toLocaleString('en-IN')}</p>
-                <p className="text-sm text-white/50">Total Payable</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="flex gap-3 mb-5">
-            <input
-              type="text"
-              placeholder="Search by name or phone…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="input w-64"
-            />
-            <div className="flex gap-1 bg-[#0e2544]/60 border border-[#263d5e] p-1 rounded-lg">
-              {[['', 'All'], ['customer', 'Customers'], ['supplier', 'Suppliers'], ['both', 'Both']].map(([v, l]) => (
-                <button
-                  key={v}
-                  onClick={() => setTypeFilter(v)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === v ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-white/50 hover:text-white/80'}`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="table-wrapper">
-            <table className="w-full text-sm">
-              <thead>
-                <tr>
-                  {['Name', 'Type', 'Phone', 'GSTIN', 'City', 'Balance', ''].map(h => (
-                    <th key={h}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {(parties as any[]).map((p: any) => {
-                  const bal = Number(balanceMap[p.id] || 0);
-                  return (
-                    <tr key={p.id}>
-                      <td>
-                        <p className="font-medium text-white">{p.name}</p>
-                        {p.email && <p className="text-xs text-white/40">{p.email}</p>}
-                      </td>
-                      <td>
-                        <span className={`${typeBadge[p.type as PartyType]} capitalize`}>{p.type}</span>
-                      </td>
-                      <td className="text-white/70">{p.phone || '—'}</td>
-                      <td className="font-mono text-xs text-white/60">{p.gstin || '—'}</td>
-                      <td className="text-white/70">{p.city || '—'}</td>
-                      <td>
-                        {bal === 0 ? (
-                          <span className="badge-gray">Settled</span>
-                        ) : (
-                          <span className={bal > 0 ? 'badge-red' : 'badge-gem'}>
-                            ₹{Math.abs(bal).toLocaleString('en-IN')} {bal > 0 ? 'Dr' : 'Cr'}
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <button onClick={() => openEdit(p)} className="btn-ghost text-xs px-2 py-1">Edit</button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {!(parties as any[]).length && (
-              <p className="text-center text-white/30 py-10">No parties found</p>
-            )}
-          </div>
-
-        </main>
+      {/* Table */}
+      <div className="card overflow-hidden">
+        <div className="table-wrapper">
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                {['Name', 'Type', 'Phone', 'GSTIN', 'City', 'Balance', ''].map(h => (
+                  <th key={h}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(parties as any[]).map((p: any) => {
+                const bal = Number(balanceMap[p.id] || 0);
+                const initials = p.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+                return (
+                  <tr key={p.id}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ background: 'rgba(201,168,76,0.15)', color: '#e8c96a', border: '1px solid rgba(201,168,76,0.25)' }}
+                        >
+                          {initials}
+                        </div>
+                        <div>
+                          <p className="font-medium" style={{ color: '#c8d4e8' }}>{p.name}</p>
+                          {p.email && <p className="text-xs" style={{ color: 'rgba(200,212,232,0.4)' }}>{p.email}</p>}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`${typeBadge[p.type as PartyType]} capitalize`}>{p.type}</span>
+                    </td>
+                    <td style={{ color: 'rgba(200,212,232,0.7)' }}>{p.phone || '—'}</td>
+                    <td>
+                      {p.gstin ? (
+                        <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(200,212,232,0.7)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                          {p.gstin}
+                        </span>
+                      ) : <span style={{ color: 'rgba(200,212,232,0.3)' }}>—</span>}
+                    </td>
+                    <td style={{ color: 'rgba(200,212,232,0.7)' }}>{p.city || '—'}</td>
+                    <td>
+                      {bal === 0 ? (
+                        <span className="badge-gray">Settled</span>
+                      ) : (
+                        <span className={bal > 0 ? 'badge-red' : 'badge-gem'}>
+                          ₹{Math.abs(bal).toLocaleString('en-IN')} {bal > 0 ? 'Dr' : 'Cr'}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <button onClick={() => openEdit(p)} className="btn-ghost text-xs px-2 py-1">Edit</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {!(parties as any[]).length && (
+            <p className="text-center text-white/30 py-10">No parties found</p>
+          )}
+        </div>
       </div>
 
       {/* Add/Edit modal */}
@@ -268,6 +260,6 @@ export default function PartiesPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

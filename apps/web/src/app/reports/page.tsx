@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { log } from '@bluemetal/shared';
 import { getItemWiseReport, getPartyWiseReport, getGstSummary, getMonthlyTrend } from '@/lib/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import TabBar from '@/components/ui/TabBar';
 import dayjs from 'dayjs';
 
 type ReportTab = 'item-wise' | 'party-wise' | 'gst' | 'trend';
@@ -49,21 +49,12 @@ export default function ReportsPage() {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Reports" subtitle="Business analytics and insights" actions={dateActions} />
-        <main className="flex-1 overflow-y-auto p-6">
-
-          {/* Tabs */}
-          <div className="flex gap-1 p-1 rounded-xl bg-surface-card border border-surface-border w-fit mb-6">
-            {tabs.map(t => (
-              <button key={t.key} onClick={() => setTab(t.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === t.key ? 'btn-primary' : 'text-white/50 hover:text-white'}`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
+    <AppLayout title="Reports" subtitle="Business analytics and insights" actions={dateActions}>
+      <TabBar
+        tabs={tabs}
+        active={tab}
+        onChange={k => setTab(k as ReportTab)}
+      />
 
           {/* Item-wise */}
           {tab === 'item-wise' && (
@@ -201,8 +192,6 @@ export default function ReportsPage() {
             </div>
           )}
 
-        </main>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

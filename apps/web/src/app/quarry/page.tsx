@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getQuarrySales, createQuarrySale, getProducts, getVehicles } from '@/lib/api';
-import { Mountain, Plus, X } from 'lucide-react';
+import { Mountain, Plus, X, TrendingUp, Scale, DollarSign } from 'lucide-react';
 import dayjs from 'dayjs';
 
 function NewQuarrySaleModal({ onClose }: { onClose: () => void }) {
@@ -141,37 +141,27 @@ export default function QuarryPage() {
   const totalAmount = filtered.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0);
   const totalQty = filtered.reduce((sum: number, s: any) => sum + Number(s.quantity || 0), 0);
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Quarry"
-          subtitle="Stone extraction and internal transfers"
-          actions={
-            <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
-              <Plus size={16} /> New Entry
-            </button>
-          }
-        />
-        <main className="flex-1 overflow-y-auto p-6">
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {[
-              { label: 'Total Sales', value: filtered.length.toString(), unit: 'entries' },
-              { label: 'Total Quantity', value: totalQty.toFixed(2), unit: 'MT' },
-              { label: 'Total Amount', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, unit: '' },
-            ].map(c => (
-              <div key={c.label} className="card p-5">
-                <p className="text-xs text-white/50 uppercase font-medium mb-1">{c.label}</p>
-                <p className="text-2xl font-bold text-white mt-1">{c.value}</p>
-                {c.unit && <p className="text-xs text-white/40 mt-0.5">{c.unit}</p>}
-              </div>
-            ))}
-          </div>
+  const quarryStats = [
+    { label: 'Total Entries', value: String(filtered.length), sub: 'Sale records', icon: Mountain, color: '#a78bfa' },
+    { label: 'Total Quantity', value: `${totalQty.toFixed(2)} MT`, sub: 'Material dispatched', icon: Scale, color: '#60a5fa' },
+    { label: 'Total Revenue', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, sub: 'This period', icon: DollarSign, color: '#e8c96a' },
+    { label: 'Avg Rate / MT', value: totalQty > 0 ? `₹${(totalAmount / totalQty).toLocaleString('en-IN', { maximumFractionDigits: 0 })}` : '—', icon: TrendingUp, color: '#34d399' },
+  ];
 
-          {/* Filters */}
-          <div className="card p-4 mb-5 flex flex-wrap gap-3 items-end">
+  return (
+    <AppLayout
+      title="Quarry"
+      subtitle="Stone extraction and internal transfers"
+      actions={
+        <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> New Entry
+        </button>
+      }
+    >
+      <StatsRow stats={quarryStats} />
+
+      {/* Filters */}
+      <div className="card p-4 flex flex-wrap gap-3 items-end">
             <div>
               <label className="label">From</label>
               <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
@@ -224,9 +214,7 @@ export default function QuarryPage() {
               </table>
             </div>
           </div>
-        </main>
-      </div>
       {showNew && <NewQuarrySaleModal onClose={() => setShowNew(false)} />}
-    </div>
+    </AppLayout>
   );
 }

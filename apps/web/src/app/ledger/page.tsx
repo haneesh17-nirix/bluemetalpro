@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getLedgerBalances, getPartyLedger, createReceipt, getParties } from '@/lib/api';
-import { DollarSign, TrendingUp, TrendingDown, Plus, X, ArrowRight } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Plus, X, ArrowRight, Users } from 'lucide-react';
 import dayjs from 'dayjs';
 
 function ReceiptModal({ onClose }: { onClose: () => void }) {
@@ -160,111 +160,109 @@ export default function LedgerPage() {
     !search || b.party_name?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const settledCount = (balances as any[]).filter(b => Number(b.total_balance) === 0).length;
+
+  const stats = [
+    { label: 'Total Receivable', value: `₹${totalReceivable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, icon: TrendingUp, color: '#34d399' },
+    { label: 'Total Payable', value: `₹${totalPayable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, icon: TrendingDown, color: '#f87171' },
+    { label: 'Net Position', value: `₹${(totalReceivable - totalPayable).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, sub: totalReceivable >= totalPayable ? 'Net receivable' : 'Net payable', icon: DollarSign, color: '#e8c96a' },
+    { label: 'Parties', value: String((balances as any[]).length), sub: `${settledCount} settled`, icon: Users, color: '#60a5fa' },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Ledger"
-          subtitle="Party balances and transaction history"
-          actions={
-            <button onClick={() => setShowReceipt(true)} className="btn-primary flex items-center gap-2">
-              <Plus size={16} /> New Receipt
-            </button>
-          }
+    <AppLayout
+      title="Ledger"
+      subtitle="Party balances and transaction history"
+      actions={
+        <button onClick={() => setShowReceipt(true)} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> New Receipt
+        </button>
+      }
+    >
+      <StatsRow stats={stats} />
+
+      {/* Search */}
+      <div>
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search party…"
+          className="input w-full max-w-sm"
         />
-        <main className="flex-1 overflow-y-auto p-6">
+      </div>
 
-          {/* Summary */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="card p-5 flex items-center gap-4">
-              <div className="p-3 bg-emerald-500/20 rounded-xl"><TrendingUp size={22} className="text-emerald-400" /></div>
-              <div>
-                <p className="label">Total Receivable</p>
-                <p className="text-2xl font-bold text-emerald-400">₹{totalReceivable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
-              </div>
-            </div>
-            <div className="card p-5 flex items-center gap-4">
-              <div className="p-3 bg-red-500/20 rounded-xl"><TrendingDown size={22} className="text-red-400" /></div>
-              <div>
-                <p className="label">Total Payable</p>
-                <p className="text-2xl font-bold text-red-400">₹{totalPayable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="mb-4">
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search party…"
-              className="input w-full max-w-sm"
-            />
-          </div>
-
-          {/* Party balances table */}
-          <div className="table-wrapper">
-            <table className="w-full text-sm">
-              <thead>
+      {/* Party balances table */}
+      <div className="card overflow-hidden">
+        <div className="table-wrapper">
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                {['Party', 'Type', 'Total Sales', 'Total Received', 'Balance', ''].map(h => (
+                  <th key={h}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan={6} className="text-center py-12 text-white/30">Loading…</td></tr>
+              ) : !filtered.length ? (
                 <tr>
-                  {['Party', 'Type', 'Total Sales', 'Total Received', 'Balance', ''].map(h => (
-                    <th key={h}>{h}</th>
-                  ))}
+                  <td colSpan={6} className="text-center py-14 text-white/20">
+                    <DollarSign size={36} className="mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No party balances yet</p>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-white/30">Loading…</td></tr>
-                ) : !filtered.length ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-14 text-white/20">
-                      <DollarSign size={36} className="mx-auto mb-2 opacity-30" />
-                      <p className="text-sm">No party balances yet</p>
+              ) : filtered.map((b: any) => {
+                const bal = Number(b.total_balance || 0);
+                const initials = b.party_name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() || '?';
+                return (
+                  <tr key={b.party_id}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.25)' }}
+                        >
+                          {initials}
+                        </div>
+                        <span className="font-medium" style={{ color: '#c8d4e8' }}>{b.party_name}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={
+                        b.party_type === 'customer' ? 'badge-blue' :
+                        b.party_type === 'supplier' ? 'badge-gem' : 'badge-gold'
+                      }>{b.party_type}</span>
+                    </td>
+                    <td style={{ color: 'rgba(200,212,232,0.7)' }}>₹{Number(b.total_sales || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                    <td style={{ color: '#34d399' }}>₹{Number(b.total_received || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                    <td>
+                      {bal === 0 ? (
+                        <span className="badge-gray">Settled</span>
+                      ) : bal > 0 ? (
+                        <span className="badge-red">
+                          ₹{Math.abs(bal).toLocaleString('en-IN', { maximumFractionDigits: 0 })} DR
+                        </span>
+                      ) : (
+                        <span className="badge-gem">
+                          ₹{Math.abs(bal).toLocaleString('en-IN', { maximumFractionDigits: 0 })} CR
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => setSelectedParty({ id: b.party_id, name: b.party_name })}
+                        className="btn-ghost text-xs px-2 py-1 flex items-center gap-1"
+                      >
+                        View <ArrowRight size={12} />
+                      </button>
                     </td>
                   </tr>
-                ) : filtered.map((b: any) => {
-                  const bal = Number(b.total_balance || 0);
-                  return (
-                    <tr key={b.party_id}>
-                      <td className="font-medium text-white">{b.party_name}</td>
-                      <td>
-                        <span className={
-                          b.party_type === 'customer' ? 'badge-blue' :
-                          b.party_type === 'supplier' ? 'badge-gem' : 'badge-gold'
-                        + ' capitalize'}>{b.party_type}</span>
-                      </td>
-                      <td className="text-white/70">₹{Number(b.total_sales || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-                      <td className="text-white/70">₹{Number(b.total_received || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-                      <td>
-                        {bal === 0 ? (
-                          <span className="badge-gray">Settled</span>
-                        ) : bal > 0 ? (
-                          <span className="badge-red">
-                            ₹{Math.abs(bal).toLocaleString('en-IN', { maximumFractionDigits: 0 })} DR
-                          </span>
-                        ) : (
-                          <span className="badge-gem">
-                            ₹{Math.abs(bal).toLocaleString('en-IN', { maximumFractionDigits: 0 })} CR
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => setSelectedParty({ id: b.party_id, name: b.party_name })}
-                          className="btn-ghost text-xs px-2 py-1 flex items-center gap-1"
-                        >
-                          View <ArrowRight size={12} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-        </main>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showReceipt && <ReceiptModal onClose={() => setShowReceipt(false)} />}
@@ -275,6 +273,6 @@ export default function LedgerPage() {
           onClose={() => setSelectedParty(null)}
         />
       )}
-    </div>
+    </AppLayout>
   );
 }

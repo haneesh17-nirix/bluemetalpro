@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getUsers, createUser, updateUser } from '@/lib/api';
 import api from '@/lib/api';
-import { Plus, X, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { Plus, X, ShieldCheck, Eye, EyeOff, Users, UserCheck, Shield } from 'lucide-react';
 
 type UserRole = 'admin' | 'sales_operator' | 'accounts' | 'report_viewer' | 'vehicle_manager' | 'quarry_operator';
 
@@ -101,15 +101,22 @@ export default function UsersPage() {
     </button>
   );
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Users" subtitle="Team accounts and access control" actions={pageActions} />
-        <main className="flex-1 overflow-y-auto p-6">
+  const activeCount = (users as any[]).filter((u: any) => u.is_active).length;
+  const adminCount = (users as any[]).filter((u: any) => u.role === 'admin').length;
 
-          {/* Role reference cards */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+  const userStats = [
+    { label: 'Total Users', value: String((users as any[]).length), icon: Users, color: '#60a5fa' },
+    { label: 'Active', value: String(activeCount), sub: 'Can log in', icon: UserCheck, color: '#34d399' },
+    { label: 'Administrators', value: String(adminCount), icon: Shield, color: '#f87171' },
+    { label: 'Roles in Use', value: String(new Set((users as any[]).map((u: any) => u.role)).size), icon: ShieldCheck, color: '#e8c96a' },
+  ];
+
+  return (
+    <AppLayout title="Users" subtitle="Team accounts and access control" actions={pageActions}>
+      <StatsRow stats={userStats} />
+
+      {/* Role reference cards */}
+      <div className="grid grid-cols-3 gap-4">
             {roleGroups.map(([role, cfg]) => (
               <div key={role} className="card p-4">
                 <div className="flex items-center gap-2 mb-3">
@@ -174,9 +181,6 @@ export default function UsersPage() {
             </table>
             {!(users as any[]).length && <p className="text-center text-white/30 py-10">No users found</p>}
           </div>
-
-        </main>
-      </div>
 
       {/* Add/Edit User modal */}
       {showForm && (
@@ -269,6 +273,6 @@ export default function UsersPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

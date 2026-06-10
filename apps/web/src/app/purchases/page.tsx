@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getPurchases, createPurchase, getParties, getProducts, getVehicles } from '@/lib/api';
-import { Plus, X, Package } from 'lucide-react';
+import { Plus, X, Package, TrendingDown, Users, AlertCircle, Receipt } from 'lucide-react';
 import dayjs from 'dayjs';
 
 const emptyItem = () => ({ product_id: '', product_name: '', unit: 'MT', quantity: '', rate: '', gst_rate: 5 });
@@ -199,92 +199,83 @@ export default function PurchasesPage() {
   const totalPaid = (purchases as any[]).reduce((s, p) => s + Number(p.amount_paid || 0), 0);
   const totalDue = totalAmount - totalPaid;
 
+  const supplierCount = Array.from(new Set((purchases as any[]).map((p: any) => p.party_id).filter(Boolean))).length;
+
+  const stats = [
+    { label: 'Total Spend', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, sub: 'This period', icon: TrendingDown, color: '#e8c96a' },
+    { label: 'Bills Recorded', value: String((purchases as any[]).length), sub: 'Invoices', icon: Receipt, color: '#60a5fa' },
+    { label: 'Pending Payments', value: `₹${totalDue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, sub: 'Balance due', icon: AlertCircle, color: '#f87171' },
+    { label: 'Suppliers', value: String(supplierCount), sub: 'Unique vendors', icon: Users, color: '#34d399' },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Purchases"
-          subtitle="Track procurement and supplier orders"
-          actions={
-            <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
-              <Plus size={16} /> New Purchase
-            </button>
-          }
-        />
-        <main className="flex-1 overflow-y-auto p-6">
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {[
-              { label: 'Total Purchases', value: `₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-white' },
-              { label: 'Amount Paid', value: `₹${totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-emerald-400' },
-              { label: 'Balance Due', value: `₹${totalDue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-red-400' },
-            ].map(c => (
-              <div key={c.label} className="card p-4">
-                <p className="text-xs text-white/50 uppercase font-medium mb-1">{c.label}</p>
-                <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
-              </div>
-            ))}
-          </div>
+    <AppLayout
+      title="Purchases"
+      subtitle="Track procurement and supplier orders"
+      actions={
+        <button onClick={() => setShowNew(true)} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> New Purchase
+        </button>
+      }
+    >
+      <StatsRow stats={stats} />
 
-          {/* Filters */}
-          <div className="card p-4 mb-5 flex gap-3 items-end flex-wrap">
-            <div>
-              <label className="label">From</label>
-              <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
-            </div>
-            <div>
-              <label className="label">To</label>
-              <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
-            </div>
-          </div>
+      {/* Filters */}
+      <div className="card p-4 flex gap-3 items-end flex-wrap">
+        <div>
+          <label className="label">From</label>
+          <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="input w-40" />
+        </div>
+        <div>
+          <label className="label">To</label>
+          <input type="date" value={to} onChange={e => setTo(e.target.value)} className="input w-40" />
+        </div>
+      </div>
 
-          {/* Table */}
-          <div className="card overflow-hidden">
-            <div className="table-wrapper">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr>
-                    {['Bill No.', 'Date', 'Supplier', 'Vehicle', 'Grand Total', 'Paid', 'Balance', 'Mode'].map(h => (
-                      <th key={h}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    <tr><td colSpan={8} className="text-center py-12 text-white/40">Loading…</td></tr>
-                  ) : !(purchases as any[]).length ? (
-                    <tr>
-                      <td colSpan={8}>
-                        <div className="flex flex-col items-center py-16 text-white/30">
-                          <Package size={40} className="mb-2" />
-                          <p className="text-sm">No purchases in this period</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (purchases as any[]).map((p: any) => (
-                    <tr key={p.id}>
-                      <td className="font-medium text-white">{p.bill_number}</td>
-                      <td>{dayjs(p.purchase_date).format('DD/MM/YYYY')}</td>
-                      <td>{p.party_name || '—'}</td>
-                      <td>{p.vehicle_number || '—'}</td>
-                      <td className="font-semibold text-white">₹{Number(p.grand_total).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-                      <td className="text-emerald-400">₹{Number(p.amount_paid).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-                      <td className={Number(p.balance_due) > 0 ? 'text-red-400 font-medium' : 'text-white/40'}>
-                        ₹{Number(p.balance_due).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                      </td>
-                      <td>
-                        <span className="badge-gray uppercase">{p.payment_mode}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </main>
+      {/* Table */}
+      <div className="card overflow-hidden">
+        <div className="table-wrapper">
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                {['Bill No.', 'Date', 'Supplier', 'Vehicle', 'Grand Total', 'Paid', 'Balance', 'Mode'].map(h => (
+                  <th key={h}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan={8} className="text-center py-12 text-white/40">Loading…</td></tr>
+              ) : !(purchases as any[]).length ? (
+                <tr>
+                  <td colSpan={8}>
+                    <div className="flex flex-col items-center py-16 text-white/30">
+                      <Package size={40} className="mb-2" />
+                      <p className="text-sm">No purchases in this period</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (purchases as any[]).map((p: any) => (
+                <tr key={p.id}>
+                  <td className="font-medium" style={{ color: '#c8d4e8' }}>{p.bill_number}</td>
+                  <td style={{ color: '#c8d4e8' }}>{dayjs(p.purchase_date).format('DD/MM/YYYY')}</td>
+                  <td style={{ color: '#c8d4e8' }}>{p.party_name || '—'}</td>
+                  <td style={{ color: '#c8d4e8' }}>{p.vehicle_number || '—'}</td>
+                  <td className="font-semibold" style={{ color: '#e8c96a' }}>₹{Number(p.grand_total).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                  <td style={{ color: '#34d399' }}>₹{Number(p.amount_paid).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                  <td className={Number(p.balance_due) > 0 ? 'font-medium' : ''} style={{ color: Number(p.balance_due) > 0 ? '#f87171' : 'rgba(200,212,232,0.4)' }}>
+                    ₹{Number(p.balance_due).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  </td>
+                  <td>
+                    <span className="badge-gray uppercase">{p.payment_mode}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {showNew && <NewPurchaseModal onClose={() => setShowNew(false)} />}
-    </div>
+    </AppLayout>
   );
 }

@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
+import TabBar from '@/components/ui/TabBar';
 import { getAssets, getMaintenanceRecords } from '@/lib/api';
 import api from '@/lib/api';
-import { Plus, X, Wrench, Truck, AlertTriangle } from 'lucide-react';
+import { Plus, X, Wrench, Truck, AlertTriangle, CheckCircle2, CalendarClock, Package } from 'lucide-react';
 import dayjs from 'dayjs';
 
 type AssetType = 'machinery' | 'vehicle';
@@ -111,43 +112,50 @@ export default function MaintenancePage() {
     </div>
   );
 
+  const completed = (records as any[]).filter((r: any) => r.status === 'completed').length;
+  const overdue = (records as any[]).filter((r: any) =>
+    r.status !== 'completed' && r.status !== 'cancelled' &&
+    r.scheduled_date && dayjs(r.scheduled_date).isBefore(dayjs())
+  ).length;
+
+  const maintStats = [
+    { label: 'Total Assets', value: String((assets as any[]).length), icon: Package, color: '#60a5fa' },
+    { label: 'Due This Week', value: String(upcoming.length), sub: 'Needs attention', icon: CalendarClock, color: '#fbbf24' },
+    { label: 'Overdue', value: String(overdue), sub: 'Past scheduled date', icon: AlertTriangle, color: '#f87171' },
+    { label: 'Completed', value: String(completed), sub: 'This dataset', icon: CheckCircle2, color: '#34d399' },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Maintenance" subtitle="Asset and vehicle maintenance scheduling" actions={pageActions} />
-        <main className="flex-1 overflow-y-auto p-6">
+    <AppLayout title="Maintenance" subtitle="Asset and vehicle maintenance scheduling" actions={pageActions}>
+      <StatsRow stats={maintStats} />
 
-          {/* Upcoming alert */}
-          {upcoming.length > 0 && (
-            <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-              <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-amber-300 text-sm">{upcoming.length} maintenance task{upcoming.length > 1 ? 's' : ''} due within 7 days</p>
-                <p className="text-xs text-amber-400/80 mt-0.5">{upcoming.map((r: any) => r.asset_name).join(', ')}</p>
-              </div>
-            </div>
-          )}
+      {/* Upcoming alert */}
+      {upcoming.length > 0 && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+          <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-amber-300 text-sm">{upcoming.length} maintenance task{upcoming.length > 1 ? 's' : ''} due within 7 days</p>
+            <p className="text-xs text-amber-400/80 mt-0.5">{upcoming.map((r: any) => r.asset_name).join(', ')}</p>
+          </div>
+        </div>
+      )}
 
-          {/* Tabs + Filters */}
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="flex gap-1 p-1 rounded-xl bg-surface-card border border-surface-border">
-              {[['records', 'Maintenance Records'], ['assets', 'Assets']].map(([k, l]) => (
-                <button key={k} onClick={() => setTab(k as any)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === k ? 'btn-primary' : 'text-white/50 hover:text-white'}`}>
-                  {l}
-                </button>
-              ))}
-            </div>
+      {/* Tabs + Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        <TabBar
+          tabs={[{ key: 'records', label: 'Maintenance Records' }, { key: 'assets', label: 'Assets' }]}
+          active={tab}
+          onChange={k => setTab(k as 'records' | 'assets')}
+        />
 
-            <div className="flex gap-1 p-1 rounded-lg bg-surface-card border border-surface-border">
-              {[['', 'All'], ['machinery', 'Machinery'], ['vehicle', 'Vehicle']].map(([v, l]) => (
-                <button key={v} onClick={() => setAssetTypeFilter(v)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${assetTypeFilter === v ? 'btn-primary' : 'text-white/50 hover:text-white'}`}>
-                  {l}
-                </button>
-              ))}
-            </div>
+        <div className="flex gap-1 p-1 rounded-lg bg-[#111e35] border border-[#1f3659]">
+          {[['', 'All'], ['machinery', 'Machinery'], ['vehicle', 'Vehicle']].map(([v, l]) => (
+            <button key={v} onClick={() => setAssetTypeFilter(v)}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${assetTypeFilter === v ? 'bg-[#162c52] text-[#e8c96a]' : 'text-white/50 hover:text-white'}`}>
+              {l}
+            </button>
+          ))}
+        </div>
 
             {tab === 'records' && (
               <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="select text-sm">
@@ -252,9 +260,6 @@ export default function MaintenancePage() {
               {!(assets as any[]).length && <p className="text-center text-white/30 py-10">No assets found</p>}
             </div>
           )}
-
-        </main>
-      </div>
 
       {/* Add Record modal */}
       {showRecordForm && (
@@ -375,6 +380,6 @@ export default function MaintenancePage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

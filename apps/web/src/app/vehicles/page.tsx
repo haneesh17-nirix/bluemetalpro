@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
+import StatsRow from '@/components/ui/StatsRow';
 import { getVehicles, createVehicle } from '@/lib/api';
 import api from '@/lib/api';
-import { Plus, X, Truck } from 'lucide-react';
+import { Plus, X, Truck, CheckCircle2, Wrench, Archive } from 'lucide-react';
 
 type VehicleStatus = 'active' | 'maintenance' | 'retired';
 
@@ -53,72 +53,68 @@ export default function VehiclesPage() {
   const active = (vehicles as any[]).filter((v: any) => v.status === 'active').length;
   const inMaint = (vehicles as any[]).filter((v: any) => v.status === 'maintenance').length;
 
+  const retired = (vehicles as any[]).filter((v: any) => v.status === 'retired').length;
+
+  const stats = [
+    { label: 'Total Vehicles', value: String((vehicles as any[]).length), icon: Truck, color: '#60a5fa' },
+    { label: 'Active', value: String(active), sub: 'In service', icon: CheckCircle2, color: '#34d399' },
+    { label: 'Under Maintenance', value: String(inMaint), sub: 'Being serviced', icon: Wrench, color: '#fbbf24' },
+    { label: 'Retired / Inactive', value: String(retired), icon: Archive, color: 'rgba(200,212,232,0.5)' },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar
-          title="Vehicles"
-          subtitle="Fleet management and status tracking"
-          actions={
-            <button
-              onClick={() => { setEditVehicle(null); setForm(emptyForm); setShowForm(true); }}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus size={16} /> Add Vehicle
-            </button>
-          }
-        />
-        <main className="flex-1 overflow-y-auto p-6">
+    <AppLayout
+      title="Vehicles"
+      subtitle="Fleet management and status tracking"
+      actions={
+        <button
+          onClick={() => { setEditVehicle(null); setForm(emptyForm); setShowForm(true); }}
+          className="btn-primary flex items-center gap-2"
+        >
+          <Plus size={16} /> Add Vehicle
+        </button>
+      }
+    >
+      <StatsRow stats={stats} />
 
-          {/* Summary */}
-          <div className="flex gap-5 mb-6">
-            {[
-              { label: 'Total', value: (vehicles as any[]).length, iconClass: 'bg-blue-500/20 text-blue-400' },
-              { label: 'Active', value: active, iconClass: 'bg-emerald-500/20 text-emerald-400' },
-              { label: 'In Maintenance', value: inMaint, iconClass: 'bg-amber-500/20 text-amber-400' },
-            ].map(s => (
-              <div key={s.label} className="card px-6 py-4 flex items-center gap-4">
-                <div className={`${s.iconClass} w-10 h-10 rounded-lg flex items-center justify-center`}>
-                  <Truck size={18} />
+      {/* Vehicles grid */}
+      {(vehicles as any[]).length ? (
+        <div className="grid grid-cols-3 gap-4">
+          {(vehicles as any[]).map((v: any) => (
+            <div key={v.id} className="card p-5" style={{ borderLeft: v.status === 'active' ? '3px solid #34d399' : v.status === 'maintenance' ? '3px solid #fbbf24' : '3px solid rgba(255,255,255,0.1)' }}>
+              <div className="flex justify-between items-start mb-3">
+                <div
+                  className="text-sm font-bold px-3 py-1 rounded-lg"
+                  style={{ background: '#1e3a5f', border: '1px solid #263d5e', color: '#c8d4e8' }}
+                >
+                  {v.registration_number}
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">{s.value}</p>
-                  <p className="text-sm text-white/50">{s.label}</p>
-                </div>
+                <span className={`${statusBadge[v.status as VehicleStatus]} capitalize`}>{v.status}</span>
               </div>
-            ))}
-          </div>
-
-          {/* Vehicles grid */}
-          {(vehicles as any[]).length ? (
-            <div className="grid grid-cols-3 gap-4">
-              {(vehicles as any[]).map((v: any) => (
-                <div key={v.id} className="card p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="bg-[#1e3a5f] border border-[#263d5e] text-white text-sm font-bold px-3 py-1 rounded-lg">
-                      {v.registration_number}
-                    </div>
-                    <span className={`${statusBadge[v.status as VehicleStatus]} capitalize`}>{v.status}</span>
-                  </div>
-                  <p className="font-medium text-white">{v.vehicle_type || 'Unknown type'}</p>
-                  <p className="text-sm text-white/60 mt-1">{v.owner_name || '—'}</p>
-                  {v.owner_phone && <p className="text-xs text-white/40">{v.owner_phone}</p>}
-                  {v.capacity_mt && <p className="text-xs text-amber-400 mt-2 font-medium">{v.capacity_mt} MT capacity</p>}
-                  {v.notes && <p className="text-xs text-white/30 mt-1 truncate">{v.notes}</p>}
-                  <button onClick={() => openEdit(v)} className="btn-ghost text-xs px-2 py-1 mt-3">Edit</button>
+              <p className="font-semibold text-white mt-2">{v.vehicle_type || 'Unknown type'}</p>
+              <p className="text-sm mt-1" style={{ color: 'rgba(200,212,232,0.6)' }}>{v.owner_name || '—'}</p>
+              {v.owner_phone && <p className="text-xs mt-0.5" style={{ color: 'rgba(200,212,232,0.4)' }}>{v.owner_phone}</p>}
+              {v.capacity_mt && (
+                <div className="mt-3 flex items-center gap-1.5">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>
+                    {v.capacity_mt} MT
+                  </span>
                 </div>
-              ))}
+              )}
+              {v.notes && <p className="text-xs mt-2 truncate" style={{ color: 'rgba(200,212,232,0.3)' }}>{v.notes}</p>}
+              <button onClick={() => openEdit(v)} className="btn-ghost text-xs px-2 py-1 mt-3 w-full text-center">Edit Details</button>
             </div>
-          ) : (
-            <div className="text-center py-16 text-white/30">
-              <Truck size={40} className="mx-auto mb-2 opacity-30" />
-              <p>No vehicles added yet</p>
-            </div>
-          )}
-
-        </main>
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="card flex flex-col items-center py-20 gap-3">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <Truck size={28} style={{ color: 'rgba(200,212,232,0.25)' }} />
+          </div>
+          <p className="text-base font-semibold text-white/70">No vehicles added yet</p>
+          <p className="text-sm text-white/35">Add your fleet vehicles to start tracking</p>
+        </div>
+      )}
 
       {/* Add/Edit modal */}
       {showForm && (
@@ -175,6 +171,6 @@ export default function VehiclesPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

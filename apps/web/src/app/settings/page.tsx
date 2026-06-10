@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import TopBar from '@/components/layout/TopBar';
+import AppLayout from '@/components/layout/AppLayout';
 import { getConfig, updateConfig } from '@/lib/api';
-import { Save, Building2 } from 'lucide-react';
+import { Save, Building2, CreditCard, FileText, Phone } from 'lucide-react';
 
 export default function SettingsPage() {
   useEffect(() => { log.page('Settings'); }, []);
@@ -56,93 +55,107 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title="Settings" subtitle="Company configuration and preferences" actions={saveAction} />
-        <main className="flex-1 overflow-y-auto p-6">
+    <AppLayout title="Settings" subtitle="Company configuration and preferences" actions={saveAction}>
+      <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} className="space-y-5">
 
-          <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} className="space-y-6">
-
-            {/* Company Info */}
-            <div className="card p-6">
-              <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
-                <Building2 size={18} className="text-[#c9a84c]" /> Company Information
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2"><F label="Company Name" name="company_name" required /></div>
-                <F label="GSTIN" name="gstin" placeholder="22AAAAA0000A1Z5" maxLength={15} />
-                <F label="PAN" name="pan" placeholder="AAAAA0000A" maxLength={10} />
-                <F label="Phone" name="phone" />
-                <F label="Email" name="email" type="email" />
-                <div className="col-span-2"><F label="Address" name="address" /></div>
-                <F label="City" name="city" />
-                <F label="State" name="state" />
-                <F label="Pincode" name="pincode" maxLength={6} />
-              </div>
+        {/* Company Info */}
+        <div className="card p-6">
+          <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.25)' }}>
+              <Building2 size={16} style={{ color: '#e8c96a' }} />
             </div>
-
-            {/* Bank Details */}
-            <div className="card p-6">
-              <h2 className="font-semibold text-white mb-5">Bank Details</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <F label="Bank Name" name="bank_name" placeholder="State Bank of India" />
-                <F label="Account Number" name="bank_account" />
-                <F label="IFSC Code" name="bank_ifsc" placeholder="SBIN0001234" maxLength={11} />
-                <F label="Branch" name="bank_branch" />
-              </div>
+            <div>
+              <h2 className="font-semibold text-white text-sm">Company Information</h2>
+              <p className="text-xs" style={{ color: 'rgba(200,212,232,0.45)' }}>Legal entity details and contact info</p>
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2"><F label="Company Name" name="company_name" required /></div>
+            <F label="GSTIN" name="gstin" placeholder="22AAAAA0000A1Z5" maxLength={15} />
+            <F label="PAN" name="pan" placeholder="AAAAA0000A" maxLength={10} />
+            <F label="Phone" name="phone" />
+            <F label="Email" name="email" type="email" />
+            <div className="col-span-2"><F label="Address" name="address" /></div>
+            <F label="City" name="city" />
+            <F label="State" name="state" />
+            <F label="Pincode" name="pincode" maxLength={6} />
+          </div>
+        </div>
 
-            {/* Invoice Config */}
-            <div className="card p-6">
-              <h2 className="font-semibold text-white mb-5">Invoice Configuration</h2>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <F label="Invoice Prefix" name="invoice_prefix" placeholder="INV" maxLength={10} />
-                  <p className="text-xs text-white/30 mt-1">e.g. INV → INV/2526/0001</p>
-                </div>
-                <div>
-                  <F label="Quarry Invoice Prefix" name="quarry_invoice_prefix" placeholder="QRY" maxLength={10} />
-                  <p className="text-xs text-white/30 mt-1">e.g. QRY → QRY/2526/0001</p>
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="label">Terms & Conditions (printed on invoice)</label>
-                <textarea
-                  value={form.terms_conditions || ''}
-                  onChange={e => setForm((f: any) => ({ ...f, terms_conditions: e.target.value }))}
-                  className="input"
-                  rows={3}
-                  placeholder="E.g. Goods once sold will not be taken back. Subject to local jurisdiction."
-                />
-              </div>
+        {/* Bank Details */}
+        <div className="card p-6">
+          <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.25)' }}>
+              <CreditCard size={16} style={{ color: '#60a5fa' }} />
             </div>
-
-            {/* GST Info panel */}
-            <div className="card-gold p-5">
-              <h3 className="font-semibold text-[#c9a84c] mb-4 text-sm">GST Rate Reference — Stone Crushing Products</h3>
-              <div className="grid grid-cols-3 gap-3 text-xs">
-                {[
-                  { item: 'M-Sand, P-Sand', hsn: '25171010', gst: '5%' },
-                  { item: '20mm, 40mm Aggregates', hsn: '25171010', gst: '5%' },
-                  { item: 'Dust / Stone Dust', hsn: '25171010', gst: '5%' },
-                  { item: 'GSB / WMM', hsn: '25171010', gst: '5%' },
-                  { item: 'Boulder / Bollar', hsn: '25171010', gst: '5%' },
-                  { item: 'Transport (if billed)', hsn: '996511', gst: '12%' },
-                ].map(r => (
-                  <div key={r.item} className="card p-3">
-                    <p className="font-medium text-white">{r.item}</p>
-                    <p className="text-white/40 font-mono">HSN: {r.hsn}</p>
-                    <p className="text-[#c9a84c] font-bold mt-0.5">GST: {r.gst}</p>
-                  </div>
-                ))}
-              </div>
+            <div>
+              <h2 className="font-semibold text-white text-sm">Bank Details</h2>
+              <p className="text-xs" style={{ color: 'rgba(200,212,232,0.45)' }}>Account information printed on invoices</p>
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <F label="Bank Name" name="bank_name" placeholder="State Bank of India" />
+            <F label="Account Number" name="bank_account" />
+            <F label="IFSC Code" name="bank_ifsc" placeholder="SBIN0001234" maxLength={11} />
+            <F label="Branch" name="bank_branch" />
+          </div>
+        </div>
 
-          </form>
+        {/* Invoice Config */}
+        <div className="card p-6">
+          <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
+              <FileText size={16} style={{ color: '#34d399' }} />
+            </div>
+            <div>
+              <h2 className="font-semibold text-white text-sm">Invoice Configuration</h2>
+              <p className="text-xs" style={{ color: 'rgba(200,212,232,0.45)' }}>Numbering and terms settings</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <F label="Invoice Prefix" name="invoice_prefix" placeholder="INV" maxLength={10} />
+              <p className="text-xs mt-1" style={{ color: 'rgba(200,212,232,0.3)' }}>e.g. INV → INV/2526/0001</p>
+            </div>
+            <div>
+              <F label="Quarry Invoice Prefix" name="quarry_invoice_prefix" placeholder="QRY" maxLength={10} />
+              <p className="text-xs mt-1" style={{ color: 'rgba(200,212,232,0.3)' }}>e.g. QRY → QRY/2526/0001</p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <label className="label">Terms &amp; Conditions (printed on invoice)</label>
+            <textarea
+              value={form.terms_conditions || ''}
+              onChange={e => setForm((f: any) => ({ ...f, terms_conditions: e.target.value }))}
+              className="input"
+              rows={3}
+              placeholder="E.g. Goods once sold will not be taken back. Subject to local jurisdiction."
+            />
+          </div>
+        </div>
 
-        </main>
-      </div>
-    </div>
+        {/* GST Info panel */}
+        <div className="card-gold p-5">
+          <h3 className="font-semibold text-[#c9a84c] mb-4 text-sm">GST Rate Reference — Stone Crushing Products</h3>
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            {[
+              { item: 'M-Sand, P-Sand', hsn: '25171010', gst: '5%' },
+              { item: '20mm, 40mm Aggregates', hsn: '25171010', gst: '5%' },
+              { item: 'Dust / Stone Dust', hsn: '25171010', gst: '5%' },
+              { item: 'GSB / WMM', hsn: '25171010', gst: '5%' },
+              { item: 'Boulder / Bollar', hsn: '25171010', gst: '5%' },
+              { item: 'Transport (if billed)', hsn: '996511', gst: '12%' },
+            ].map(r => (
+              <div key={r.item} className="card p-3">
+                <p className="font-medium text-white">{r.item}</p>
+                <p className="font-mono" style={{ color: 'rgba(200,212,232,0.4)' }}>HSN: {r.hsn}</p>
+                <p className="font-bold mt-0.5" style={{ color: '#e8c96a' }}>GST: {r.gst}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </form>
+    </AppLayout>
   );
 }
