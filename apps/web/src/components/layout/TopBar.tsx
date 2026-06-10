@@ -6,21 +6,13 @@ import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Notification {
-  id: string;
-  title: string;
-  body: string;
-  type: string;
-  is_read: boolean;
-  sent_at: string;
+  id: string; title: string; body: string; type: string;
+  is_read: boolean; sent_at: string;
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  sale: '#4ade80',
-  purchase: '#60a5fa',
-  maintenance: '#f59e0b',
-  quarry: '#a78bfa',
-  wages: '#34d399',
-  payment: '#c9a84c',
+  sale: '#4ade80', purchase: '#60a5fa', maintenance: '#f59e0b',
+  quarry: '#a78bfa', wages: '#34d399', payment: '#c9a84c',
 };
 
 interface TopBarProps {
@@ -36,16 +28,12 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const [loading, setLoading] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Fetch unread count + open SSE stream on mount
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (!token) return;
-
     api.get('/notifications/unread-count').then((r: { data: { count: number } }) => setUnread(r.data.count)).catch(() => {});
-
     let aborted = false;
     const controller = new AbortController();
-
     const connect = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
@@ -58,41 +46,30 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
         while (!aborted) {
           const { value, done } = await reader.read();
           if (done) break;
-          const text = decoder.decode(value);
-          for (const line of text.split('\n')) {
+          for (const line of decoder.decode(value).split('\n')) {
             if (line.startsWith('data: ')) {
               try {
                 const data = JSON.parse(line.slice(6));
                 if (data.notifications?.length) {
                   setUnread(u => u + data.notifications.length);
-                  const first = data.notifications[0];
-                  toast(first.title, {
+                  toast(data.notifications[0].title, {
                     icon: '🔔',
-                    style: { background: '#162c52', color: '#e8edf5', border: '1px solid #2a4570' },
+                    style: { background: '#172d54', color: '#e8edf5', border: '1px solid rgba(42,69,112,0.8)' },
                   });
-                  // Prepend to open panel if it's showing
                   setItems(prev => prev.length ? [...data.notifications, ...prev] : prev);
                 }
-              } catch { /* ignore parse errors */ }
+              } catch { /* ignore */ }
             }
           }
         }
       } catch (err: any) {
-        if (!aborted && err?.name !== 'AbortError') {
-          setTimeout(connect, 5000);
-        }
+        if (!aborted && err?.name !== 'AbortError') setTimeout(connect, 5000);
       }
     };
-
     connect();
-
-    return () => {
-      aborted = true;
-      controller.abort();
-    };
+    return () => { aborted = true; controller.abort(); };
   }, []);
 
-  // Close panel on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
@@ -106,10 +83,8 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
     setOpen(next);
     if (next) {
       setLoading(true);
-      try {
-        const r = await api.get('/notifications?limit=20');
-        setItems(r.data);
-      } catch { /* ignore */ } finally { setLoading(false); }
+      try { const r = await api.get('/notifications?limit=20'); setItems(r.data); }
+      catch { /* ignore */ } finally { setLoading(false); }
     }
   };
 
@@ -129,164 +104,151 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const crusherName = crusherStr ? (() => { try { return JSON.parse(crusherStr)?.name; } catch { return null; } })() : null;
 
   return (
-    <header
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '12px 24px', flexShrink: 0, position: 'relative',
-        background: 'rgba(5, 14, 30, 0.85)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(30,52,88,0.9)',
-        boxShadow: '0 1px 0 rgba(184,149,62,0.06), 0 4px 20px rgba(0,0,0,0.3)',
-        zIndex: 40,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div>
-          <h1 className="text-xl font-bold text-white leading-none tracking-tight">{title}</h1>
+    <header style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '14px 24px', flexShrink: 0, position: 'relative',
+      background: 'rgba(5,14,30,0.9)', backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderBottom: '1px solid rgba(30,52,88,0.9)',
+      boxShadow: '0 1px 0 rgba(184,149,62,0.06), 0 4px 24px rgba(0,0,0,0.35)',
+      zIndex: 40,
+    }}>
+      {/* Left: title + crusher badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+        <div style={{ minWidth: 0 }}>
+          <h1 style={{
+            fontSize: 20, fontWeight: 700, color: '#fff',
+            lineHeight: 1, letterSpacing: '-0.02em', margin: 0,
+          }}>{title}</h1>
           {subtitle && (
-            <p className="text-xs mt-1 font-medium" style={{ color: 'rgba(200,212,232,0.55)' }}>
+            <p style={{ fontSize: 12, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>
               {subtitle}
             </p>
           )}
         </div>
         {crusherName && (
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '3px 10px', borderRadius: 20,
-            background: 'rgba(184,149,62,0.1)', border: '1px solid rgba(184,149,62,0.2)',
+            display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0,
+            padding: '4px 12px', borderRadius: 20,
+            background: 'rgba(184,149,62,0.08)', border: '1px solid rgba(184,149,62,0.18)',
             fontSize: 11, fontWeight: 600, color: '#c9a84c',
-          }}>
-            {crusherName}
-          </div>
+          }}>{crusherName}</div>
         )}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} ref={panelRef}>
-        {/* Bell button */}
-        <button
-          onClick={openPanel}
-          style={{
-            position: 'relative', width: 38, height: 38, borderRadius: 12,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 0.15s', cursor: 'pointer',
-            background: open ? 'rgba(184,149,62,0.15)' : 'rgba(255,255,255,0.06)',
-            border: open ? '1px solid rgba(184,149,62,0.3)' : '1px solid rgba(42,69,112,0.7)',
-          }}
-        >
-          <Bell size={16} style={{ color: open ? '#c9a84c' : 'rgba(200,212,232,0.7)' }} />
+      {/* Right: bell + actions */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} ref={panelRef}>
+        {/* Bell */}
+        <button onClick={openPanel} style={{
+          position: 'relative', width: 38, height: 38, borderRadius: 12,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', transition: 'all 0.15s',
+          background: open ? 'rgba(184,149,62,0.12)' : 'rgba(255,255,255,0.05)',
+          border: open ? '1px solid rgba(184,149,62,0.3)' : '1px solid rgba(42,69,112,0.7)',
+        }}>
+          <Bell size={15} style={{ color: open ? '#c9a84c' : 'rgba(200,212,232,0.65)' }} />
           {unread > 0 && (
-            <span
-              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[10px] font-bold"
-              style={{ background: '#c9a84c', color: '#0c1f3d' }}
-            >
-              {unread > 99 ? '99+' : unread}
-            </span>
+            <span style={{
+              position: 'absolute', top: -5, right: -5,
+              minWidth: 18, height: 18, padding: '0 4px',
+              borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 10, fontWeight: 700,
+              background: '#c9a84c', color: '#0c1f3d',
+              border: '2px solid #050e1e',
+            }}>{unread > 99 ? '99+' : unread}</span>
           )}
         </button>
 
-        {/* Dropdown panel */}
+        {/* Notification dropdown */}
         {open && (
-          <div
-            className="absolute top-full right-4 mt-2 w-96 rounded-2xl overflow-hidden"
-            style={{
-              background: '#0f1f3a',
-              border: '1px solid #2a4570',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-              zIndex: 50,
-            }}
-          >
-            {/* Header */}
-            <div
-              className="flex items-center justify-between px-4 py-3"
-              style={{ borderBottom: '1px solid #1f3659' }}
-            >
-              <div className="flex items-center gap-2">
+          <div style={{
+            position: 'absolute', top: '100%', right: 16, marginTop: 8,
+            width: 380, borderRadius: 16, overflow: 'hidden',
+            background: 'linear-gradient(160deg, #172d54 0%, #102241 100%)',
+            border: '1px solid rgba(42,69,112,0.8)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
+            zIndex: 50,
+          }}>
+            {/* Panel header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 16px', borderBottom: '1px solid rgba(42,69,112,0.5)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bell size={14} style={{ color: '#c9a84c' }} />
-                <span className="text-sm font-semibold text-white">Notifications</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#e8edf5' }}>Notifications</span>
                 {unread > 0 && (
-                  <span
-                    className="px-1.5 py-0.5 rounded-full text-xs font-bold"
-                    style={{ background: 'rgba(184,149,62,0.15)', color: '#c9a84c' }}
-                  >
-                    {unread} new
-                  </span>
+                  <span style={{
+                    padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
+                    background: 'rgba(184,149,62,0.15)', color: '#c9a84c',
+                  }}>{unread} new</span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 {unread > 0 && (
-                  <button
-                    onClick={markAllRead}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all"
-                    style={{ color: 'rgba(200,212,232,0.6)', background: 'rgba(255,255,255,0.05)' }}
-                  >
-                    <CheckCheck size={12} /> Mark all read
+                  <button onClick={markAllRead} style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '5px 10px', borderRadius: 8, fontSize: 11, fontWeight: 500,
+                    cursor: 'pointer', background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(200,212,232,0.7)',
+                  }}>
+                    <CheckCheck size={11} /> Mark all read
                   </button>
                 )}
-                <button
-                  onClick={() => setOpen(false)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg"
-                  style={{ color: 'rgba(200,212,232,0.4)', background: 'rgba(255,255,255,0.05)' }}
-                >
-                  <X size={14} />
+                <button onClick={() => setOpen(false)} style={{
+                  width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 8, cursor: 'pointer', background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(200,212,232,0.5)',
+                }}>
+                  <X size={13} />
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div className="max-h-[420px] overflow-y-auto">
+            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
               {loading ? (
-                <div className="py-8 text-center text-sm" style={{ color: 'rgba(200,212,232,0.4)' }}>
+                <div style={{ padding: '32px 16px', textAlign: 'center', fontSize: 13, color: 'rgba(200,212,232,0.4)' }}>
                   Loading…
                 </div>
               ) : items.length === 0 ? (
-                <div className="py-12 text-center">
-                  <Bell size={24} className="mx-auto mb-2" style={{ color: 'rgba(200,212,232,0.15)' }} />
-                  <p className="text-sm" style={{ color: 'rgba(200,212,232,0.35)' }}>No notifications yet</p>
+                <div style={{ padding: '48px 16px', textAlign: 'center' }}>
+                  <Bell size={24} style={{ color: 'rgba(200,212,232,0.15)', display: 'block', margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: 13, color: 'rgba(200,212,232,0.35)' }}>No notifications yet</p>
                 </div>
-              ) : (
-                items.map(n => (
-                  <div
-                    key={n.id}
-                    onClick={() => !n.is_read && markRead(n.id)}
-                    className="flex gap-3 px-4 py-3 transition-all cursor-pointer"
-                    style={{
-                      background: n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)',
-                      borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)'; }}
-                  >
-                    {/* Type dot */}
-                    <div
-                      className="flex-shrink-0 mt-1 w-2 h-2 rounded-full"
-                      style={{
-                        background: TYPE_COLORS[n.type] ?? '#60a5fa',
-                        boxShadow: `0 0 6px ${TYPE_COLORS[n.type] ?? '#60a5fa'}60`,
-                      }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className="text-sm font-medium leading-tight"
-                        style={{ color: n.is_read ? 'rgba(200,212,232,0.6)' : '#e8edf5' }}
-                      >
-                        {n.title}
+              ) : items.map(n => (
+                <div key={n.id} onClick={() => !n.is_read && markRead(n.id)}
+                  style={{
+                    display: 'flex', gap: 12, padding: '12px 16px', cursor: 'pointer',
+                    background: n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)',
+                    borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.12s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.04)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = n.is_read ? 'transparent' : 'rgba(184,149,62,0.04)'; }}
+                >
+                  <div style={{
+                    width: 8, height: 8, borderRadius: '50%', flexShrink: 0, marginTop: 5,
+                    background: TYPE_COLORS[n.type] ?? '#60a5fa',
+                    boxShadow: `0 0 6px ${TYPE_COLORS[n.type] ?? '#60a5fa'}60`,
+                  }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.3, color: n.is_read ? 'rgba(200,212,232,0.6)' : '#e8edf5' }}>
+                      {n.title}
+                    </p>
+                    {n.body && (
+                      <p style={{ fontSize: 11, marginTop: 2, color: 'rgba(200,212,232,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {n.body}
                       </p>
-                      {n.body && (
-                        <p className="text-xs mt-0.5 truncate" style={{ color: 'rgba(200,212,232,0.4)' }}>
-                          {n.body}
-                        </p>
-                      )}
-                      <p className="text-[10px] mt-1 font-medium" style={{ color: 'rgba(200,212,232,0.3)' }}>
-                        {formatDistanceToNow(new Date(n.sent_at), { addSuffix: true })}
-                      </p>
-                    </div>
-                    {!n.is_read && (
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-2" style={{ background: '#c9a84c' }} />
                     )}
+                    <p style={{ fontSize: 10, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.3)' }}>
+                      {formatDistanceToNow(new Date(n.sent_at), { addSuffix: true })}
+                    </p>
                   </div>
-                ))
-              )}
+                  {!n.is_read && (
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, marginTop: 6, background: '#c9a84c' }} />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}

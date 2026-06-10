@@ -41,8 +41,8 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
   const activeStyle: React.CSSProperties = {
     background: 'linear-gradient(135deg, rgba(184,149,62,0.14) 0%, rgba(184,149,62,0.06) 100%)',
     border: '1px solid rgba(184,149,62,0.2)',
+    borderLeft: '3px solid #c9a84c',
     color: '#d4aa52',
-    borderLeft: '3px solid #d4aa52',
     paddingLeft: 10,
   };
   const inactiveStyle: React.CSSProperties = {
@@ -57,14 +57,13 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '10px 12px', borderRadius: 12,
         fontSize: 13, fontWeight: 500, textDecoration: 'none',
-        transition: 'all 0.15s',
-        position: 'relative',
+        transition: 'all 0.15s', position: 'relative',
         ...(active ? activeStyle : inactiveStyle),
       }}
       onMouseEnter={e => {
         if (!active) {
           (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
-          (e.currentTarget as HTMLAnchorElement).style.color = '#fff';
+          (e.currentTarget as HTMLAnchorElement).style.color = '#e8edf5';
         }
       }}
       onMouseLeave={e => {
@@ -74,8 +73,10 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
         }
       }}
     >
-      <item.icon size={15} style={{ color: active ? '#c9a84c' : 'rgba(200,212,232,0.5)', flexShrink: 0 }} />
-      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+      <item.icon size={15} style={{ color: active ? '#c9a84c' : 'rgba(200,212,232,0.45)', flexShrink: 0 }} />
+      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {item.label}
+      </span>
       {active && <ChevronRight size={12} style={{ color: 'rgba(184,149,62,0.5)', flexShrink: 0 }} />}
     </Link>
   );
@@ -102,119 +103,123 @@ export default function Sidebar() {
     : 'BM';
 
   return (
-    <aside
-      style={{
-        width: '256px',
-        minWidth: '256px',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        position: 'sticky',
-        top: 0,
-        flexShrink: 0,
-        overflow: 'hidden',
-        background: 'linear-gradient(180deg, #050e1e 0%, #081525 50%, #0a1c35 100%)',
-        borderRight: '1px solid rgba(30, 52, 88, 0.8)',
-      }}
-    >
-      {/* ── Logo ──────────────────────────────────── */}
-      <div
-        className="px-5 py-5 flex items-center gap-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid #1f3659' }}
-      >
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-lg"
-          style={{
-            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-            color: '#0c1f3d',
-            boxShadow: '0 4px 12px rgba(184,149,62,0.25)',
-          }}
-        >
-          B
-        </div>
-        <div className="min-w-0">
-          <p className="font-bold text-sm text-white leading-tight">BlueMetal Pro</p>
-          <p
-            className="text-[10px] font-semibold mt-0.5 tracking-wide"
-            style={{
-              background: 'linear-gradient(135deg, #b8953e, #d4aa52)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            QUARRY ERP
+    <aside style={{
+      width: 256, minWidth: 256, display: 'flex', flexDirection: 'column',
+      height: '100vh', position: 'sticky', top: 0, flexShrink: 0, overflow: 'hidden',
+      background: 'linear-gradient(180deg, #050e1e 0%, #081525 50%, #0a1c35 100%)',
+      borderRight: '1px solid rgba(30,52,88,0.8)',
+    }}>
+
+      {/* ── Logo ── */}
+      <div style={{
+        padding: '20px 20px 18px', display: 'flex', alignItems: 'center', gap: 12,
+        flexShrink: 0, borderBottom: '1px solid rgba(30,52,88,0.8)',
+      }}>
+        <div style={{
+          width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontWeight: 900, fontSize: 18, color: '#0c1f3d',
+          background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
+          boxShadow: '0 4px 12px rgba(184,149,62,0.25)',
+        }}>B</div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p style={{ fontWeight: 700, fontSize: 14, color: '#fff', lineHeight: 1.2, margin: 0 }}>
+            BlueMetal Pro
           </p>
+          <p style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', marginTop: 3,
+            background: 'linear-gradient(135deg, #b8953e, #d4aa52)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>QUARRY ERP</p>
         </div>
       </div>
 
-      {/* ── Crusher badge ─────────────────────────── */}
+      {/* ── Crusher badge ── */}
       {crusherName && (
-        <div style={{ padding: '8px 16px 0' }}>
+        <div style={{ padding: '10px 14px 0' }}>
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '4px 10px', borderRadius: 20,
-            background: 'rgba(184,149,62,0.1)', border: '1px solid rgba(184,149,62,0.2)',
-            fontSize: 11, fontWeight: 600, color: '#d4aa52',
-            maxWidth: '100%',
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '5px 10px', borderRadius: 20,
+            background: 'rgba(184,149,62,0.08)', border: '1px solid rgba(184,149,62,0.18)',
+            fontSize: 11, fontWeight: 600, color: '#c9a84c',
           }}>
-            <Factory size={11} style={{ flexShrink: 0 }} />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{crusherName}</span>
+            <Factory size={10} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {crusherName}
+            </span>
           </div>
         </div>
       )}
 
-      {/* ── Navigation ────────────────────────────── */}
-      <nav style={{ flex: 1, overflowY: 'auto', padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* ── Navigation ── */}
+      <nav style={{
+        flex: 1, overflowY: 'auto', padding: '10px 8px',
+        display: 'flex', flexDirection: 'column', gap: 1,
+      }}>
         {mainItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
 
         {adminItems.length > 0 && (
           <>
-            <div style={{ margin: '10px 4px 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(184,149,62,0.4)', textTransform: 'uppercase' }}>Admin</span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(184,149,62,0.12)' }} />
+            <div style={{
+              margin: '12px 6px 6px', display: 'flex', alignItems: 'center', gap: 8,
+            }}>
+              <span style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+                color: 'rgba(184,149,62,0.45)', textTransform: 'uppercase',
+              }}>Admin</span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(184,149,62,0.1)' }} />
             </div>
             {adminItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
           </>
         )}
       </nav>
 
-      {/* ── User profile ──────────────────────────── */}
-      <div className="p-3 flex-shrink-0" style={{ borderTop: '1px solid #1f3659' }}>
-        <div
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1.5"
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
-            style={{
-              background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
-              color: '#0c1f3d',
-            }}
-          >
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-white truncate">{user?.name || 'User'}</p>
-            <p className="text-[10px] mt-0.5 truncate" style={{ color: 'rgba(200,212,232,0.5)' }}>
-              {ROLE_LABELS[user?.role] || user?.role || 'Unknown role'}
-            </p>
+      {/* ── User profile ── */}
+      <div style={{
+        padding: 12, flexShrink: 0, borderTop: '1px solid rgba(30,52,88,0.8)',
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 12px', borderRadius: 12, marginBottom: 4,
+          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
+        }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, fontSize: 13, color: '#0c1f3d',
+            background: 'linear-gradient(135deg, #7a5e22, #c9a84c)',
+          }}>{initials}</div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{
+              fontSize: 13, fontWeight: 600, color: '#fff',
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>{user?.name || 'User'}</p>
+            <p style={{
+              fontSize: 10, marginTop: 2, color: 'rgba(200,212,232,0.45)',
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>{ROLE_LABELS[user?.role] || user?.role || 'Unknown'}</p>
           </div>
         </div>
 
         <button
           onClick={logout}
-          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm transition-all duration-150"
-          style={{ color: 'rgba(200,212,232,0.5)' }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            width: '100%', padding: '8px 12px', borderRadius: 10,
+            fontSize: 13, fontWeight: 500, cursor: 'pointer',
+            background: 'transparent', border: 'none',
+            color: 'rgba(200,212,232,0.45)', transition: 'all 0.15s',
+          }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLButtonElement).style.color = '#fca5a5';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)';
+            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)';
           }}
           onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = 'rgba(200,212,232,0.5)';
+            (e.currentTarget as HTMLButtonElement).style.color = 'rgba(200,212,232,0.45)';
             (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
           }}
         >
-          <LogOut size={15} />
+          <LogOut size={14} />
           <span>Sign out</span>
         </button>
       </div>
