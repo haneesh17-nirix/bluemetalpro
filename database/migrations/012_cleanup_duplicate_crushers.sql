@@ -34,37 +34,23 @@ BEGIN
 
   RAISE NOTICE 'Keeping Unit1=% Unit2=%', c1, c2;
 
-  -- ── 2. Re-home all FK references from duplicate Unit-1 rows to c1 ─────────
-  UPDATE sales              SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE purchases          SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE quarry_sales       SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE parties            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE vehicles           SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE products           SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE workers            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE assets             SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE ledger_transactions SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE maintenance_records SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE attendance         SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE cameras            SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE notifications      SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-  UPDATE wage_payments      SET crusher_id = c1 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 1%' AND id <> c1);
-
-  -- ── 3. Re-home all FK references from duplicate Unit-2 rows to c2 ─────────
-  UPDATE sales              SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE purchases          SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE quarry_sales       SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE parties            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE vehicles           SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE products           SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE workers            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE assets             SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE ledger_transactions SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE maintenance_records SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE attendance         SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE cameras            SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE notifications      SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
-  UPDATE wage_payments      SET crusher_id = c2 WHERE crusher_id IN (SELECT id FROM crushers WHERE name ILIKE '%Unit 2%' AND id <> c2);
+  -- ── 2. Re-home all FK references from any duplicate crusher to c1 ──────────
+  -- Any row pointing to a crusher that is not one of our two keepers gets
+  -- reassigned to c1. This catches duplicates regardless of their name.
+  UPDATE sales               SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE purchases           SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE quarry_sales        SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE parties             SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE vehicles            SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE products            SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE workers             SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE assets              SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE ledger_transactions SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE maintenance_records SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE attendance          SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE cameras             SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE notifications       SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
+  UPDATE wage_payments       SET crusher_id = c1 WHERE crusher_id NOT IN (c1, c2);
 
   -- ── 4. Remove access rows for duplicates, then delete duplicates ──────────
   DELETE FROM user_crusher_access WHERE crusher_id NOT IN (c1, c2);
