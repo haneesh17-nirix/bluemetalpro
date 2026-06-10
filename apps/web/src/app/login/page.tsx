@@ -5,18 +5,14 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { login, selectCrusher, getCrushers } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
-import { Lock, Mail, ArrowRight, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, Shield, TrendingUp, Cpu, Globe } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
 const features = [
-  'GST invoicing & filing',
-  'Multi-plant operations',
-  'Live weighbridge',
-  'Real-time dashboards',
-  'Payroll & attendance',
-  'Ledger & party mgmt',
-  'Maintenance alerts',
-  'Vehicle fleet tracking',
+  { icon: Shield,     label: 'Secure & Compliant',  sub: 'GST-ready, role-based access' },
+  { icon: TrendingUp, label: 'Live Analytics',       sub: 'Real-time dashboards & KPIs' },
+  { icon: Cpu,        label: 'Smart Operations',     sub: 'Weighbridge & maintenance' },
+  { icon: Globe,      label: 'Multi-Plant',          sub: 'All units in one platform' },
 ];
 
 export default function LoginPage() {
@@ -85,186 +81,348 @@ export default function LoginPage() {
     }
   };
 
-  const inputStyle = (field: string, hasRightIcon = false): React.CSSProperties => ({
-    width: '100%',
-    background: focusedField === field
-      ? 'rgba(2, 8, 28, 0.92)'
-      : 'rgba(3, 9, 24, 0.80)',
-    border: focusedField === field
-      ? '1px solid rgba(180,138,32,0.6)'
-      : '1px solid rgba(90,120,180,0.18)',
-    borderRadius: 10,
-    padding: `9px ${hasRightIcon ? '40px' : '14px'} 9px 40px`,
-    fontSize: 14,
-    color: '#dde6f4',
-    outline: 'none',
-    boxShadow: focusedField === field
-      ? '0 0 0 2px rgba(140,100,20,0.12), 0 0 14px rgba(120,85,12,0.18), inset 0 0 18px rgba(10,30,80,0.3)'
-      : 'inset 0 0 12px rgba(5,18,55,0.4)',
-    transition: 'border-color 0.18s, box-shadow 0.18s, background 0.18s',
-  });
-
   return (
-    <div className="login-page" style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'row',
-      background: 'linear-gradient(175deg, #111418 0%, #161c24 50%, #111418 100%)',
-    }}>
+    <>
       <style>{`
+        .lp-root {
+          min-height: 100vh;
+          display: flex;
+          align-items: stretch;
+          position: relative;
+          overflow: hidden;
+          background: #06091080;
+        }
+        /* Full-bleed grid texture */
+        .lp-root::before {
+          content: '';
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          background:
+            linear-gradient(135deg, #06090f 0%, #0b1220 45%, #080e1c 100%);
+        }
+        .lp-root::after {
+          content: '';
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          background-image:
+            linear-gradient(rgba(184,149,62,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(184,149,62,0.04) 1px, transparent 1px);
+          background-size: 56px 56px;
+          mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+          -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+        }
+        /* Ambient blobs */
+        .lp-blob-tl {
+          position: fixed; z-index: 0; pointer-events: none;
+          width: 700px; height: 700px; border-radius: 50%;
+          top: -200px; left: -200px;
+          background: radial-gradient(circle, rgba(37,99,168,0.14) 0%, transparent 65%);
+        }
+        .lp-blob-br {
+          position: fixed; z-index: 0; pointer-events: none;
+          width: 600px; height: 600px; border-radius: 50%;
+          bottom: -150px; right: -100px;
+          background: radial-gradient(circle, rgba(184,149,62,0.10) 0%, transparent 65%);
+        }
+
+        /* ── Left branding panel ── */
+        .lp-left {
+          position: relative; z-index: 1;
+          width: 48%; min-width: 440px; flex-shrink: 0;
+          display: flex; flex-direction: column;
+          justify-content: space-between;
+          padding: 56px 52px;
+          border-right: 1px solid rgba(184,149,62,0.08);
+        }
+        .lp-brand { display: flex; flex-direction: column; gap: 28px; }
+        .lp-logo-wrap {
+          display: flex; align-items: center; gap: 18px;
+        }
+        .lp-wordmark { display: flex; flex-direction: column; gap: 4px; }
+        .lp-wordmark-name {
+          font-size: 28px; font-weight: 900; color: #fff;
+          letter-spacing: -0.03em; line-height: 1;
+        }
+        .lp-wordmark-tag {
+          font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+          background: linear-gradient(135deg, #b8953e, #d4aa52);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .lp-hero { display: flex; flex-direction: column; gap: 12px; }
+        .lp-hero-heading {
+          font-size: 48px; font-weight: 900; color: #fff;
+          letter-spacing: -0.04em; line-height: 1.05;
+        }
+        .lp-hero-heading span {
+          background: linear-gradient(135deg, #c9a84c 0%, #e8c96a 50%, #c9a84c 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .lp-hero-sub {
+          font-size: 15px; color: rgba(200,212,232,0.5);
+          font-weight: 400; line-height: 1.6; max-width: 380px;
+        }
+        .lp-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .lp-feat {
+          display: flex; align-items: flex-start; gap: 12px;
+          padding: 14px 16px; border-radius: 14px;
+          background: rgba(255,255,255,0.025);
+          border: 1px solid rgba(255,255,255,0.06);
+          transition: border-color 0.2s;
+        }
+        .lp-feat:hover { border-color: rgba(184,149,62,0.2); }
+        .lp-feat-icon {
+          width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: linear-gradient(135deg, rgba(184,149,62,0.15) 0%, rgba(184,149,62,0.06) 100%);
+          border: 1px solid rgba(184,149,62,0.18);
+        }
+        .lp-feat-text { display: flex; flex-direction: column; gap: 2px; }
+        .lp-feat-label { font-size: 12px; font-weight: 700; color: rgba(220,232,248,0.9); }
+        .lp-feat-sub { font-size: 11px; color: rgba(180,200,228,0.4); line-height: 1.4; }
+        .lp-footer {
+          font-size: 11px; color: rgba(180,200,228,0.2); font-weight: 500;
+        }
+
+        /* ── Right form panel ── */
+        .lp-right {
+          position: relative; z-index: 1;
+          flex: 1; display: flex; align-items: center; justify-content: center;
+          padding: 32px 24px;
+        }
+        .lp-card {
+          width: 100%; max-width: 400px;
+          border-radius: 20px;
+          background: rgba(255,255,255,0.03);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(255,255,255,0.07);
+          box-shadow:
+            0 0 0 0.5px rgba(184,149,62,0.12),
+            0 32px 80px rgba(0,0,0,0.6),
+            inset 0 1px 0 rgba(255,255,255,0.05);
+          padding: 36px 32px;
+        }
+        .lp-card-header { margin-bottom: 28px; }
+        .lp-card-eyebrow {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: '3px 10px'; border-radius: 20px;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+          color: #c9a84c;
+          background: rgba(184,149,62,0.08);
+          border: 1px solid rgba(184,149,62,0.2);
+          margin-bottom: 16px;
+        }
+        .lp-card-title {
+          font-size: 26px; font-weight: 800; color: #fff;
+          letter-spacing: -0.03em; line-height: 1; margin: 0 0 8px;
+        }
+        .lp-card-sub {
+          font-size: 13px; color: rgba(180,200,228,0.45); font-weight: 400;
+        }
+        .lp-label {
+          display: block; font-size: 11px; font-weight: 700;
+          letter-spacing: 0.1em; color: rgba(170,190,220,0.5);
+          text-transform: uppercase; margin-bottom: 6px;
+        }
+        .lp-input-wrap { position: relative; }
+        .lp-input-icon {
+          position: absolute; left: 14px; top: 50%;
+          transform: translateY(-50%); pointer-events: none;
+          transition: color 0.18s;
+        }
+        .lp-input {
+          width: 100%; border-radius: 12px;
+          font-size: 14px; color: #dde6f4; outline: none;
+          transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+          box-sizing: border-box;
+        }
+        .lp-eye {
+          position: absolute; right: 12px; top: 50%;
+          transform: translateY(-50%);
+          background: none; border: none; padding: 0;
+          cursor: pointer; display: flex; align-items: center;
+          transition: color 0.18s;
+        }
+        .lp-btn {
+          width: 100%; padding: 13px 20px; border-radius: 12px;
+          font-size: 14px; font-weight: 700; letter-spacing: 0.04em;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          cursor: pointer; transition: all 0.2s;
+          border: 1px solid rgba(120,80,15,0.7);
+          background: linear-gradient(160deg, #6a4808 0%, #8a5e12 35%, #7a5010 65%, #5a3808 100%);
+          color: #d4a838;
+          box-shadow:
+            inset 0 1px 0 rgba(180,130,30,0.22),
+            inset 0 -1px 0 rgba(0,0,0,0.4),
+            0 4px 16px rgba(0,0,0,0.4),
+            0 1px 0 rgba(184,149,62,0.1);
+        }
+        .lp-btn:disabled {
+          background: linear-gradient(160deg, #3a2008, #4a2e0a);
+          color: rgba(180,132,28,0.4); cursor: not-allowed; box-shadow: none;
+        }
+        .lp-btn:not(:disabled):hover {
+          background: linear-gradient(160deg, #7a5610 0%, #9a6a18 35%, #8a5e14 65%, #6a4210 100%);
+          box-shadow:
+            inset 0 1px 0 rgba(200,150,40,0.3),
+            inset 0 -1px 0 rgba(0,0,0,0.4),
+            0 6px 20px rgba(0,0,0,0.45),
+            0 0 20px rgba(184,149,62,0.12);
+        }
+        .lp-divider {
+          margin-top: 20px; padding-top: 18px;
+          border-top: 1px solid rgba(255,255,255,0.05);
+          text-align: center;
+          font-size: 11px; color: rgba(150,170,210,0.22);
+        }
+
+        /* ── Mobile ── */
         @media (max-width: 767px) {
-          .login-page        { flex-direction: column !important; }
-          .login-left        { width: 100% !important; min-width: unset !important;
-                               padding: 28px 24px 20px !important; flex-shrink: 0 !important;
-                               justify-content: flex-start !important; align-items: center !important; }
-          .login-blobs       { display: none !important; }
-          .login-branding    { gap: 12px !important; }
-          .login-branding-logo { filter: drop-shadow(0 6px 18px rgba(160,112,20,0.5)) !important; }
-          .login-features    { display: none !important; }
-          .login-stats       { display: none !important; }
-          .login-right       { padding: 12px 16px 32px !important; align-items: flex-start !important; }
-          .login-title       { font-size: 26px !important; }
-          .login-subtitle    { font-size: 11px !important; }
+          .lp-root { flex-direction: column; }
+          .lp-left {
+            width: 100% !important; min-width: unset !important;
+            padding: 32px 24px 24px !important;
+            border-right: none !important;
+            border-bottom: 1px solid rgba(184,149,62,0.08);
+          }
+          .lp-hero { display: none !important; }
+          .lp-features { display: none !important; }
+          .lp-footer { display: none !important; }
+          .lp-hero-heading { font-size: 32px !important; }
+          .lp-right { padding: 24px 16px 40px !important; }
+          .lp-card { padding: 28px 22px !important; }
         }
         @media (min-width: 768px) {
-          .login-mobile-logo { display: none !important; }
+          .lp-brand { flex-direction: row; align-items: center; }
+          .lp-brand .lp-logo-wrap { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
 
-      {/* ── Left branding panel ── */}
-      <div className="login-left" style={{
-        width: '46%', minWidth: '420px',
-        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        padding: '48px', position: 'relative', overflow: 'hidden', flexShrink: 0,
-      }}>
-        <div className="login-blobs" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', width: 560, height: 560, borderRadius: '50%', top: -80, left: -160, background: 'radial-gradient(circle, rgba(37,99,168,0.22) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', width: 440, height: 440, borderRadius: '50%', bottom: -60, right: -80, background: 'radial-gradient(circle, rgba(184,149,62,0.14) 0%, transparent 65%)' }} />
-        </div>
+      <div className="lp-root">
+        <div className="lp-blob-tl" />
+        <div className="lp-blob-br" />
 
-        {/* Logo + branding */}
-        <div className="login-branding" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-          <div className="login-branding-logo" style={{ filter: 'drop-shadow(0 8px 28px rgba(160,112,20,0.55))' }}>
-            <LogoIcon size={148} />
+        {/* ── Left branding panel ── */}
+        <div className="lp-left">
+          <div className="lp-brand">
+            <div className="lp-logo-wrap">
+              <div style={{ filter: 'drop-shadow(0 6px 24px rgba(160,112,20,0.5))' }}>
+                <LogoIcon size={64} />
+              </div>
+              <div className="lp-wordmark">
+                <span className="lp-wordmark-name">BlueMetal Pro</span>
+                <span className="lp-wordmark-tag">QUARRY ERP</span>
+              </div>
+            </div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <p className="login-title" style={{ fontWeight: 900, fontSize: 34, color: '#fff', lineHeight: 1, margin: 0, letterSpacing: '-0.02em' }}>BlueMetal Pro</p>
-            <p className="login-subtitle" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.22em', marginTop: 8, background: 'linear-gradient(135deg, #b8953e, #d4aa52, #b8953e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUSINESS INTELLIGENCE</p>
-          </div>
-        </div>
 
-        {/* Features + stats */}
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="login-features" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', alignSelf: 'center' }}>
+          <div className="lp-hero">
+            <h1 className="lp-hero-heading">
+              Run your quarry<br />
+              <span>smarter, faster.</span>
+            </h1>
+            <p className="lp-hero-sub">
+              End-to-end business intelligence for stone crushing operations — from weighbridge to GST filing.
+            </p>
+          </div>
+
+          <div className="lp-features">
             {features.map(f => (
-              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <CheckCircle size={13} style={{ color: '#c9a84c', flexShrink: 0 }} />
-                <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(220,230,245,0.92)' }}>{f}</span>
+              <div className="lp-feat" key={f.label}>
+                <div className="lp-feat-icon">
+                  <f.icon size={14} style={{ color: '#c9a84c' }} />
+                </div>
+                <div className="lp-feat-text">
+                  <span className="lp-feat-label">{f.label}</span>
+                  <span className="lp-feat-sub">{f.sub}</span>
+                </div>
               </div>
             ))}
           </div>
-          <div className="login-stats" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-            {[{ label: 'Modules', value: '12+' }, { label: 'GST Ready', value: '100%' }, { label: 'Real-time', value: 'Live' }].map(s => (
-              <div key={s.label} style={{ textAlign: 'center', padding: '14px 12px', borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p style={{ fontSize: 20, fontWeight: 800, color: '#c9a84c' }}>{s.value}</p>
-                <p style={{ fontSize: 11, marginTop: 4, fontWeight: 500, color: 'rgba(200,212,232,0.5)' }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
+
+          <p className="lp-footer">BlueMetal Pro · Quarry & Stone Crushing ERP</p>
         </div>
-      </div>
 
-      {/* ── Right login panel ── */}
-      <div className="login-right" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <div style={{ width: '100%', maxWidth: 400 }}>
-          <div style={{
-            borderRadius: 16,
-            padding: '22px 22px',
-            background: 'linear-gradient(175deg, #0d1f3c 0%, #091628 55%, #060e1c 100%)',
-            border: '2px solid transparent',
-            backgroundClip: 'padding-box',
-            outline: '2px solid transparent',
-            boxShadow: [
-              /* matte gold ring — same gradient tones as logo ring */
-              '0 0 0 1.5px #7a5010',
-              '0 0 0 2px #4a2e06',
-              '0 0 0 2.8px #a07020',
-              '0 0 0 3.5px #6a4008',
-              /* ambient glow */
-              '0 0 18px rgba(130,90,15,0.3)',
-              '0 28px 60px rgba(0,0,0,0.65)',
-              'inset 0 1px 0 rgba(80,130,220,0.07)',
-              'inset 0 -1px 0 rgba(0,0,20,0.5)',
-            ].join(', '),
-          }}>
-
-            <div style={{ marginBottom: 18 }}>
-              <h2 style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em', color: '#e8edf8', margin: 0 }}>Welcome back</h2>
-              <p style={{ fontSize: 11, marginTop: 4, color: 'rgba(180,200,230,0.45)', fontWeight: 500 }}>Sign in to your workspace</p>
+        {/* ── Right form panel ── */}
+        <div className="lp-right">
+          <div className="lp-card">
+            <div className="lp-card-header">
+              <div className="lp-card-eyebrow" style={{ padding: '3px 10px' }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c9a84c', boxShadow: '0 0 6px rgba(201,168,76,0.8)' }} />
+                Secure login
+              </div>
+              <h2 className="lp-card-title">Welcome back</h2>
+              <p className="lp-card-sub">Sign in to your workspace</p>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Email address</label>
-                <div style={{ position: 'relative' }}>
-                  <Mail size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'email' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
-                  <input type="email" required value={form.email}
+                <label className="lp-label">Email address</label>
+                <div className="lp-input-wrap">
+                  <Mail size={14} className="lp-input-icon" style={{ color: focusedField === 'email' ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.28)' }} />
+                  <input
+                    type="email" required value={form.email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)}
-                    style={inputStyle('email')} placeholder="admin@company.com" autoComplete="email" />
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="admin@company.com"
+                    autoComplete="email"
+                    className="lp-input"
+                    style={{
+                      background: focusedField === 'email' ? 'rgba(2,8,28,0.92)' : 'rgba(3,9,24,0.65)',
+                      border: focusedField === 'email' ? '1px solid rgba(180,138,32,0.55)' : '1px solid rgba(255,255,255,0.07)',
+                      padding: '11px 14px 11px 40px',
+                      boxShadow: focusedField === 'email'
+                        ? '0 0 0 3px rgba(140,100,20,0.08), 0 0 16px rgba(120,85,12,0.15)'
+                        : 'none',
+                    }}
+                  />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(170,190,220,0.55)', marginBottom: 5, textTransform: 'uppercase' }}>Password</label>
-                <div style={{ position: 'relative' }}>
-                  <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: focusedField === 'password' ? 'rgba(180,132,28,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s' }} />
-                  <input type={showPassword ? 'text' : 'password'} required value={form.password}
+                <label className="lp-label">Password</label>
+                <div className="lp-input-wrap">
+                  <Lock size={14} className="lp-input-icon" style={{ color: focusedField === 'password' ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.28)' }} />
+                  <input
+                    type={showPassword ? 'text' : 'password'} required value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                    onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)}
-                    style={inputStyle('password', true)} placeholder="••••••••" autoComplete="current-password" />
-                  <button type="button" onClick={() => setShowPassword(v => !v)}
-                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: showPassword ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.32)', transition: 'color 0.18s', display: 'flex', alignItems: 'center' }}>
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className="lp-input"
+                    style={{
+                      background: focusedField === 'password' ? 'rgba(2,8,28,0.92)' : 'rgba(3,9,24,0.65)',
+                      border: focusedField === 'password' ? '1px solid rgba(180,138,32,0.55)' : '1px solid rgba(255,255,255,0.07)',
+                      padding: '11px 40px 11px 40px',
+                      boxShadow: focusedField === 'password'
+                        ? '0 0 0 3px rgba(140,100,20,0.08), 0 0 16px rgba(120,85,12,0.15)'
+                        : 'none',
+                    }}
+                  />
+                  <button type="button" className="lp-eye" onClick={() => setShowPassword(v => !v)}
+                    style={{ color: showPassword ? 'rgba(180,138,32,0.7)' : 'rgba(150,170,210,0.28)' }}>
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
               </div>
 
-              <div>
-                <button type="submit" disabled={loading}
-                  style={{
-                    width: '100%', padding: '10px 20px', borderRadius: 10,
-                    border: '1px solid rgba(100,70,10,0.7)',
-                    background: loading
-                      ? 'linear-gradient(160deg, #4a3008, #5a3a0a)'
-                      : 'linear-gradient(160deg, #6a4808 0%, #8a5e12 35%, #7a5010 65%, #5a3808 100%)',
-                    color: loading ? 'rgba(180,132,28,0.5)' : '#d4a838',
-                    fontSize: 14, fontWeight: 700, letterSpacing: '0.05em',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    boxShadow: !loading ? [
-                      'inset 0 1px 0 rgba(180,130,30,0.22)',
-                      'inset 0 -1px 0 rgba(0,0,0,0.4)',
-                      '0 2px 8px rgba(0,0,0,0.35)',
-                    ].join(', ') : 'none',
-                    transition: 'all 0.2s',
-                  }}>
+              <div style={{ paddingTop: 4 }}>
+                <button type="submit" disabled={loading} className="lp-btn">
                   {loading
                     ? <><Loader2 size={15} className="animate-spin" /> Signing in…</>
-                    : <>Sign In <ArrowRight size={15} /></>}
+                    : <>Sign In <ArrowRight size={15} /></>
+                  }
                 </button>
               </div>
             </form>
 
-            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(100,70,10,0.22)', textAlign: 'center' }}>
-              <p style={{ fontSize: 11, color: 'rgba(150,170,210,0.28)' }}>
-                BlueMetal Pro · Quarry & Stone Crushing ERP
-              </p>
+            <div className="lp-divider">
+              BlueMetal Pro · Quarry & Stone Crushing ERP
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
