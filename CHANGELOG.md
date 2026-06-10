@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.17] — 2026-06-10
+
+
+### Other Changes
+
+- 2-col feature grid with updated 8-item list ([f095dcc])
+
 ## [1.21.16] — 2026-06-10
 
 
