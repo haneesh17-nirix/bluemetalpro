@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.11] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` user profile to TopBar, inline styles across all pages ([54208b2])
+
 ## [1.10.10] — 2026-06-10
 
 
