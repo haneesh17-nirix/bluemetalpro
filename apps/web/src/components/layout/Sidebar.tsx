@@ -31,15 +31,15 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
   const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
 
   const activeStyle: React.CSSProperties = {
-    background: 'linear-gradient(135deg, rgba(220,202,159,0.14) 0%, rgba(220,202,159,0.06) 100%)',
-    border: '1px solid rgba(220,202,159,0.2)',
-    borderLeft: '3px solid #e4d4a6',
-    color: '#ead5a9',
+    background: 'linear-gradient(135deg, rgba(184,149,62,0.14) 0%, rgba(184,149,62,0.06) 100%)',
+    border: '1px solid rgba(184,149,62,0.2)',
+    borderLeft: '3px solid #c9a84c',
+    color: '#d4aa52',
     paddingLeft: 10,
   };
   const inactiveStyle: React.CSSProperties = {
     border: '1px solid transparent',
-    color: 'rgba(228,234,244,0.65)',
+    color: 'rgba(200,212,232,0.65)',
   };
 
   return (
@@ -55,21 +55,21 @@ function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) 
       onMouseEnter={e => {
         if (!active) {
           (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
-          (e.currentTarget as HTMLAnchorElement).style.color = '#f4f6fa';
+          (e.currentTarget as HTMLAnchorElement).style.color = '#e8edf5';
         }
       }}
       onMouseLeave={e => {
         if (!active) {
           (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-          (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(228,234,244,0.65)';
+          (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(200,212,232,0.65)';
         }
       }}
     >
-      <item.icon size={15} style={{ color: active ? '#e4d4a6' : 'rgba(228,234,244,0.45)', flexShrink: 0 }} />
+      <item.icon size={15} style={{ color: active ? '#c9a84c' : 'rgba(200,212,232,0.45)', flexShrink: 0 }} />
       <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.label}
       </span>
-      {active && <ChevronRight size={12} style={{ color: 'rgba(220,202,159,0.5)', flexShrink: 0 }} />}
+      {active && <ChevronRight size={12} style={{ color: 'rgba(184,149,62,0.5)', flexShrink: 0 }} />}
     </Link>
   );
 }
@@ -89,25 +89,25 @@ export default function Sidebar() {
     <aside style={{
       width: 256, minWidth: 256, display: 'flex', flexDirection: 'column',
       height: '100vh', position: 'sticky', top: 0, flexShrink: 0, overflow: 'hidden',
-      background: 'linear-gradient(180deg, #86888c 0%, #878a90 50%, #86888c 100%)',
-      borderRight: '1px solid rgba(141,154,184,0.45)',
+      background: 'linear-gradient(180deg, #0c1118 0%, #0e1420 50%, #0c1118 100%)',
+      borderRight: '1px solid rgba(26,53,112,0.45)',
     }}>
 
       {/* ── Logo ── */}
       <div style={{
         padding: '20px 20px 18px', display: 'flex', alignItems: 'center', gap: 12,
-        flexShrink: 0, borderBottom: '1px solid rgba(141,154,184,0.45)',
+        flexShrink: 0, borderBottom: '1px solid rgba(26,53,112,0.45)',
       }}>
-        <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 16px rgba(208,184,144,0.45))' }}>
+        <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 16px rgba(160,112,32,0.45))' }}>
           <LogoIcon size={56} />
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <p style={{ fontWeight: 800, fontSize: 16, color: '#ffffff', lineHeight: 1.2, margin: 0, letterSpacing: '-0.01em' }}>
+          <p style={{ fontWeight: 800, fontSize: 16, color: '#fff', lineHeight: 1.2, margin: 0, letterSpacing: '-0.01em' }}>
             BlueMetal Pro
           </p>
           <p style={{
             fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', marginTop: 4,
-            background: 'linear-gradient(135deg, #dcca9f, #ead5a9)',
+            background: 'linear-gradient(135deg, #b8953e, #d4aa52)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>QUARRY ERP</p>
         </div>
@@ -119,8 +119,8 @@ export default function Sidebar() {
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '5px 10px', borderRadius: 20,
-            background: 'rgba(220,202,159,0.08)', border: '1px solid rgba(220,202,159,0.18)',
-            fontSize: 11, fontWeight: 600, color: '#e4d4a6',
+            background: 'rgba(184,149,62,0.08)', border: '1px solid rgba(184,149,62,0.18)',
+            fontSize: 11, fontWeight: 600, color: '#c9a84c',
           }}>
             <Factory size={10} style={{ flexShrink: 0 }} />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -144,9 +144,9 @@ export default function Sidebar() {
             }}>
               <span style={{
                 fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
-                color: 'rgba(220,202,159,0.45)', textTransform: 'uppercase',
+                color: 'rgba(184,149,62,0.45)', textTransform: 'uppercase',
               }}>Admin</span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(220,202,159,0.1)' }} />
+              <div style={{ flex: 1, height: 1, background: 'rgba(184,149,62,0.1)' }} />
             </div>
             {adminItems.map(item => <NavItem key={item.href} item={item} pathname={pathname} />)}
           </>

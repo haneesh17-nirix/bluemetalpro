@@ -43,7 +43,7 @@ export default function SelectCrusherPage() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: 24,
-      background: 'linear-gradient(160deg, #888a8c 0%, #8b8e92 50%, #888a8c 100%)',
+      background: 'linear-gradient(160deg, #111418 0%, #161c24 50%, #111418 100%)',
     }}>
       <style>{`
         @keyframes tileIn {
@@ -57,13 +57,13 @@ export default function SelectCrusherPage() {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: 16,
-            filter: 'drop-shadow(0 6px 20px rgba(208,184,138,0.5))' }}>
+            filter: 'drop-shadow(0 6px 20px rgba(160,112,20,0.5))' }}>
             <LogoIcon size={80} />
           </div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
             Select Plant
           </h1>
-          <p style={{ fontSize: 12, color: 'rgba(218,228,243,0.45)', margin: 0 }}>
+          <p style={{ fontSize: 12, color: 'rgba(180,200,230,0.45)', margin: 0 }}>
             Choose the crushing plant to manage
           </p>
         </div>
@@ -89,14 +89,14 @@ export default function SelectCrusherPage() {
                   padding: '14px 10px',
                   borderRadius: 14,
                   border: isHovered && !isDisabled
-                    ? '1px solid rgba(208,187,140,0.65)'
-                    : '1px solid rgba(178,164,134,0.4)',
+                    ? '1px solid rgba(160,118,24,0.65)'
+                    : '1px solid rgba(100,72,12,0.4)',
                   background: isHovered && !isDisabled
-                    ? 'linear-gradient(160deg, #8990a0 0%, #878d9a 100%)'
-                    : 'linear-gradient(160deg, #868c98 0%, #858a94 100%)',
+                    ? 'linear-gradient(160deg, #122040 0%, #0e1a34 100%)'
+                    : 'linear-gradient(160deg, #0d1830 0%, #0a1428 100%)',
                   boxShadow: isHovered && !isDisabled
-                    ? '0 0 0 1px rgba(198,178,137,0.2), 0 6px 20px rgba(128,128,128,0.4), inset 0 1px 0 rgba(208,187,140,0.1)'
-                    : '0 2px 8px rgba(128,128,128,0.3), inset 0 1px 0 rgba(255,255,255,0.03)',
+                    ? '0 0 0 1px rgba(140,100,18,0.2), 0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(160,118,24,0.1)'
+                    : '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)',
                   cursor: isDisabled ? 'not-allowed' : 'pointer',
                   opacity: isDisabled && !isSelecting ? 0.5 : 1,
                   display: 'flex',
@@ -110,22 +110,22 @@ export default function SelectCrusherPage() {
                 }}
               >
                 {isSelecting ? (
-                  <Loader2 size={18} style={{ color: '#e4d4a6', animation: 'spin 0.8s linear infinite' }} />
+                  <Loader2 size={18} style={{ color: '#c9a84c', animation: 'spin 0.8s linear infinite' }} />
                 ) : (
                   <div style={{
                     width: 34, height: 34, borderRadius: 10,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     background: isHovered
-                      ? 'rgba(218,195,142,0.18)'
-                      : 'rgba(198,178,137,0.12)',
+                      ? 'rgba(180,135,28,0.18)'
+                      : 'rgba(140,100,18,0.12)',
                     border: isHovered
-                      ? '1px solid rgba(208,187,140,0.4)'
-                      : '1px solid rgba(188,171,135,0.25)',
+                      ? '1px solid rgba(160,118,24,0.4)'
+                      : '1px solid rgba(120,86,14,0.25)',
                     transition: 'all 0.18s ease',
                   }}>
                     {c.logo_url
                       ? <img src={c.logo_url} alt="" style={{ width: 24, height: 24, objectFit: 'contain', borderRadius: 6 }} />
-                      : <span style={{ fontSize: 14, fontWeight: 800, color: '#e4d4a6', lineHeight: 1 }}>
+                      : <span style={{ fontSize: 14, fontWeight: 800, color: '#c9a84c', lineHeight: 1 }}>
                           {c.name.charAt(0).toUpperCase()}
                         </span>
                     }
@@ -133,7 +133,7 @@ export default function SelectCrusherPage() {
                 )}
                 <span style={{
                   fontSize: 12, fontWeight: 600,
-                  color: isHovered ? '#f4eccc' : 'rgba(233,238,248,0.85)',
+                  color: isHovered ? '#e8d898' : 'rgba(210,220,240,0.85)',
                   textAlign: 'center',
                   lineHeight: 1.3,
                   wordBreak: 'break-word',
