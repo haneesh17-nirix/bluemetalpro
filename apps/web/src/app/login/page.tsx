@@ -65,13 +65,16 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex"
       style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'row',
         background: 'linear-gradient(175deg, #060f20 0%, #0c1f3d 50%, #060f20 100%)',
       }}
     >
       {/* ── Left panel — branding ──────────────────── */}
-      <div className="hidden lg:flex flex-col w-[46%] p-12 relative overflow-hidden">
+      <div style={{ width: '46%', minWidth: '400px', display: 'flex', flexDirection: 'column', padding: '48px', position: 'relative', overflow: 'hidden' }}
+        className="hidden lg:flex">
 
         {/* Background blobs */}
         <div className="absolute inset-0 pointer-events-none">
@@ -170,7 +173,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right panel — login form ───────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div className="w-full max-w-[400px] animate-slide-up">
 
           {/* Mobile logo */}
