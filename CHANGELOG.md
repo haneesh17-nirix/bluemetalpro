@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.19] — 2026-06-10
+
+
+### Other Changes
+
+- deep navy form, thinner gold border, show-password toggle, golden field edges ([d6393c7])
+
 ## [1.21.18] — 2026-06-10
 
 
