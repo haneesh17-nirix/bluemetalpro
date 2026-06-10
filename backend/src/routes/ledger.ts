@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { logger, logAction } from '../utils/logger';
+import { fanOut } from '../services/notifyService';
 
 export const ledgerRouter = Router();
 ledgerRouter.use(authenticate);
@@ -20,6 +21,13 @@ ledgerRouter.post('/receipt', authorize('admin', 'operations'), async (req, res)
     await query('UPDATE sales SET amount_received = amount_received + $1, balance_due = balance_due - $1 WHERE id = $2', [amount, reference_id]);
   }
   logAction('ledger.receipt_recorded', { party_id, amount, payment_mode, reference_id, by: req.user!.email });
+  const partyRow = party_id ? await queryOne('SELECT name FROM parties WHERE id = $1', [party_id]) : null;
+  fanOut(cid, {
+    type: 'ledger',
+    title: 'Payment Received',
+    body: `₹${Number(amount).toLocaleString('en-IN')} received${partyRow ? ` from ${(partyRow as any).name}` : ''} via ${payment_mode}`,
+    reference_id: (txn as any).id,
+  });
   res.status(201).json(txn);
 });
 

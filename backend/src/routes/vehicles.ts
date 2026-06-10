@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { logger, logAction } from '../utils/logger';
+import { fanOut } from '../services/notifyService';
 
 export const vehiclesRouter = Router();
 vehiclesRouter.use(authenticate);
@@ -22,6 +23,12 @@ vehiclesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     [registration_number.toUpperCase(), vehicle_type, owner_name, owner_phone, capacity_mt, notes, req.user!.id, cid]
   );
   logAction('vehicle.created', { number: req.body.vehicle_number, type: req.body.vehicle_type, by: req.user!.email });
+  fanOut(cid, {
+    type: 'vehicle',
+    title: 'Vehicle Added',
+    body: `${(v as any).registration_number} (${(v as any).vehicle_type}) registered`,
+    reference_id: (v as any).id,
+  });
   res.status(201).json(v);
 });
 
@@ -34,6 +41,12 @@ vehiclesRouter.put('/:id', authorize('admin', 'operations'), async (req, res) =>
     [registration_number?.toUpperCase(), vehicle_type, owner_name, owner_phone, capacity_mt, status, notes, req.params.id, cid]
   );
   logAction('vehicle.updated', { vehicleId: req.params.id, by: req.user!.email });
+  fanOut(cid, {
+    type: 'vehicle',
+    title: 'Vehicle Updated',
+    body: `${(v as any).registration_number} details updated`,
+    reference_id: (v as any).id,
+  });
   res.json(v);
 });
 

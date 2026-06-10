@@ -2,7 +2,7 @@ import { query } from '../config/db';
 import { logger } from '../utils/logger';
 import { Response } from 'express';
 
-export type NotifyEvent = 'sale' | 'purchase' | 'maintenance' | 'quarry' | 'wages' | 'payment';
+export type NotifyEvent = 'sale' | 'purchase' | 'maintenance' | 'quarry' | 'wages' | 'payment' | 'vehicle' | 'party' | 'weighbridge' | 'ledger';
 
 export interface NotifyPayload {
   type: NotifyEvent;

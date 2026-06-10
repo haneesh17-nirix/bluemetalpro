@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { logger, logAction } from '../utils/logger';
+import { fanOut } from '../services/notifyService';
 
 export const partiesRouter = Router();
 partiesRouter.use(authenticate);
@@ -34,6 +35,12 @@ partiesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     [name, type || 'customer', gstin, pan, phone, email, address, city, state, pincode, credit_limit || 0, opening_balance || 0, req.user!.id, cid]
   );
   logAction('party.created', { name: req.body.name, type: req.body.party_type, by: req.user!.email });
+  fanOut(cid, {
+    type: 'party',
+    title: 'Party Added',
+    body: `${(party as any).name} (${(party as any).type}) added to directory`,
+    reference_id: (party as any).id,
+  });
   res.status(201).json(party);
 });
 

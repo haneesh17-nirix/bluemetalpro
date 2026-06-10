@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize } from '../middleware/auth';
 import type { EdgeWeightPayload } from '../../../packages/shared/src/types/weighbridge';
+import { fanOut } from '../services/notifyService';
 
 export const weighbridgeRouter = Router();
 
@@ -103,6 +104,18 @@ weighbridgeRouter.post('/tickets', authorize('admin', 'operations'), async (req,
      gross_weight_kg, tare_weight_kg || 0, net_weight_kg, net_weight_mt,
      req.user!.id, notes]
   );
+  const t = ticket as any;
+  if (t?.weighbridge_id) {
+    const wb = await queryOne('SELECT crusher_id FROM weighbridges WHERE id = $1', [t.weighbridge_id]);
+    if (wb) {
+      fanOut((wb as any).crusher_id, {
+        type: 'weighbridge',
+        title: 'Weigh Ticket Created',
+        body: `${t.ticket_number} — ${t.vehicle_number || 'unknown vehicle'} | ${t.net_weight_mt} MT${t.party_name ? ` | ${t.party_name}` : ''}`,
+        reference_id: t.id,
+      });
+    }
+  }
   res.status(201).json(ticket);
 });
 
