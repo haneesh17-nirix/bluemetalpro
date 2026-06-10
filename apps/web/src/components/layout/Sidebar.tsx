@@ -98,15 +98,15 @@ export default function Sidebar() {
         padding: '20px 20px 18px', display: 'flex', alignItems: 'center', gap: 12,
         flexShrink: 0, borderBottom: '1px solid rgba(26,53,112,0.45)',
       }}>
-        <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 12px rgba(180,140,20,0.35))' }}>
-          <LogoIcon size={40} />
+        <div style={{ flexShrink: 0, filter: 'drop-shadow(0 4px 16px rgba(160,112,32,0.45))' }}>
+          <LogoIcon size={56} />
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <p style={{ fontWeight: 700, fontSize: 14, color: '#fff', lineHeight: 1.2, margin: 0 }}>
+          <p style={{ fontWeight: 800, fontSize: 16, color: '#fff', lineHeight: 1.2, margin: 0, letterSpacing: '-0.01em' }}>
             BlueMetal Pro
           </p>
           <p style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', marginTop: 3,
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', marginTop: 4,
             background: 'linear-gradient(135deg, #b8953e, #d4aa52)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>QUARRY ERP</p>

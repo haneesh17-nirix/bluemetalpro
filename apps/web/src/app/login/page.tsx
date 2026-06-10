@@ -119,7 +119,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: 16, marginBottom: 64 }}>
           <div style={{ flexShrink: 0, filter: 'drop-shadow(0 6px 20px rgba(180,140,20,0.45))' }}>
-            <LogoIcon size={52} />
+            <LogoIcon size={88} />
           </div>
           <div>
             <p style={{ fontWeight: 700, fontSize: 20, color: '#fff', lineHeight: 1 }}>BlueMetal Pro</p>

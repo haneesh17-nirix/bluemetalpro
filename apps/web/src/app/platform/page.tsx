@@ -471,7 +471,7 @@ export default function PlatformPage() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ filter: 'drop-shadow(0 3px 8px rgba(180,140,20,0.4))' }}>
-            <LogoIcon size={34} />
+            <LogoIcon size={52} />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#e8edf5', lineHeight: 1.2 }}>BlueMetal Pro</div>
