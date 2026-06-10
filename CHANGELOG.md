@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.8] — 2026-06-10
+
+
+### Other Changes
+
+- `ui` sidebar sections, badge system, inline grid layouts, login keep-warm ([63ae702])
+
 ## [1.10.7] — 2026-06-10
 
 
