@@ -111,7 +111,7 @@ BEGIN
   SELECT id INTO p1_6mm   FROM products WHERE name = '6mm Chips'       AND crusher_id = c1 LIMIT 1;
 
   -- Parties
-  INSERT INTO parties (name, party_type, gstin, phone, city, state, crusher_id) VALUES
+  INSERT INTO parties (name, type, gstin, phone, city, state, crusher_id) VALUES
     ('Ramaiah Constructions',   'customer', '33BBBCC1111B1Z1', '9841100001', 'Chennai',    'Tamil Nadu', c1),
     ('GKK Builders Pvt Ltd',    'customer', '33CCCDD2222C1Z2', '9841100002', 'Bangalore',  'Karnataka',  c1),
     ('Suresh Road Works',       'customer', '33DDDEE3333D1Z3', '9841100003', 'Hosur',      'Tamil Nadu', c1),
@@ -434,7 +434,7 @@ BEGIN
   SELECT id INTO p2_dust  FROM products WHERE name = 'Quarry Dust'     AND crusher_id = c2 LIMIT 1;
 
   -- Parties
-  INSERT INTO parties (name, party_type, gstin, phone, city, state, crusher_id) VALUES
+  INSERT INTO parties (name, type, gstin, phone, city, state, crusher_id) VALUES
     ('Salem Steel Constructions', 'customer', '33HHHII7777H1Z7', '9944200001', 'Salem',     'Tamil Nadu', c2),
     ('Erode Roads Pvt Ltd',       'customer', '33IIIJJ8888I1Z8', '9944200002', 'Erode',     'Tamil Nadu', c2),
     ('TNHB Salem Division',       'customer', '33JJJKK9999J1Z9', '9944200003', 'Salem',     'Tamil Nadu', c2),
