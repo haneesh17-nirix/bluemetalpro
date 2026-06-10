@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.6] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` login page layout — replace flex/w-[46%] Tailwind with inline styles ([863c356])
+
 ## [1.10.5] — 2026-06-10
 
 
