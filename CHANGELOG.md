@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.4] — 2026-06-10
+
+
+### Other Changes
+
+- Replace polygon rock tile with clean navy glass cards ([441537e])
+
 ## [1.21.3] — 2026-06-10
 
 
