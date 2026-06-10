@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.14] — 2026-06-10
+
+
+### Other Changes
+
+- clean form with navy/gold colours, no animations ([1a12e22])
+
 ## [1.21.13] — 2026-06-10
 
 
