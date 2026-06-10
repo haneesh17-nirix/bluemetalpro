@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.4] — 2026-06-10
+
+
+### Bug Fixes
+
+- rename party_type → type in 007 parties INSERT (correct column name) ([9aff082])
+
 ## [1.14.3] — 2026-06-10
 
 
