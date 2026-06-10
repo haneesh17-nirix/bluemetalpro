@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.2] — 2026-06-10
+
+
+### Other Changes
+
+- Wire fanOut notifications to all missing backend routes ([f25fffe])
+
 ## [1.21.1] — 2026-06-10
 
 
