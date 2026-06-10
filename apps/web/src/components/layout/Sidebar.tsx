@@ -16,7 +16,6 @@ const nav = [
   { href: '/purchases',   label: 'Purchases',     icon: Package,         roles: ALL,    admin: false },
   { href: '/quarry',      label: 'Quarry',        icon: Mountain,        roles: ALL,    admin: false },
   { href: '/weighbridge', label: 'Weighbridge',   icon: Scale,           roles: ALL,    admin: false },
-  { href: '/parties',     label: 'Parties',       icon: Users,           roles: ALL,    admin: false },
   { href: '/vehicles',    label: 'Vehicles',      icon: Truck,           roles: ALL,    admin: false },
   { href: '/ledger',      label: 'Ledger',        icon: DollarSign,      roles: ALL,    admin: false },
   { href: '/reports',     label: 'Reports',       icon: BarChart3,       roles: ALL,    admin: false },
@@ -24,7 +23,7 @@ const nav = [
   { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ALL,    admin: false },
   { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ALL,    admin: false },
   { href: '/users',       label: 'Users',         icon: Users,           roles: ALL,    admin: true },
-  { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ALL,    admin: true },
+  { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'],      admin: true },
   { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ALL,    admin: true },
 ];
 
