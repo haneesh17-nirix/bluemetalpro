@@ -1,6 +1,6 @@
 {
   "name": "@bluemetal/shared",
-  "version": "1.21.15",
+  "version": "1.21.16",
   "description": "Shared types and utilities for BlueMetal Pro",
   "main": "src/index.ts",
   "types": "src/index.ts",

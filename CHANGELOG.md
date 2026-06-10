@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.16] — 2026-06-10
+
+
+### Other Changes
+
+- Login form: bold rugged matte gold outer border ([257aff4])
+
 ## [1.21.15] — 2026-06-10
 
 
