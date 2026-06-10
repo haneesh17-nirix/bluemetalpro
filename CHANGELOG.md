@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.12] — 2026-06-10
+
+
+### Bug Fixes
+
+- `web` merge duplicate style props causing TS17001 build failure ([6379b1c])
+
 ## [1.10.11] — 2026-06-10
 
 
