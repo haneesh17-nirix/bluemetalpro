@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.15] — 2026-06-10
+
+
+### Bug Fixes
+
+- treat NODE_ENV=prod as production in logger (container crashes without pino-pretty) ([325077b])
+
 ## [1.14.14] — 2026-06-10
 
 
