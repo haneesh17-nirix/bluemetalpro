@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.28] — 2026-06-10
+
+
+### Other Changes
+
+- Redesign login page v2 — modern full-bleed layout with glassmorphism card ([6876a58])
+
 ## [1.21.27] — 2026-06-10
 
 
