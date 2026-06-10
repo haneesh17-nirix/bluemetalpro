@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0] — 2026-06-10
+
+
+### Features
+
+- `ui` grey boulder glass panels — true grey stone, iOS gloss sheen ([ac95836])
+
 ## [1.15.0] — 2026-06-10
 
 
