@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.15] — 2026-06-10
+
+
+### Bug Fixes
+
+- `ui` purge all remaining Tailwind structural classes across all pages ([dc03785])
+
 ## [1.10.14] — 2026-06-10
 
 
