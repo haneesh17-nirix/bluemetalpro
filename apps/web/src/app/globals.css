@@ -73,70 +73,48 @@
 ───────────────────────────────────────────────────────── */
 @layer components {
 
-  /* ── Cards — SVG polygon rock mosaic tile + iOS glass ── */
-  /*
-   * 6 interlocking stone polygons (shield-navy palette) with gold crack
-   * lines between them, tiled as a data URI background. iOS glass on top.
-   * Stones: S1(0,0–80,80) S2(80,0–240,80) S3(160,0–240,80)
-   *         S4(0,80–80,160) S5(75,80–160,160) S6(155,80–240,160)
-   * All share exact edge coordinates — zero gaps.
-   */
+  /* ── Cards ────────────────────────────────────────────── */
   .card {
-    background-image:
-      linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
-    background-size: 100% 100%, 240px 160px;
-    background-repeat: no-repeat, repeat;
-    border: 1px solid rgba(80,120,200,0.25);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0) 50%),
+      linear-gradient(180deg, #1a2f5c 0%, #152448 50%, #111e3c 100%);
+    border: 1px solid rgba(46,88,168,0.35);
     border-radius: 16px;
     box-shadow:
-      inset 0 1.5px 0 rgba(255,255,255,0.16),
-      inset 0 -1px 0 rgba(0,0,20,0.50),
-      inset 1px 0 0 rgba(100,150,255,0.04),
-      0 8px 32px rgba(0,0,30,0.65),
-      0 2px 8px rgba(0,0,20,0.45);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      inset 0 -1px 0 rgba(0,0,30,0.35),
+      0 4px 24px rgba(0,0,30,0.5),
+      0 1px 4px rgba(0,0,20,0.3);
     position: relative;
     overflow: hidden;
   }
-  .card::before {
+  .card::after {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 46%;
-    background: linear-gradient(180deg,
-      rgba(255,255,255,0.10) 0%,
-      rgba(255,255,255,0.025) 60%,
-      transparent 100%
-    );
-    border-radius: 16px 16px 50% 50%;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.12) 60%, transparent 100%);
     pointer-events: none;
-    z-index: 0;
   }
   .card > * { position: relative; z-index: 1; }
 
   .card-gold {
-    background-image:
-      linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
-    background-size: 100% 100%, 240px 160px;
-    background-repeat: no-repeat, repeat;
-    border: 1px solid rgba(184,149,62,0.36);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0) 50%),
+      linear-gradient(180deg, #1a2f5c 0%, #152448 50%, #111e3c 100%);
+    border: 1px solid rgba(200,144,24,0.3);
     border-radius: 16px;
     box-shadow:
-      inset 0 1.5px 0 rgba(255,255,255,0.16),
-      inset 0 -1px 0 rgba(0,0,20,0.50),
-      0 8px 32px rgba(0,0,30,0.65);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      inset 0 -1px 0 rgba(0,0,30,0.35),
+      0 4px 24px rgba(0,0,30,0.5);
     position: relative; overflow: hidden;
   }
-  .card-gold::before {
+  .card-gold::after {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 46%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.025) 60%, transparent 100%);
-    border-radius: 16px 16px 50% 50%;
-    pointer-events: none; z-index: 0;
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,144,24,0.4) 40%, rgba(200,144,24,0.4) 60%, transparent 100%);
+    pointer-events: none;
   }
   .card-gold > * { position: relative; z-index: 1; }
 
@@ -347,39 +325,36 @@
   .badge-yellow { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
   .badge-gray   { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.15); }
 
-  /* ── Stat cards — SVG polygon rock tile + iOS glass ───── */
+  /* ── Stat cards ───────────────────────────────────────── */
   .stat-card {
-    background-image:
-      linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0) 42%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160'%3E%3Cpolygon points='0,0 80,0 78,38 75,72 28,75 0,80' fill='%231a3570'/%3E%3Cpolygon points='0,0 80,0 74,25 10,28' fill='%231e3d7c'/%3E%3Cpolyline points='0,0 80,0 78,38 75,72 28,75 0,80 0,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='10' y1='28' x2='74' y2='25' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='80,0 160,0 162,36 155,78 118,80 75,72 78,38' fill='%23152e68'/%3E%3Cpolygon points='80,0 160,0 158,28 84,32 78,38' fill='%231a3878'/%3E%3Cpolyline points='80,0 160,0 162,36 155,78 118,80 75,72 78,38 80,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='84' y1='32' x2='158' y2='28' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='160,0 240,0 240,80 195,82 155,78 162,36' fill='%231c3872'/%3E%3Cpolygon points='160,0 240,0 238,26 166,30 162,36' fill='%23204080'/%3E%3Cpolyline points='160,0 240,0 240,80 195,82 155,78 162,36 160,0' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='166' y1='30' x2='238' y2='26' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='0,80 28,75 75,72 72,120 80,160 0,160' fill='%23132860'/%3E%3Cpolygon points='0,80 28,75 75,72 68,94 5,98' fill='%231a3570'/%3E%3Cpolyline points='0,80 28,75 75,72 72,120 80,160 0,160 0,80' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='5' y1='98' x2='68' y2='94' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='75,72 118,80 155,78 158,128 160,160 80,160 72,120' fill='%231b3472'/%3E%3Cpolygon points='75,72 118,80 155,78 150,100 78,96' fill='%231f3d80'/%3E%3Cpolyline points='75,72 118,80 155,78 158,128 160,160 80,160 72,120 75,72' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='78' y1='96' x2='150' y2='100' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3Cpolygon points='155,78 195,82 240,80 240,160 160,160 158,128' fill='%23182e68'/%3E%3Cpolygon points='155,78 195,82 240,80 238,108 162,112' fill='%231c3878'/%3E%3Cpolyline points='155,78 195,82 240,80 240,160 160,160 158,128 155,78' fill='none' stroke='%23c48c14' stroke-width='1.4' opacity='0.75'/%3E%3Cline x1='162' y1='112' x2='238' y2='108' stroke='%23d4a020' stroke-width='1.0' opacity='0.65'/%3E%3C/svg%3E");
-    background-size: 100% 100%, 240px 160px;
-    background-repeat: no-repeat, repeat;
-    border: 1px solid rgba(80,120,200,0.25);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0) 50%),
+      linear-gradient(180deg, #1a2f5c 0%, #152448 50%, #111e3c 100%);
+    border: 1px solid rgba(46,88,168,0.35);
     border-radius: 16px;
     padding: 20px;
     display: flex;
     align-items: flex-start;
     gap: 16px;
     box-shadow:
-      inset 0 1.5px 0 rgba(255,255,255,0.16),
-      inset 0 -1px 0 rgba(0,0,20,0.50),
-      0 8px 32px rgba(0,0,30,0.65);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
-    transition: border-color 0.2s, transform 0.2s;
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      inset 0 -1px 0 rgba(0,0,30,0.35),
+      0 4px 24px rgba(0,0,30,0.5);
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     animation: fadeIn 0.3s ease-in-out both;
     position: relative; overflow: hidden;
   }
-  .stat-card::before {
+  .stat-card::after {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 46%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.025) 60%, transparent 100%);
-    border-radius: 16px 16px 50% 50%;
-    pointer-events: none; z-index: 0;
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.12) 60%, transparent 100%);
+    pointer-events: none;
   }
   .stat-card > * { position: relative; z-index: 1; }
   .stat-card:hover {
-    border-color: rgba(184,149,62,0.35);
+    border-color: rgba(200,144,24,0.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 32px rgba(0,0,30,0.6), 0 0 0 1px rgba(200,144,24,0.1);
     transform: translateY(-1px);
   }
   .stat-icon {

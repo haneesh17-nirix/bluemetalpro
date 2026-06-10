@@ -93,8 +93,7 @@ export const submitAttendance = (data: any) => api.post('/wages/attendance/bulk'
 export const getConfig = () => api.get('/config').then(r => r.data);
 export const updateConfig = (data: any) => api.put('/config', data).then(r => r.data);
 
-// Notifications
-export const getNotifications = () => api.get('/notifications').then(r => r.data);
+// Notifications (base — extended version at bottom of file)
 
 // Crusher selection & management
 export const selectCrusher = (crusher_id: string) =>
