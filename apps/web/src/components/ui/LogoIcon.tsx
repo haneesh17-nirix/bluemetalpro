@@ -5,11 +5,11 @@ interface LogoIconProps {
 export default function LogoIcon({ size = 40 }: LogoIconProps) {
   return (
     <img
-      src="/logo-icon.svg"
+      src="/logo-icon.png"
       alt="BlueMetal Pro"
       width={size}
-      height={Math.round(size * 560 / 500)}
-      style={{ display: 'block' }}
+      height={size}
+      style={{ display: 'block', objectFit: 'contain' }}
     />
   );
 }
