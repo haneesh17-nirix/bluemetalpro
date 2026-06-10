@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.8] — 2026-06-10
+
+
+### Other Changes
+
+- Fix all test account passwords to Test@1234; add Playwright panel-check suite ([cacd669])
+
 ## [1.14.7] — 2026-06-10
 
 
