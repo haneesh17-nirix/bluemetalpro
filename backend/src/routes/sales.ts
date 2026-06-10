@@ -44,7 +44,7 @@ salesRouter.get('/:id', async (req, res) => {
 });
 
 // Create sale
-salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const client = await (await import('../config/db')).pool.connect();
   try {
@@ -144,7 +144,7 @@ salesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (r
 });
 
 // Cancel sale
-salesRouter.patch('/:id/cancel', authorize('admin', 'accounts'), async (req, res) => {
+salesRouter.patch('/:id/cancel', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const sale = await queryOne(
     "UPDATE sales SET status = 'cancelled', updated_at = now() WHERE id = $1 AND crusher_id = $2 AND status != 'cancelled' RETURNING *",

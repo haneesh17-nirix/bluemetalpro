@@ -7,7 +7,7 @@ export const ledgerRouter = Router();
 ledgerRouter.use(authenticate);
 ledgerRouter.use(requireCrusher);
 
-ledgerRouter.post('/receipt', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+ledgerRouter.post('/receipt', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { party_id, txn_date, amount, payment_mode, cheque_number, cheque_date, bank_name, reference_id, narration } = req.body;
   const txn = await queryOne(
@@ -33,7 +33,7 @@ ledgerRouter.get('/party/:party_id', async (req, res) => {
   res.json(rows);
 });
 
-ledgerRouter.get('/balances', authorize('admin', 'report_viewer', 'accounts'), async (req, res) => {
+ledgerRouter.get('/balances', authorize('admin', 'report_viewer', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const rows = await query('SELECT * FROM party_balances WHERE crusher_id = $1 ORDER BY total_balance DESC', [cid]);
   res.json(rows);

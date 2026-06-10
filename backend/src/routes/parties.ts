@@ -25,7 +25,7 @@ partiesRouter.get('/:id', async (req, res) => {
   res.json(party);
 });
 
-partiesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+partiesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { name, type, gstin, pan, phone, email, address, city, state, pincode, credit_limit, opening_balance } = req.body;
   const party = await queryOne(
@@ -37,7 +37,7 @@ partiesRouter.post('/', authorize('admin', 'sales_operator', 'accounts'), async 
   res.status(201).json(party);
 });
 
-partiesRouter.put('/:id', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+partiesRouter.put('/:id', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { name, type, gstin, pan, phone, email, address, city, state, pincode, credit_limit } = req.body;
   const party = await queryOne(

@@ -137,9 +137,8 @@ function MoreMenuScreen({ navigation }: any) {
 }
 
 function MainTabs({ user }: { user: any }) {
-  const canSale   = ['admin', 'sales_operator', 'accounts'].includes(user?.role);
-  const canReport = ['admin', 'report_viewer', 'accounts'].includes(user?.role);
-  const canQuarry = ['admin', 'quarry_operator', 'accounts'].includes(user?.role);
+  const canOps    = ['admin', 'operations'].includes(user?.role);
+  const canReport = ['admin', 'operations', 'report_viewer'].includes(user?.role);
 
   return (
     <Tab.Navigator
@@ -169,8 +168,8 @@ function MainTabs({ user }: { user: any }) {
         headerShown: false,
       })}>
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      {canSale   && <Tab.Screen name="Sales"   component={SalesStack} />}
-      {canQuarry && <Tab.Screen name="Quarry"  component={QuarryScreen} />}
+      {canOps    && <Tab.Screen name="Sales"   component={SalesStack} />}
+      {canOps    && <Tab.Screen name="Quarry"  component={QuarryScreen} />}
       {canReport && <Tab.Screen name="Reports" component={ReportsScreen} />}
       <Tab.Screen name="More" component={MoreStack} />
     </Tab.Navigator>

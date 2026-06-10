@@ -7,7 +7,7 @@ import { logger, logAction } from '../utils/logger';
 export const purchasesRouter = Router();
 purchasesRouter.use(authenticate);
 purchasesRouter.use(requireCrusher);
-purchasesRouter.use(authorize('admin', 'sales_operator', 'accounts'));
+purchasesRouter.use(authorize('admin', 'operations'));
 
 purchasesRouter.get('/', async (req, res) => {
   const cid = req.user!.crusher_id!;

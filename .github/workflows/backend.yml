@@ -161,6 +161,7 @@ jobs:
           psql "$CONN" -f database/migrations/007_seed_test_data.sql --set ON_ERROR_STOP=1 -q
           psql "$CONN" -f database/migrations/008_platform_admin.sql --set ON_ERROR_STOP=1 -q
           psql "$CONN" -f database/migrations/009_more_test_data.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/010_simplify_roles.sql --set ON_ERROR_STOP=1 -q
 
       - name: Remove runner IP from firewall
         if: always()

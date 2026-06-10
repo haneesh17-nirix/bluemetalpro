@@ -8,7 +8,7 @@ import { logger, logAction } from '../utils/logger';
 export const quarryRouter = Router();
 quarryRouter.use(authenticate);
 quarryRouter.use(requireCrusher);
-quarryRouter.use(authorize('admin', 'quarry_operator', 'accounts'));
+quarryRouter.use(authorize('admin', 'operations'));
 
 quarryRouter.get('/', async (req, res) => {
   const cid = req.user!.crusher_id!;

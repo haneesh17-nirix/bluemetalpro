@@ -9,42 +9,27 @@ import { getUsers, createUser, updateUser } from '@/lib/api';
 import api from '@/lib/api';
 import { Plus, X, ShieldCheck, Eye, EyeOff, Users, UserCheck, Shield } from 'lucide-react';
 
-type UserRole = 'admin' | 'sales_operator' | 'accounts' | 'report_viewer' | 'vehicle_manager' | 'quarry_operator';
+type UserRole = 'admin' | 'operations' | 'report_viewer';
 
 const roleConfig: Record<UserRole, { label: string; badge: string; permissions: string[] }> = {
   admin: {
     label: 'Admin',
     badge: 'badge-red',
-    permissions: ['Full access to all modules', 'User management', 'Company config', 'Delete / cancel records'],
+    permissions: ['Full access to all modules', 'User management', 'Company config', 'Cancel records'],
   },
-  sales_operator: {
-    label: 'Sales Operator',
+  operations: {
+    label: 'Operations',
     badge: 'badge-blue',
-    permissions: ['Create sales invoices', 'Add vehicles', 'Manage customers', 'Record receipts'],
-  },
-  accounts: {
-    label: 'Accounts',
-    badge: 'badge-gold',
-    permissions: ['Sales & purchases', 'Ledger & receipts', 'Wages & payroll', 'All reports'],
+    permissions: ['Sales, purchases & quarry', 'Vehicles & maintenance', 'Ledger & receipts', 'Wages & payroll'],
   },
   report_viewer: {
     label: 'Report Viewer',
     badge: 'badge-gem',
-    permissions: ['View all reports', 'View sales list', 'No create/edit access'],
-  },
-  vehicle_manager: {
-    label: 'Vehicle Manager',
-    badge: 'badge-gold',
-    permissions: ['Add & edit vehicles', 'Maintenance records', 'Asset management'],
-  },
-  quarry_operator: {
-    label: 'Quarry Operator',
-    badge: 'badge-gray',
-    permissions: ['Quarry sales entry only', 'View quarry reports'],
+    permissions: ['View all reports', 'View sales & ledger', 'No create/edit access'],
   },
 };
 
-const emptyForm = { name: '', email: '', phone: '', role: 'sales_operator' as UserRole, password: '', is_active: true };
+const emptyForm = { name: '', email: '', phone: '', role: 'operations' as UserRole, password: '', is_active: true };
 
 export default function UsersPage() {
   useEffect(() => { log.page('Users'); }, []);

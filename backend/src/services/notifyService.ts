@@ -33,7 +33,7 @@ export async function fanOut(crusher_id: string, payload: NotifyPayload): Promis
       `SELECT DISTINCT u.id FROM users u
        JOIN user_crusher_access uca ON uca.user_id = u.id AND uca.crusher_id = $1
        WHERE u.is_active = true
-         AND u.role IN ('admin','accounts','report_viewer','partner')
+         AND u.role IN ('admin','operations','report_viewer','partner')
          AND (u.notify_events IS NULL OR $2 = ANY(u.notify_events))`,
       [crusher_id, payload.type]
     );

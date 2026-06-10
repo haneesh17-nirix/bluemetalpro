@@ -13,15 +13,13 @@ import {
   platformSetCrusherStatus, platformCreateUser,
 } from '@/lib/api';
 
-const ROLES = ['admin', 'sales_operator', 'accounts', 'report_viewer', 'vehicle_manager', 'quarry_operator'];
+const ROLES = ['admin', 'operations', 'report_viewer'];
 const ROLE_LABELS: Record<string, string> = {
-  admin: 'Admin', sales_operator: 'Sales', accounts: 'Accounts',
-  report_viewer: 'Reports', vehicle_manager: 'Vehicles', quarry_operator: 'Quarry',
+  admin: 'Admin', operations: 'Operations', report_viewer: 'Reports',
   platform_admin: 'Platform Admin',
 };
 const ROLE_COLORS: Record<string, string> = {
-  admin: '#c9a84c', sales_operator: '#4caf8c', accounts: '#6c9ddc',
-  report_viewer: '#9c88d4', vehicle_manager: '#e08060', quarry_operator: '#60b4d0',
+  admin: '#c9a84c', operations: '#4caf8c', report_viewer: '#9c88d4',
   platform_admin: '#e0bc60',
 };
 
@@ -176,8 +174,8 @@ function AddUserModal({ crusher, allUsers, onClose, onAdded }: {
   const [mode, setMode] = useState<'existing' | 'new'>('existing');
   const [saving, setSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
-  const [role, setRole] = useState('sales_operator');
-  const [newForm, setNewForm] = useState({ name: '', email: '', password: '', role: 'sales_operator' });
+  const [role, setRole] = useState('operations');
+  const [newForm, setNewForm] = useState({ name: '', email: '', password: '', role: 'operations' });
 
   const save = async () => {
     setSaving(true);

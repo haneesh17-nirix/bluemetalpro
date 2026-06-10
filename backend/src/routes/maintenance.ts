@@ -18,7 +18,7 @@ maintenanceRouter.get('/assets', async (req, res) => {
   res.json(rows);
 });
 
-maintenanceRouter.post('/assets', authorize('admin', 'vehicle_manager'), async (req, res) => {
+maintenanceRouter.post('/assets', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { asset_type, name, model, serial_number, purchase_date, purchase_cost, vehicle_id, notes } = req.body;
   const a = await queryOne(
@@ -46,7 +46,7 @@ maintenanceRouter.get('/records', async (req, res) => {
   res.json(rows);
 });
 
-maintenanceRouter.post('/records', authorize('admin', 'vehicle_manager'), async (req, res) => {
+maintenanceRouter.post('/records', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { asset_id, asset_type, title, description, scheduled_date, cost, vendor_name, vendor_phone, parts_replaced, next_service_date } = req.body;
   const r = await queryOne(
@@ -67,7 +67,7 @@ maintenanceRouter.post('/records', authorize('admin', 'vehicle_manager'), async 
   res.status(201).json(r);
 });
 
-maintenanceRouter.patch('/records/:id', authorize('admin', 'vehicle_manager'), async (req, res) => {
+maintenanceRouter.patch('/records/:id', authorize('admin', 'operations'), async (req, res) => {
   const { status, completed_date, cost, parts_replaced, next_service_date } = req.body;
   const r = await queryOne(
     `UPDATE maintenance_records SET status=$1, completed_date=$2, cost=$3, parts_replaced=$4, next_service_date=$5, updated_at=now()

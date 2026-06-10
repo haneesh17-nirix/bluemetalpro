@@ -6,7 +6,7 @@ import { logger, logAction } from '../utils/logger';
 export const reportsRouter = Router();
 reportsRouter.use(authenticate);
 reportsRouter.use(requireCrusher);
-reportsRouter.use(authorize('admin', 'report_viewer', 'accounts'));
+reportsRouter.use(authorize('admin', 'report_viewer', 'operations'));
 
 // Item-wise sales report
 reportsRouter.get('/item-wise', async (req, res) => {

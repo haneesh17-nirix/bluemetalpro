@@ -70,7 +70,7 @@ weighbridgeRouter.get('/tickets', async (req, res) => {
 });
 
 // Create weigh ticket (gross in)
-weighbridgeRouter.post('/tickets', authorize('admin', 'sales_operator', 'accounts', 'quarry_operator'), async (req, res) => {
+weighbridgeRouter.post('/tickets', authorize('admin', 'operations'), async (req, res) => {
   const {
     weighbridge_id, vehicle_id, vehicle_number,
     party_id, party_name, product_id, product_name,
@@ -107,7 +107,7 @@ weighbridgeRouter.post('/tickets', authorize('admin', 'sales_operator', 'account
 });
 
 // Link ticket to sale
-weighbridgeRouter.patch('/tickets/:id/link-sale', authorize('admin', 'sales_operator', 'accounts'), async (req, res) => {
+weighbridgeRouter.patch('/tickets/:id/link-sale', authorize('admin', 'operations'), async (req, res) => {
   const ticket = await queryOne(
     'UPDATE weigh_tickets SET sale_id = $1, updated_at = now() WHERE id = $2 RETURNING *',
     [req.body.sale_id, req.params.id]

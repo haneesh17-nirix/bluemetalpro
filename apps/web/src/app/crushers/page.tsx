@@ -28,7 +28,7 @@ const FIELDS = [
   { key: 'bank_branch',   label: 'Bank Branch' },
 ];
 
-const ROLES = ['admin', 'sales_operator', 'accounts', 'report_viewer', 'vehicle_manager', 'quarry_operator'];
+const ROLES = ['admin', 'operations', 'report_viewer'];
 
 function CrusherModal({ crusher, onClose }: { crusher: any | null; onClose: () => void }) {
   const qc = useQueryClient();
@@ -84,7 +84,7 @@ function GrantModal({ crusherId, onClose }: { crusherId: string; onClose: () => 
   const qc = useQueryClient();
   const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: getUsers });
   const [userId, setUserId] = useState('');
-  const [role, setRole] = useState('sales_operator');
+  const [role, setRole] = useState('operations');
 
   const mutation = useMutation({
     mutationFn: () => grantCrusherAccess(crusherId, { user_id: userId, role }),

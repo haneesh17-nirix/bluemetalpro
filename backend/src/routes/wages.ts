@@ -14,7 +14,7 @@ wagesRouter.get('/workers', async (req, res) => {
   res.json(rows);
 });
 
-wagesRouter.post('/workers', authorize('admin', 'accounts'), async (req, res) => {
+wagesRouter.post('/workers', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { name, phone, designation, wage_type, wage_rate, joining_date, aadhaar } = req.body;
   const w = await queryOne(
@@ -26,7 +26,7 @@ wagesRouter.post('/workers', authorize('admin', 'accounts'), async (req, res) =>
   res.status(201).json(w);
 });
 
-wagesRouter.put('/workers/:id', authorize('admin', 'accounts'), async (req, res) => {
+wagesRouter.put('/workers/:id', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { name, phone, designation, wage_type, wage_rate } = req.body;
   const w = await queryOne(
@@ -39,7 +39,7 @@ wagesRouter.put('/workers/:id', authorize('admin', 'accounts'), async (req, res)
 });
 
 // Bulk attendance entry
-wagesRouter.post('/attendance/bulk', authorize('admin', 'accounts'), async (req, res) => {
+wagesRouter.post('/attendance/bulk', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { date, entries } = req.body;
   // entries: [{worker_id, status, overtime_hours, advance}]
@@ -73,7 +73,7 @@ wagesRouter.get('/attendance', async (req, res) => {
 });
 
 // Calculate wages for a period
-wagesRouter.post('/calculate', authorize('admin', 'accounts'), async (req, res) => {
+wagesRouter.post('/calculate', authorize('admin', 'operations'), async (req, res) => {
   const { worker_id, from, to } = req.body;
   const worker = await queryOne('SELECT * FROM workers WHERE id = $1', [worker_id]);
   if (!worker) return res.status(404).json({ error: 'Worker not found' });
@@ -94,7 +94,7 @@ wagesRouter.post('/calculate', authorize('admin', 'accounts'), async (req, res) 
   res.json({ worker, days_worked, overtime_hours: overtime, gross_wages, advance_deducted: advance, net_wages: gross_wages - advance });
 });
 
-wagesRouter.post('/pay', authorize('admin', 'accounts'), async (req, res) => {
+wagesRouter.post('/pay', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes } = req.body;
   const p = await queryOne(

@@ -13,7 +13,7 @@ vehiclesRouter.get('/', async (req, res) => {
   res.json(rows);
 });
 
-vehiclesRouter.post('/', authorize('admin', 'sales_operator', 'vehicle_manager'), async (req, res) => {
+vehiclesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { registration_number, vehicle_type, owner_name, owner_phone, capacity_mt, notes } = req.body;
   const v = await queryOne(
@@ -25,7 +25,7 @@ vehiclesRouter.post('/', authorize('admin', 'sales_operator', 'vehicle_manager')
   res.status(201).json(v);
 });
 
-vehiclesRouter.put('/:id', authorize('admin', 'vehicle_manager'), async (req, res) => {
+vehiclesRouter.put('/:id', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { registration_number, vehicle_type, owner_name, owner_phone, capacity_mt, status, notes } = req.body;
   const v = await queryOne(

@@ -136,13 +136,13 @@ platformRouter.post('/users', async (req, res) => {
     `INSERT INTO users (name, email, password_hash, role, is_active)
      VALUES ($1, $2, $3, $4, true)
      ON CONFLICT (email) DO UPDATE SET updated_at = now() RETURNING *`,
-    [name, email, hash, role || 'sales_operator']
+    [name, email, hash, role || 'operations']
   );
   if (crusher_id) {
     await query(
       `INSERT INTO user_crusher_access (user_id, crusher_id, role)
        VALUES ($1, $2, $3) ON CONFLICT (user_id, crusher_id) DO NOTHING`,
-      [(user as any).id, crusher_id, crusher_role || role || 'sales_operator']
+      [(user as any).id, crusher_id, crusher_role || role || 'operations']
     );
   }
   logAction('platform.user.created', { email, role, by: req.user!.email });
