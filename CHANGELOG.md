@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.1] — 2026-06-11
+
+
+### Bug Fixes
+
+- resolve TypeScript errors introduced by logging upgrade agents ([0198049])
+
 ## [1.25.0] — 2026-06-11
 
 
