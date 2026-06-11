@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.2] — 2026-06-11
+
+
+### Bug Fixes
+
+- add migration 014 to CI pipeline; center login branding ([f86256f])
+
 ## [1.22.1] — 2026-06-10
 
 
