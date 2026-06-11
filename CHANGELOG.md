@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.2] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` fix migration 019 FK violation and hardcoded UUID bug ([68d19a5])
+
 ## [1.26.1] — 2026-06-11
 
 
