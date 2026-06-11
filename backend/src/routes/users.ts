@@ -35,7 +35,14 @@ usersRouter.patch('/me', async (req, res) => {
 usersRouter.use(authorize('admin'));
 
 usersRouter.get('/', async (req, res) => {
-  const rows = await query(`SELECT id, name, email, phone, role, is_active, created_at FROM users ORDER BY name`);
+  const rows = await query(
+    `SELECT DISTINCT u.id, u.name, u.email, u.phone, u.role, u.is_active, u.created_at
+     FROM users u
+     JOIN user_crusher_access uca ON uca.user_id = u.id
+     WHERE uca.crusher_id IN (SELECT crusher_id FROM user_crusher_access WHERE user_id = $1)
+     ORDER BY u.name`,
+    [req.user!.id]
+  );
   res.json(rows);
 });
 
@@ -43,7 +50,7 @@ usersRouter.get('/by-crusher/:crusher_id', async (req, res) => {
   const rows = await query(
     `SELECT u.id, u.name, u.email, u.phone, u.role, u.is_active, u.created_at
      FROM users u
-     JOIN user_crushers uc ON uc.user_id = u.id
+     JOIN user_crusher_access uc ON uc.user_id = u.id
      WHERE uc.crusher_id = $1
      ORDER BY u.name`,
     [req.params.crusher_id]
@@ -65,12 +72,28 @@ usersRouter.post('/', async (req, res) => {
 
 usersRouter.put('/:id', async (req, res) => {
   const { name, phone, role, is_active } = req.body;
+  if (role === 'platform_admin') return res.status(403).json({ error: 'Forbidden' });
   const user = await queryOne(
     `UPDATE users SET name=$1, phone=$2, role=$3, is_active=$4, updated_at=now()
      WHERE id=$5 RETURNING id, name, email, phone, role, is_active`,
     [name, phone, role, is_active, req.params.id]
   );
   logAction('user.updated', { userId: req.params.id, role, is_active, by: req.user!.email });
+  res.json(user);
+});
+
+usersRouter.patch('/:id', async (req, res) => {
+  const allowed = ['name', 'phone', 'role', 'is_active'];
+  const updates = Object.fromEntries(Object.entries(req.body).filter(([k]) => allowed.includes(k)));
+  if (updates.role === 'platform_admin') return res.status(403).json({ error: 'Forbidden' });
+  if (Object.keys(updates).length === 0) return res.status(400).json({ error: 'No valid fields to update' });
+  const setClauses = Object.keys(updates).map((k, i) => `${k}=$${i + 1}`).join(', ');
+  const values = [...Object.values(updates), req.params.id];
+  const user = await queryOne(
+    `UPDATE users SET ${setClauses}, updated_at=now() WHERE id=$${values.length} RETURNING id, name, email, phone, role, is_active`,
+    values
+  );
+  logAction('user.updated', { userId: req.params.id, ...updates, by: req.user!.email });
   res.json(user);
 });
 

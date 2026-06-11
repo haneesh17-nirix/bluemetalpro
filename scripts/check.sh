@@ -158,6 +158,10 @@ REQUIRED=(
   database/migrations/011_fix_test_passwords.sql
   database/migrations/012_cleanup_duplicate_crushers.sql
   database/migrations/013_notify_events_extended.sql
+  database/migrations/014_add_tenants.sql
+  database/migrations/015_platform_admin_flag.sql
+  database/migrations/015_weighbridge_counter_per_crusher.sql
+  database/migrations/016_cascade_delete_tenant.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
@@ -198,15 +202,16 @@ REQUIRED=(
   apps/web/src/app/ledger/page.tsx
   apps/web/src/app/login/page.tsx
   apps/web/src/app/maintenance/page.tsx
+  apps/web/src/app/notifications/page.tsx
   apps/web/src/app/page.tsx
   apps/web/src/app/parties/page.tsx
   apps/web/src/app/platform/page.tsx
   apps/web/src/app/purchases/page.tsx
   apps/web/src/app/quarry/page.tsx
-  apps/web/src/app/notifications/page.tsx
   apps/web/src/app/reports/page.tsx
   apps/web/src/app/sales/page.tsx
   apps/web/src/app/select-crusher/page.tsx
+  apps/web/src/app/select-tenant/page.tsx
   apps/web/src/app/settings/page.tsx
   apps/web/src/app/users/page.tsx
   apps/web/src/app/vehicles/page.tsx

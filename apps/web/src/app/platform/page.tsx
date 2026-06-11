@@ -48,6 +48,14 @@ function TenantModal({ tenant, onClose, onSaved }: {
 
   const save = async () => {
     if (!form.name) return toast.error('Company name is required');
+    if (!isEdit) {
+      const anyAdmin = form.admin_name || form.admin_email || form.admin_password;
+      if (anyAdmin) {
+        if (!form.admin_name || !form.admin_email || !form.admin_password) return toast.error('Admin name, email, and password are all required');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.admin_email)) return toast.error('Admin email is not valid');
+        if (form.admin_password.length < 8) return toast.error('Admin password must be at least 8 characters');
+      }
+    }
     setSaving(true);
     try {
       if (isEdit) {
@@ -238,9 +246,20 @@ export default function PlatformPage() {
     } catch { toast.error('Failed'); }
   };
 
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      if (u.role !== 'platform_admin') router.replace('/login');
+    } catch {
+      router.replace('/login');
+    }
+  }, []);
+
   useEffect(() => { load(); }, []);
 
   const user = (() => { try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; } })();
+
+  if (user?.role !== 'platform_admin') { router.replace('/dashboard'); return null; }
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #07090f 0%, #0b1220 50%, #07090f 100%)', display: 'flex', flexDirection: 'column' }}>

@@ -45,6 +45,8 @@ export default function WagesPage() {
   const [payrollWorker, setPayrollWorker] = useState('');
   const [payPeriod, setPayPeriod] = useState({ from: dayjs().format('YYYY-MM-01'), to: dayjs().format('YYYY-MM-DD') });
   const [payrollResult, setPayrollResult] = useState<any>(null);
+  const [calculatingPayroll, setCalculatingPayroll] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const { data: workers = [] } = useQuery({ queryKey: ['workers'], queryFn: getWorkers });
   const { data: attendance = [], refetch: refetchAttendance } = useQuery({
@@ -95,25 +97,41 @@ export default function WagesPage() {
 
   const calculatePayroll = async () => {
     if (!payrollWorker) return toast.error('Select a worker');
-    const res = await api.post('/wages/calculate', { worker_id: payrollWorker, from: payPeriod.from, to: payPeriod.to });
-    setPayrollResult(res.data);
+    setCalculatingPayroll(true);
+    try {
+      const res = await api.post('/wages/calculate', { worker_id: payrollWorker, from: payPeriod.from, to: payPeriod.to });
+      setPayrollResult(res.data);
+    } catch {
+      toast.error('Failed to calculate payroll');
+    } finally {
+      setCalculatingPayroll(false);
+    }
   };
 
   const processPayment = async () => {
     if (!payrollResult) return;
-    await api.post('/wages/pay', {
-      worker_id: payrollWorker,
-      period_from: payPeriod.from,
-      period_to: payPeriod.to,
-      days_worked: payrollResult.days_worked,
-      gross_wages: payrollResult.gross_wages,
-      advances_deducted: payrollResult.advance_deducted,
-      net_wages: payrollResult.net_wages,
-      payment_date: dayjs().format('YYYY-MM-DD'),
-      payment_mode: 'cash',
-    });
-    toast.success('Wage payment recorded');
-    setPayrollResult(null);
+    setProcessingPayment(true);
+    try {
+      await api.post('/wages/pay', {
+        worker_id: payrollWorker,
+        period_from: payPeriod.from,
+        period_to: payPeriod.to,
+        days_worked: payrollResult.days_worked,
+        gross_wages: payrollResult.gross_wages,
+        advances_deducted: payrollResult.advance_deducted,
+        net_wages: payrollResult.net_wages,
+        payment_date: dayjs().format('YYYY-MM-DD'),
+        payment_mode: 'cash',
+      });
+      toast.success('Wage payment recorded');
+      setPayrollResult(null);
+      qc.invalidateQueries({ queryKey: ['workers'] });
+      refetchAttendance();
+    } catch {
+      toast.error('Failed to process payment');
+    } finally {
+      setProcessingPayment(false);
+    }
   };
 
   const summary = {
@@ -289,8 +307,8 @@ export default function WagesPage() {
                       <input type="date" value={payPeriod.to} onChange={e => setPayPeriod(p => ({ ...p, to: e.target.value }))} className="input" />
                     </div>
                   </div>
-                  <button onClick={calculatePayroll} className="btn-primary" style={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}>
-                    Calculate
+                  <button onClick={calculatePayroll} disabled={calculatingPayroll} className="btn-primary disabled:opacity-60" style={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}>
+                    {calculatingPayroll ? 'Calculating…' : 'Calculate'}
                   </button>
                 </div>
               </div>
@@ -317,8 +335,8 @@ export default function WagesPage() {
                       <span className="font-bold text-lg text-[#c9a84c]">₹{Number(payrollResult.net_wages).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
-                  <button onClick={processPayment} className="btn-primary" style={{ width: '100%', marginTop: 16, paddingTop: 10, paddingBottom: 10 }}>
-                    Process Payment
+                  <button onClick={processPayment} disabled={processingPayment} className="btn-primary disabled:opacity-60" style={{ width: '100%', marginTop: 16, paddingTop: 10, paddingBottom: 10 }}>
+                    {processingPayment ? 'Processing…' : 'Process Payment'}
                   </button>
                 </div>
               )}

@@ -136,8 +136,8 @@ export default function DashboardPage() {
 
   return (
     <AppLayout
-      title={crusher ? (crusher.name || 'Dashboard') : 'Dashboard'}
-      subtitle="Dashboard"
+      title="Dashboard"
+      subtitle={crusher?.name || ''}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 

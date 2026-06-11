@@ -22,7 +22,7 @@ quarryRouter.get('/', authorize('admin', 'operations', 'report_viewer'), async (
   res.json(rows);
 });
 
-quarryRouter.post('/', async (req, res) => {
+quarryRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const client = await (await import('../config/db')).pool.connect();
   try {

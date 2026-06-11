@@ -45,7 +45,7 @@ export default function MaintenancePage() {
   const [assetForm, setAssetForm] = useState(emptyAsset);
 
   const { data: assets = [] } = useQuery({ queryKey: ['assets', assetTypeFilter], queryFn: () => getAssets({ asset_type: assetTypeFilter || undefined }) });
-  const { data: records = [] } = useQuery({
+  const { data: records = [], isLoading: recordsLoading } = useQuery({
     queryKey: ['maintenance', assetTypeFilter, statusFilter],
     queryFn: () => getMaintenanceRecords({ asset_type: assetTypeFilter || undefined, status: statusFilter || undefined }),
   });
@@ -88,15 +88,18 @@ export default function MaintenancePage() {
     setShowRecordForm(true);
   };
 
-  const updateStatus = (id: string, status: string) => {
-    api.patch(`/maintenance/records/${id}`, {
-      status,
-      completed_date: status === 'completed' ? dayjs().format('YYYY-MM-DD') : undefined,
-    }).then(() => {
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      api.patch(`/maintenance/records/${id}`, {
+        status,
+        completed_date: status === 'completed' ? dayjs().format('YYYY-MM-DD') : undefined,
+      }).then(r => r.data),
+    onSuccess: (_data, { status }) => {
       toast.success(`Marked as ${status.replace('_', ' ')}`);
-      qc.invalidateQueries({ queryKey: ['maintenance'] });
-    }).catch(() => toast.error('Failed'));
-  };
+      qc.invalidateQueries({ queryKey: ['maintenance', assetTypeFilter, statusFilter] });
+    },
+    onError: () => toast.error('Failed'),
+  });
 
   const pageActions = (
     <div style={{ display: 'flex', gap: 8 }}>
@@ -127,10 +130,10 @@ export default function MaintenancePage() {
 
   return (
     <AppLayout title="Maintenance" subtitle="Asset and vehicle maintenance scheduling" actions={pageActions}>
-      <StatsRow stats={maintStats} />
+      {!recordsLoading && <StatsRow stats={maintStats} />}
 
       {/* Upcoming alert */}
-      {upcoming.length > 0 && (
+      {!recordsLoading && upcoming.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 12, border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.1)', padding: 16 }}>
           <AlertTriangle size={20} style={{ color: '#fbbf24', flexShrink: 0, marginTop: 2 }} />
           <div>
@@ -211,10 +214,10 @@ export default function MaintenancePage() {
                       <td>
                         <div style={{ display: 'flex', gap: 8 }}>
                           {r.status === 'scheduled' && (
-                            <button onClick={() => updateStatus(r.id, 'in_progress')} className="text-xs text-blue-400 hover:underline">Start</button>
+                            <button onClick={() => statusMutation.mutate({ id: r.id, status: 'in_progress' })} disabled={statusMutation.isPending} className="text-xs text-blue-400 hover:underline disabled:opacity-50">Start</button>
                           )}
                           {r.status === 'in_progress' && (
-                            <button onClick={() => updateStatus(r.id, 'completed')} className="text-xs text-emerald-400 hover:underline">Complete</button>
+                            <button onClick={() => statusMutation.mutate({ id: r.id, status: 'completed' })} disabled={statusMutation.isPending} className="text-xs text-emerald-400 hover:underline disabled:opacity-50">Complete</button>
                           )}
                           <button onClick={() => openEdit(r)} className="text-xs text-white/50 hover:text-white hover:underline">Edit</button>
                         </div>

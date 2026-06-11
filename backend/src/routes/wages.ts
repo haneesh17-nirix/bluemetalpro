@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { query, queryOne } from '../config/db';
+import { query, queryOne, pool } from '../config/db';
 import { authenticate, authorize, requireCrusher } from '../middleware/auth';
 import { fanOut } from '../services/notifyService';
 import { logger, logAction } from '../utils/logger';
@@ -8,7 +8,7 @@ export const wagesRouter = Router();
 wagesRouter.use(authenticate);
 wagesRouter.use(requireCrusher);
 
-wagesRouter.get('/workers', async (req, res) => {
+wagesRouter.get('/workers', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const rows = await query(`SELECT * FROM workers WHERE is_active = true AND crusher_id = $1 ORDER BY name`, [cid]);
   res.json(rows);
@@ -43,20 +43,34 @@ wagesRouter.post('/attendance/bulk', authorize('admin', 'operations'), async (re
   const cid = req.user!.crusher_id!;
   const { date, entries } = req.body;
   // entries: [{worker_id, status, overtime_hours, advance}]
-  const results = await Promise.all(entries.map((e: any) =>
-    queryOne(
+  const workerIds = entries.map((e: any) => e.worker_id);
+  const statuses = entries.map((e: any) => e.status);
+  const overtimeHours = entries.map((e: any) => e.overtime_hours || 0);
+  const advances = entries.map((e: any) => e.advance || 0);
+  const client = await pool.connect();
+  let results: any[];
+  try {
+    await client.query('BEGIN');
+    const res = await client.query(
       `INSERT INTO attendance (worker_id, date, status, overtime_hours, advance, created_by, crusher_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)
-       ON CONFLICT (worker_id, date) DO UPDATE SET status=$3, overtime_hours=$4, advance=$5
+       SELECT unnest($1::int[]), $2, unnest($3::text[]), unnest($4::numeric[]), unnest($5::numeric[]), $6, $7
+       ON CONFLICT (worker_id, date) DO UPDATE SET status=EXCLUDED.status, overtime_hours=EXCLUDED.overtime_hours, advance=EXCLUDED.advance
        RETURNING *`,
-      [e.worker_id, date, e.status, e.overtime_hours || 0, e.advance || 0, req.user!.id, cid]
-    )
-  ));
+      [workerIds, date, statuses, overtimeHours, advances, req.user!.id, cid]
+    );
+    await client.query('COMMIT');
+    results = res.rows;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
   logAction('attendance.bulk_entry', { date: req.body.date, count: (req.body.entries || []).length, by: req.user!.email });
   res.json(results);
 });
 
-wagesRouter.get('/attendance', async (req, res) => {
+wagesRouter.get('/attendance', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { date, from, to, worker_id } = req.query;
   let where = 'WHERE 1=1';
@@ -75,13 +89,14 @@ wagesRouter.get('/attendance', async (req, res) => {
 // Calculate wages for a period
 wagesRouter.post('/calculate', authorize('admin', 'operations'), async (req, res) => {
   const { worker_id, from, to } = req.body;
-  const worker = await queryOne('SELECT * FROM workers WHERE id = $1', [worker_id]);
+  const cid = req.user!.crusher_id!;
+  const worker = await queryOne('SELECT * FROM workers WHERE id = $1 AND crusher_id = $2', [worker_id, cid]);
   if (!worker) return res.status(404).json({ error: 'Worker not found' });
 
   const attendance = await query(
     `SELECT status, overtime_hours, SUM(advance) as advance
-     FROM attendance WHERE worker_id = $1 AND date BETWEEN $2 AND $3 GROUP BY status, overtime_hours`,
-    [worker_id, from, to]
+     FROM attendance WHERE worker_id = $1 AND date BETWEEN $2 AND $3 AND crusher_id = $4 GROUP BY status, overtime_hours`,
+    [worker_id, from, to, cid]
   );
   const present = attendance.filter(a => a.status === 'present').length;
   const half = attendance.filter(a => a.status === 'half_day').length;
@@ -98,9 +113,9 @@ wagesRouter.post('/pay', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes } = req.body;
   const p = await queryOne(
-    `INSERT INTO wage_payments (worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes, created_by)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
-    [worker_id, period_from, period_to, days_worked, gross_wages, deductions || 0, advances_deducted || 0, net_wages, payment_date, payment_mode, notes, req.user!.id]
+    `INSERT INTO wage_payments (crusher_id, worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, notes, created_by)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+    [cid, worker_id, period_from, period_to, days_worked, gross_wages, deductions || 0, advances_deducted || 0, net_wages, payment_date, payment_mode, notes, req.user!.id]
   );
 
   // Real-time SSE fan-out (fire-and-forget)

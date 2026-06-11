@@ -107,7 +107,7 @@ salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
           amount, gst_rate, cgst_rate, sgst_rate, igst_rate, cgst_amount, sgst_amount, igst_amount,
           total_amount, sort_order)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
-        [sale.rows[0].id, it.product_id, it.product_name, it.hsn_code, it.unit,
+        [sale.id, it.product_id, it.product_name, it.hsn_code, it.unit,
          it.quantity, it.rate, it.amount, it.gst_rate,
          is_same_state ? it.gst_rate / 2 : 0,
          is_same_state ? it.gst_rate / 2 : 0,
@@ -117,7 +117,7 @@ salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     }
 
     await client.query('COMMIT');
-    const created = sale.rows[0];
+    const created = sale;
 
     // Send push notification async
     sendSaleNotification(created).catch(console.error);

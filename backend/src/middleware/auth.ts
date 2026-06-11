@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { queryOne } from '../config/db';
 
 export interface AuthUser {
   id: string;
@@ -20,11 +22,16 @@ declare global {
   }
 }
 
-export function authenticate(req: Request, res: Response, next: NextFunction) {
+export async function authenticate(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token provided' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser;
+    const session = await queryOne(
+      `SELECT 1 FROM user_sessions WHERE user_id = $1 AND token_hash = $2 AND expires_at > now()`,
+      [decoded.id, crypto.createHash('sha256').update(token).digest('hex')]
+    );
+    if (!session) return res.status(401).json({ error: 'Session not found or expired' });
     req.user = decoded;
     next();
   } catch {

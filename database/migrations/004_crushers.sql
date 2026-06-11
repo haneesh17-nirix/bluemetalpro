@@ -68,20 +68,20 @@ CROSS JOIN (SELECT id FROM crushers LIMIT 1) c
 ON CONFLICT (user_id, crusher_id) DO NOTHING;
 
 -- 6. Add crusher_id FK columns to all operational tables (nullable for migration safety)
-ALTER TABLE sales               ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE purchases           ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE quarry_sales        ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE parties             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE vehicles            ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE products            ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE workers             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE assets              ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE ledger_transactions ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE maintenance_records ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE attendance          ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE cameras             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE notifications       ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
-ALTER TABLE wage_payments       ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id);
+ALTER TABLE sales               ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE purchases           ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE quarry_sales        ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE parties             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE vehicles            ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE products            ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE workers             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE assets              ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE ledger_transactions ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE maintenance_records ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE attendance          ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE cameras             ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE notifications       ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
+ALTER TABLE wage_payments       ADD COLUMN IF NOT EXISTS crusher_id UUID REFERENCES crushers(id) ON DELETE SET NULL;
 
 -- 7. Back-fill all existing rows to point to the default crusher
 UPDATE sales               SET crusher_id = (SELECT id FROM crushers ORDER BY created_at LIMIT 1) WHERE crusher_id IS NULL;
@@ -109,3 +109,9 @@ CREATE INDEX IF NOT EXISTS idx_workers_crusher             ON workers(crusher_id
 CREATE INDEX IF NOT EXISTS idx_ledger_crusher              ON ledger_transactions(crusher_id);
 CREATE INDEX IF NOT EXISTS idx_user_crusher_access_user    ON user_crusher_access(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_crusher_access_crusher ON user_crusher_access(crusher_id);
+CREATE INDEX IF NOT EXISTS idx_weigh_tickets_sale        ON weigh_tickets(sale_id);
+CREATE INDEX IF NOT EXISTS idx_weigh_tickets_weighbridge ON weigh_tickets(weighbridge_id);
+CREATE INDEX IF NOT EXISTS idx_assets_crusher            ON assets(crusher_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_crusher       ON maintenance_records(crusher_id);
+CREATE INDEX IF NOT EXISTS idx_wage_payments_crusher     ON wage_payments(crusher_id);
+CREATE INDEX IF NOT EXISTS idx_raw_material_product      ON raw_material_stock(product_id);

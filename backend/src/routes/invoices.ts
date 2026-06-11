@@ -1,16 +1,18 @@
 import { Router } from 'express';
 import { query, queryOne } from '../config/db';
 import { authenticate } from '../middleware/auth';
+import { requireCrusher } from '../middleware/auth';
 import { generateInvoicePDF } from '../services/pdfGenerator';
 import { uploadToBlob } from '../services/azureStorage';
 import { logger, logAction } from '../utils/logger';
 
 export const invoicesRouter = Router();
 invoicesRouter.use(authenticate);
+invoicesRouter.use(requireCrusher);
 
 // Generate & download invoice PDF
 invoicesRouter.get('/:sale_id/pdf', async (req, res) => {
-  const sale = await queryOne('SELECT * FROM sales WHERE id = $1', [req.params.sale_id]);
+  const sale = await queryOne('SELECT * FROM sales WHERE id = $1 AND crusher_id = $2', [req.params.sale_id, req.user!.crusher_id]);
   if (!sale) return res.status(404).json({ error: 'Sale not found' });
 
   const items = await query('SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY sort_order', [req.params.sale_id]);
@@ -27,7 +29,7 @@ invoicesRouter.get('/:sale_id/pdf', async (req, res) => {
 
 // Upload invoice to Azure Blob & return URL
 invoicesRouter.post('/:sale_id/upload', async (req, res) => {
-  const sale = await queryOne('SELECT * FROM sales WHERE id = $1', [req.params.sale_id]);
+  const sale = await queryOne('SELECT * FROM sales WHERE id = $1 AND crusher_id = $2', [req.params.sale_id, req.user!.crusher_id]);
   if (!sale) return res.status(404).json({ error: 'Sale not found' });
 
   const items = await query('SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY sort_order', [req.params.sale_id]);

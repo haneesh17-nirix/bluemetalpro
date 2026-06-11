@@ -26,7 +26,7 @@ purchasesRouter.get('/', authorize('admin', 'operations', 'report_viewer'), asyn
   res.json(rows);
 });
 
-purchasesRouter.post('/', async (req, res) => {
+purchasesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const client = await (await import('../config/db')).pool.connect();
   try {
@@ -80,7 +80,7 @@ purchasesRouter.get('/:id', authorize('admin', 'operations', 'report_viewer'), a
   res.json({ ...purchase, items });
 });
 
-purchasesRouter.put('/:id', async (req, res) => {
+purchasesRouter.put('/:id', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { amount_paid, payment_mode, notes } = req.body;
   const existing = await queryOne('SELECT grand_total FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);

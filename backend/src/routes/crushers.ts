@@ -9,7 +9,7 @@ crushersRouter.use(authenticate);
 // List all crushers (admin sees all; regular users see their accessible ones)
 crushersRouter.get('/', async (req, res) => {
   if (req.user!.role === 'admin') {
-    const rows = await query('SELECT * FROM crushers ORDER BY name');
+    const rows = await query('SELECT * FROM crushers WHERE tenant_id = $1 ORDER BY name', [req.user!.tenant_id]);
     return res.json(rows);
   }
   const rows = await query(
@@ -49,11 +49,12 @@ crushersRouter.put('/:id', authorize('admin'), async (req, res) => {
     `UPDATE crushers SET name=$1, legal_name=$2, gstin=$3, pan=$4, address=$5, city=$6, state=$7, state_code=$8,
        pincode=$9, phone=$10, email=$11, bank_name=$12, bank_account=$13, bank_ifsc=$14, bank_branch=$15,
        invoice_prefix=$16, quarry_invoice_prefix=$17, terms_conditions=$18, is_active=$19, updated_at=now()
-     WHERE id=$20 RETURNING *`,
+     WHERE id=$20 AND EXISTS (SELECT 1 FROM user_crusher_access WHERE crusher_id=$20 AND user_id=$21 AND is_active=true) RETURNING *`,
     [name, legal_name, gstin, pan, address, city, state, state_code, pincode, phone, email,
      bank_name, bank_account, bank_ifsc, bank_branch, invoice_prefix, quarry_invoice_prefix,
-     terms_conditions, is_active, req.params.id]
+     terms_conditions, is_active, req.params.id, req.user!.id]
   );
+  if (!crusher) return res.status(403).json({ error: 'Forbidden' });
   logAction('crusher.updated', { crusherId: req.params.id, by: req.user!.email });
   res.json(crusher);
 });

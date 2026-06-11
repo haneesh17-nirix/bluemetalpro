@@ -68,22 +68,25 @@ maintenanceRouter.post('/records', authorize('admin', 'operations'), async (req,
 });
 
 maintenanceRouter.patch('/records/:id', authorize('admin', 'operations'), async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const { status, completed_date, cost, parts_replaced, next_service_date } = req.body;
   const r = await queryOne(
     `UPDATE maintenance_records SET status=$1, completed_date=$2, cost=$3, parts_replaced=$4, next_service_date=$5, updated_at=now()
-     WHERE id=$6 RETURNING *`,
-    [status, completed_date, cost, parts_replaced, next_service_date, req.params.id]
+     WHERE id=$6 AND crusher_id=$7 RETURNING *`,
+    [status, completed_date, cost, parts_replaced, next_service_date, req.params.id, cid]
   );
   logAction('maintenance.record_updated', { recordId: req.params.id, status: req.body.status, by: req.user!.email });
   res.json(r);
 });
 
 maintenanceRouter.get('/upcoming', async (req, res) => {
+  const cid = req.user!.crusher_id!;
   const rows = await query(
     `SELECT mr.*, a.name as asset_name, a.asset_type FROM maintenance_records mr
      JOIN assets a ON a.id = mr.asset_id
-     WHERE mr.status IN ('scheduled', 'in_progress') AND mr.scheduled_date <= CURRENT_DATE + interval '7 days'
-     ORDER BY mr.scheduled_date`
+     WHERE mr.crusher_id = $1 AND mr.status IN ('scheduled', 'in_progress') AND mr.scheduled_date <= CURRENT_DATE + interval '7 days'
+     ORDER BY mr.scheduled_date`,
+    [cid]
   );
   res.json(rows);
 });

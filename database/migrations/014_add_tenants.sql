@@ -25,7 +25,9 @@ CREATE TABLE IF NOT EXISTS tenants (
 );
 
 -- ── 2. Add tenant_id to crushers ─────────────────────────────────────────
-ALTER TABLE crushers ADD COLUMN IF NOT EXISTS tenant_id UUID REFERENCES tenants(id);
+ALTER TABLE crushers ADD COLUMN IF NOT EXISTS tenant_id UUID;
+ALTER TABLE crushers DROP CONSTRAINT IF EXISTS crushers_tenant_id_fkey;
+ALTER TABLE crushers ADD CONSTRAINT crushers_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE RESTRICT;
 
 -- ── 3. Tenant-level user access ───────────────────────────────────────────
 -- A user with an entry here has the given role on EVERY crusher in that tenant.
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS user_tenant_access (
   id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id    UUID        NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
   tenant_id  UUID        NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  role       VARCHAR(50) NOT NULL DEFAULT 'report_viewer',
+  role       user_role   NOT NULL DEFAULT 'report_viewer',
   is_active  BOOLEAN     NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(user_id, tenant_id)
@@ -54,3 +56,7 @@ BEGIN
   END IF;
 END;
 $$;
+
+CREATE INDEX IF NOT EXISTS idx_crushers_tenant_id ON crushers(tenant_id);
+
+ALTER TABLE crushers ALTER COLUMN tenant_id SET NOT NULL;

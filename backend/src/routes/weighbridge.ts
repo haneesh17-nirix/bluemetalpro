@@ -42,7 +42,8 @@ weighbridgeRouter.get('/', async (req, res) => {
     `SELECT w.*, wl.weight_kg, wl.status as live_status, wl.vehicle_number, wl.captured_at
      FROM weighbridges w
      LEFT JOIN weighbridge_live wl ON wl.weighbridge_id = w.id
-     WHERE w.is_active = true ORDER BY w.sort_order`
+     WHERE w.is_active = true AND w.crusher_id = $1 ORDER BY w.sort_order`,
+    [req.user!.crusher_id]
   );
   res.json(rows);
 });
@@ -56,12 +57,14 @@ weighbridgeRouter.get('/tickets', async (req, res) => {
   if (from) { params.push(from); where += ` AND t.created_at >= $${params.length}`; }
   if (to) { params.push(to); where += ` AND t.created_at <= $${params.length}`; }
   if (weighbridge_id) { params.push(weighbridge_id); where += ` AND t.weighbridge_id = $${params.length}`; }
+  params.push(req.user!.crusher_id);
+  where += ` AND w.crusher_id = $${params.length}`;
   params.push(Number(limit), offset);
 
   const rows = await query(
     `SELECT t.*, w.name as weighbridge_name, u.name as operator_name
      FROM weigh_tickets t
-     LEFT JOIN weighbridges w ON w.id = t.weighbridge_id
+     JOIN weighbridges w ON w.id = t.weighbridge_id
      LEFT JOIN users u ON u.id = t.operator_id
      ${where} ORDER BY t.created_at DESC
      LIMIT $${params.length - 1} OFFSET $${params.length}`,
@@ -81,10 +84,15 @@ weighbridgeRouter.post('/tickets', authorize('admin', 'operations'), async (req,
   const net_weight_kg = Math.max(0, Number(gross_weight_kg) - Number(tare_weight_kg || 0));
   const net_weight_mt = +(net_weight_kg / 1000).toFixed(3);
 
+  const wb = await queryOne('SELECT crusher_id FROM weighbridges WHERE id = $1', [weighbridge_id]);
+  const crusherId = (wb as any)?.crusher_id;
+
   // Generate ticket number
   const counterRow = await queryOne(
-    `UPDATE company_config SET weighbridge_ticket_counter = COALESCE(weighbridge_ticket_counter, 0) + 1
-     RETURNING weighbridge_ticket_counter, EXTRACT(YEAR FROM now()) as year, EXTRACT(MONTH FROM now()) as month`
+    `UPDATE crushers SET weighbridge_ticket_counter = COALESCE(weighbridge_ticket_counter, 0) + 1
+     WHERE id = $1
+     RETURNING weighbridge_ticket_counter, EXTRACT(YEAR FROM now()) as year, EXTRACT(MONTH FROM now()) as month`,
+    [crusherId]
   );
   const { weighbridge_ticket_counter, year, month } = counterRow as any;
   const fy = Number(month) >= 4
@@ -122,8 +130,8 @@ weighbridgeRouter.post('/tickets', authorize('admin', 'operations'), async (req,
 // Link ticket to sale
 weighbridgeRouter.patch('/tickets/:id/link-sale', authorize('admin', 'operations'), async (req, res) => {
   const ticket = await queryOne(
-    'UPDATE weigh_tickets SET sale_id = $1, updated_at = now() WHERE id = $2 RETURNING *',
-    [req.body.sale_id, req.params.id]
+    `UPDATE weigh_tickets wt SET sale_id = $1, updated_at = now() FROM weighbridges wb WHERE wt.id = $2 AND wt.weighbridge_id = wb.id AND wb.crusher_id = $3 RETURNING wt.*`,
+    [req.body.sale_id, req.params.id, req.user!.crusher_id]
   );
   res.json(ticket);
 });

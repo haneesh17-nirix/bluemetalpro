@@ -89,7 +89,7 @@ export default function CrushersPage() {
               <table style={{ width: '100%' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--surface-border, rgba(255,255,255,0.1))' }}>
-                    {['Name', 'Legal Name', 'GSTIN', 'Location', 'Status', 'Actions'].map(h => (
+                    {['Name', 'Legal Name', 'GSTIN', 'Location', 'Status', 'Users'].map(h => (
                       <th key={h} className="text-left text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ padding: '12px 16px' }}>{h}</th>
                     ))}
                   </tr>

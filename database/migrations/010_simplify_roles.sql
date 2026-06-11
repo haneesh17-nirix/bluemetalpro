@@ -10,10 +10,10 @@ END $$;
 
 -- Migrate existing rows: all old granular roles → operations
 UPDATE users SET role = 'operations'
-WHERE role IN ('sales_operator','quarry_operator','vehicle_manager','accounts');
+WHERE role::text IN ('sales_operator','quarry_operator','vehicle_manager','accounts');
 
 UPDATE user_crusher_access SET role = 'operations'
-WHERE role IN ('sales_operator','quarry_operator','vehicle_manager','accounts');
+WHERE role::text IN ('sales_operator','quarry_operator','vehicle_manager','accounts');
 
 -- Reset test account passwords to Test@1234
 -- Hash: $2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy

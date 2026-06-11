@@ -5,6 +5,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface Notification {
   id: string; title: string; body: string; type: string;
@@ -30,13 +31,20 @@ interface TopBarProps {
 }
 
 export default function TopBar({ title, subtitle, actions }: TopBarProps) {
+  const qc = useQueryClient();
   const [notifOpen, setNotifOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
-  const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+
+  const { data: unreadData } = useQuery({
+    queryKey: ['notifications-unread-count'],
+    queryFn: () => api.get('/notifications/unread-count').then((r: { data: { count: number } }) => r.data.count),
+    initialData: 0,
+  });
+  const unread: number = unreadData ?? 0;
 
   // Load user info
   const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
@@ -48,14 +56,13 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const tenantName = tenantStr ? (() => { try { return JSON.parse(tenantStr)?.name; } catch { return null; } })() : null;
 
   const logout = () => {
-    ['token', 'user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
+    ['token', 'temp_token', 'user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/login';
   };
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (!token) return;
-    api.get('/notifications/unread-count').then((r: { data: { count: number } }) => setUnread(r.data.count)).catch(() => {});
     let aborted = false;
     const controller = new AbortController();
     const connect = async () => {
@@ -75,7 +82,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
               try {
                 const data = JSON.parse(line.slice(6));
                 if (data.notifications?.length) {
-                  setUnread(u => u + data.notifications.length);
+                  qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
                   toast(data.notifications[0].title, {
                     icon: '🔔',
                     style: { background: '#121e30', color: '#e8edf5', border: '1px solid rgba(26,53,112,0.55)' },
@@ -92,7 +99,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
     };
     connect();
     return () => { aborted = true; controller.abort(); };
-  }, []);
+  }, [qc]);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -117,14 +124,14 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
 
   const markAllRead = async () => {
     await api.post('/notifications/mark-all-read');
-    setUnread(0);
+    qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
     setItems(items.map(i => ({ ...i, is_read: true })));
   };
 
   const markRead = async (id: string) => {
     await api.patch(`/notifications/${id}/read`);
     setItems(items.map(i => i.id === id ? { ...i, is_read: true } : i));
-    setUnread(u => Math.max(0, u - 1));
+    qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
   };
 
   return (

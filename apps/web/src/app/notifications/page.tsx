@@ -47,20 +47,24 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<string>('all');
 
   const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ['notifications-full'],
+    queryKey: ['notifications', 100],
     queryFn: () => getNotifications(100),
   });
 
   const readMutation = useMutation({
     mutationFn: (id: string) => markNotificationRead(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications-full'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['notifications', 100] });
+      qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
   });
 
   const readAllMutation = useMutation({
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
       toast.success('All notifications marked as read');
-      qc.invalidateQueries({ queryKey: ['notifications-full'] });
+      qc.invalidateQueries({ queryKey: ['notifications', 100] });
+      qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
     },
   });
 

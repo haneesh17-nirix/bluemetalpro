@@ -22,9 +22,9 @@ const nav = [
   { href: '/cameras',     label: 'Live Cameras',  icon: Camera,          roles: ALL,    admin: false },
   { href: '/maintenance', label: 'Maintenance',   icon: Wrench,          roles: ALL,    admin: false },
   { href: '/wages',       label: 'Wages',         icon: FileText,        roles: ALL,    admin: false },
-  { href: '/users',       label: 'Users',         icon: Users,           roles: ALL,    admin: true },
+  { href: '/users',       label: 'Users',         icon: Users,           roles: ['admin'],    admin: true },
   { href: '/crushers',    label: 'Crushers',      icon: Factory,         roles: ['admin'],      admin: true },
-  { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ALL,    admin: true },
+  { href: '/settings',    label: 'Settings',      icon: Settings,        roles: ['admin'],    admin: true },
 ];
 
 function NavItem({ item, pathname }: { item: typeof nav[0]; pathname: string }) {

@@ -1,4 +1,6 @@
 'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
@@ -11,6 +13,16 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ title, subtitle, actions, children, noPadding }: AppLayoutProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    const user = userStr ? JSON.parse(userStr) : null;
+    if (user?.role === 'platform_admin') {
+      router.replace('/platform');
+    }
+  }, [router]);
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%', overflow: 'hidden' }}>
       <Sidebar />

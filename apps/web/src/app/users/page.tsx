@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -33,6 +34,17 @@ const emptyForm = { name: '', email: '', phone: '', role: 'operations' as UserRo
 
 export default function UsersPage() {
   useEffect(() => { log.page('Users'); }, []);
+  const router = useRouter();
+  const currentUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : {};
+  const isAdmin = currentUser?.role === 'admin';
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !isAdmin) {
+      router.replace('/dashboard');
+    }
+  }, [isAdmin, router]);
+
+  if (!isAdmin) return null;
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editUser, setEditUser] = useState<any>(null);
@@ -58,7 +70,7 @@ export default function UsersPage() {
 
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
-      api.put(`/users/${id}`, { is_active }).then(r => r.data),
+      api.patch(`/users/${id}`, { is_active }).then(r => r.data),
     onSuccess: () => { toast.success('User updated'); qc.invalidateQueries({ queryKey: ['users'] }); },
   });
 
@@ -77,14 +89,14 @@ export default function UsersPage() {
 
   const roleGroups = Object.entries(roleConfig) as [UserRole, typeof roleConfig[UserRole]][];
 
-  const pageActions = (
+  const pageActions = isAdmin ? (
     <button
       onClick={() => { setEditUser(null); setForm(emptyForm); setShowForm(true); }}
       className="btn-primary text-sm" style={{ display: 'flex', alignItems: 'center', gap: 8 }}
     >
       <Plus size={16} /> Add User
     </button>
-  );
+  ) : null;
 
   const activeCount = (users as any[]).filter((u: any) => u.is_active).length;
   const adminCount = (users as any[]).filter((u: any) => u.role === 'admin').length;
@@ -126,23 +138,31 @@ export default function UsersPage() {
                       </span>
                     </td>
                     <td>
-                      <button
-                        onClick={() => toggleActiveMutation.mutate({ id: u.id, is_active: !u.is_active })}
-                        className={`text-xs font-medium transition-colors ${u.is_active ? 'badge-gem' : 'badge-red'}`}
-                        style={{ padding: '2px 8px', borderRadius: 9999 }}
-                      >
-                        {u.is_active ? 'Active' : 'Inactive'}
-                      </button>
+                      {isAdmin ? (
+                        <button
+                          onClick={() => toggleActiveMutation.mutate({ id: u.id, is_active: !u.is_active })}
+                          className={`text-xs font-medium transition-colors ${u.is_active ? 'badge-gem' : 'badge-red'}`}
+                          style={{ padding: '2px 8px', borderRadius: 9999 }}
+                        >
+                          {u.is_active ? 'Active' : 'Inactive'}
+                        </button>
+                      ) : (
+                        <span className={`text-xs font-medium ${u.is_active ? 'badge-gem' : 'badge-red'}`} style={{ padding: '2px 8px', borderRadius: 9999 }}>
+                          {u.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                      )}
                     </td>
                     <td className="text-white/40 text-xs">
                       {new Date(u.created_at).toLocaleDateString('en-IN')}
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 12 }}>
-                        <button onClick={() => openEdit(u)} className="text-xs text-[#c9a84c] hover:underline font-medium">Edit</button>
-                        <button onClick={() => setResetModal({ user: u, password: '' })} className="text-xs text-white/50 hover:text-white hover:underline font-medium">Reset pwd</button>
-                      </div>
-                    </td>
+                    {isAdmin && (
+                      <td>
+                        <div style={{ display: 'flex', gap: 12 }}>
+                          <button onClick={() => openEdit(u)} className="text-xs text-[#c9a84c] hover:underline font-medium">Edit</button>
+                          <button onClick={() => setResetModal({ user: u, password: '' })} className="text-xs text-white/50 hover:text-white hover:underline font-medium">Reset pwd</button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -177,7 +197,7 @@ export default function UsersPage() {
       </div>
 
       {/* Add/Edit User modal */}
-      {showForm && (
+      {isAdmin && showForm && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
           <div className="card-gold" style={{ width: '100%', maxWidth: 512, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -241,7 +261,7 @@ export default function UsersPage() {
       )}
 
       {/* Reset password modal */}
-      {resetModal && (
+      {isAdmin && resetModal && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: 16 }}>
           <div className="card-gold" style={{ width: '100%', maxWidth: 384, padding: 24 }}>
             <h2 className="text-lg font-bold text-white" style={{ marginBottom: 4 }}>Reset Password</h2>

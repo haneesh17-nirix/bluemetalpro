@@ -8,6 +8,11 @@ import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, Shield, TrendingUp, Cpu, Globe } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
+function setAuthToken(token: string) {
+  sessionStorage.setItem('token', token);
+  document.cookie = `token=${token}; path=/; SameSite=Lax`;
+}
+
 const features = [
   { icon: Shield,     label: 'Secure & Compliant',  sub: 'GST-ready, role-based access' },
   { icon: TrendingUp, label: 'Live Analytics',       sub: 'Real-time dashboards & KPIs' },
@@ -34,7 +39,7 @@ export default function LoginPage() {
       const data = await login(form.email, form.password);
 
       if (data.platform_admin && data.token) {
-        localStorage.setItem('token', data.token);
+        setAuthToken(data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         log.action('Platform admin login', {});
         router.push('/platform');
@@ -43,7 +48,7 @@ export default function LoginPage() {
 
       if (!data.temp_token) throw new Error('Unexpected login response');
 
-      localStorage.setItem('token', data.temp_token);
+      sessionStorage.setItem('temp_token', data.temp_token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
       const tenants: any[] = data.tenants ?? [];
@@ -57,16 +62,15 @@ export default function LoginPage() {
 
       // Single tenant — auto-select it
       const tenantData = await selectTenant(tenants[0].id);
-      localStorage.setItem('token', tenantData.temp_token);
+      sessionStorage.setItem('temp_token', tenantData.temp_token);
       setTenant(tenantData.tenant);
 
-      const crushers: any[] = (tenantData.crushers ?? []).filter(
-        (c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i
-      );
+      const crushers: any[] = tenantData.crushers ?? [];
 
       if (crushers.length === 1) {
         const sel = await selectCrusher(crushers[0].id);
-        localStorage.setItem('token', sel.token);
+        sessionStorage.removeItem('temp_token');
+        setAuthToken(sel.token);
         localStorage.setItem('user', JSON.stringify(sel.user));
         setCrusher(sel.crusher);
         log.action('Login successful', { role: sel.user?.role });

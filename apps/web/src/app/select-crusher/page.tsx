@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { selectCrusher } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { log } from '@bluemetal/shared';
+import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
 
@@ -25,13 +26,17 @@ export default function SelectCrusherPage() {
     setSelecting(c.id);
     try {
       const data = await selectCrusher(c.id);
+      localStorage.removeItem('temp_token');
       localStorage.setItem('token', data.token);
+      document.cookie = `token=${data.token}; path=/; SameSite=Lax`;
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.removeItem('crushers_list');
       setCrusher(data.crusher);
       log.action('Crusher selected', { name: c.name });
       router.push('/dashboard');
     } catch (err) {
+      log.error('Crusher selection failed', err);
+      toast.error('Failed to select plant. Please try again.');
       setSelecting(null);
     }
   };

@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { log } from '@bluemetal/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { getSales, createSale, getParties, getProducts, getVehicles, downloadInvoice } from '@/lib/api';
+import { getSales, createSale, cancelSale, getParties, getProducts, getVehicles, downloadInvoice } from '@/lib/api';
 import api from '@/lib/api';
 import AppLayout from '@/components/layout/AppLayout';
 import {
@@ -87,10 +87,11 @@ export default function SalesPage() {
   });
 
   const cancelMutation = useMutation({
-    mutationFn: (id: string) => api.patch(`/sales/${id}/cancel`).then(r => r.data),
+    mutationFn: cancelSale,
     onSuccess: () => {
       toast.success('Sale cancelled');
       qc.invalidateQueries({ queryKey: ['sales'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
       setCancelId(null);
     },
     onError: () => toast.error('Failed to cancel sale'),
@@ -126,6 +127,7 @@ export default function SalesPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!items.length || !items[0].product_id) return toast.error('Add at least one item');
+    if (items.some(item => item.quantity <= 0 || item.rate <= 0)) return toast.error('All items must have quantity and rate greater than 0');
     createMutation.mutate({ ...form, items });
   };
 

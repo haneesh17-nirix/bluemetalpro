@@ -6,6 +6,7 @@ import { useCrusher } from '@/contexts/CrusherContext';
 import { log } from '@bluemetal/shared';
 import { Loader2, Building2 } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
+import toast from 'react-hot-toast';
 
 export default function SelectTenantPage() {
   const router = useRouter();
@@ -25,25 +26,28 @@ export default function SelectTenantPage() {
     setSelecting(t.id);
     try {
       const data = await selectTenant(t.id);
-      localStorage.setItem('token', data.temp_token);
+      localStorage.setItem('temp_token', data.temp_token);
       setTenant(data.tenant);
       localStorage.removeItem('tenants_list');
 
       const crushers: any[] = data.crushers ?? [];
-      const unique = crushers.filter((c: any, i: number, a: any[]) => a.findIndex((x: any) => x.id === c.id) === i);
 
-      if (unique.length === 1) {
-        const sel = await selectCrusher(unique[0].id);
+      if (crushers.length === 1) {
+        const sel = await selectCrusher(crushers[0].id);
+        localStorage.removeItem('temp_token');
         localStorage.setItem('token', sel.token);
+        document.cookie = `token=${sel.token}; path=/; SameSite=Lax`;
         localStorage.setItem('user', JSON.stringify(sel.user));
         setCrusher(sel.crusher);
-        log.action('Auto-selected single crusher', { name: unique[0].name });
+        log.action('Auto-selected single crusher', { name: crushers[0].name });
         router.push('/dashboard');
       } else {
-        localStorage.setItem('crushers_list', JSON.stringify(unique));
+        localStorage.setItem('crushers_list', JSON.stringify(crushers));
         router.push('/select-crusher');
       }
-    } catch {
+    } catch (err: any) {
+      log.error('Select tenant failed', { message: err?.message });
+      toast.error(err?.response?.data?.error || 'Failed to select company. Please try again.');
       setSelecting(null);
     }
   };

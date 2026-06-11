@@ -18,7 +18,7 @@ ledgerRouter.post('/receipt', authorize('admin', 'operations'), async (req, res)
   );
   // Update balance_due on sale if reference provided
   if (reference_id) {
-    await query('UPDATE sales SET amount_received = amount_received + $1, balance_due = balance_due - $1 WHERE id = $2', [amount, reference_id]);
+    await query('UPDATE sales SET amount_received = amount_received + $1, balance_due = balance_due - $1 WHERE id = $2 AND crusher_id = $3', [amount, reference_id, cid]);
   }
   logAction('ledger.receipt_recorded', { party_id, amount, payment_mode, reference_id, by: req.user!.email });
   const partyRow = party_id ? await queryOne('SELECT name FROM parties WHERE id = $1', [party_id]) : null;
@@ -34,9 +34,13 @@ ledgerRouter.post('/receipt', authorize('admin', 'operations'), async (req, res)
 ledgerRouter.get('/party/:party_id', async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to } = req.query;
+  const fromDate = (from as string) || new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const toDate = (to as string) || new Date().toISOString().slice(0, 10);
+  const limit = Math.min(parseInt((req.query.limit as string) || '100', 10), 500);
+  const offset = parseInt((req.query.offset as string) || '0', 10);
   const rows = await query(
-    `SELECT * FROM ledger_transactions WHERE party_id = $1 AND txn_date BETWEEN $2 AND $3 AND crusher_id = $4 ORDER BY txn_date`,
-    [req.params.party_id, from || 'now()-interval 90 days', to || 'now()', cid]
+    'SELECT * FROM ledger_transactions WHERE party_id = $1 AND txn_date BETWEEN $2 AND $3 AND crusher_id = $4 ORDER BY txn_date LIMIT $5 OFFSET $6',
+    [req.params.party_id, fromDate, toDate, cid, limit, offset]
   );
   res.json(rows);
 });

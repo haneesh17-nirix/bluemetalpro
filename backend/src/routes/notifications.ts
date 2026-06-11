@@ -52,7 +52,7 @@ notificationsRouter.get('/stream', (req, res) => {
 });
 
 notificationsRouter.patch('/:id/read', async (req, res) => {
-  await query('UPDATE notifications SET is_read = true WHERE id = $1', [req.params.id]);
+  await query('UPDATE notifications SET is_read = true WHERE id = $1 AND user_id = $2 AND crusher_id = $3', [req.params.id, req.user!.id, req.user!.crusher_id]);
   res.json({ ok: true });
 });
 

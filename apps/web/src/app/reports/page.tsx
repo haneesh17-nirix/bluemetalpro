@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import AppLayout from '@/components/layout/AppLayout';
 import TabBar from '@/components/ui/TabBar';
+import { useCrusher } from '@/contexts/CrusherContext';
 import dayjs from 'dayjs';
 
 type ReportTab = 'item-wise' | 'party-wise' | 'gst' | 'trend' | 'pl';
@@ -45,6 +46,7 @@ function CostBar({ label, amount, pct, color }: { label: string; amount: number;
 
 export default function ReportsPage() {
   useEffect(() => { log.page('Reports'); }, []);
+  const { crusher } = useCrusher();
   const [tab, setTab] = useState<ReportTab>('item-wise');
 
   // Default range: current financial year (Apr 1 → today)
@@ -57,7 +59,7 @@ export default function ReportsPage() {
   const { data: itemWise = [] } = useQuery({ queryKey: ['report-item', range], queryFn: () => getItemWiseReport(range), enabled: tab === 'item-wise' });
   const { data: partyWise = [] } = useQuery({ queryKey: ['report-party', range], queryFn: () => getPartyWiseReport(range), enabled: tab === 'party-wise' });
   const { data: gst = [] } = useQuery({ queryKey: ['report-gst', range], queryFn: () => getGstSummary(range), enabled: tab === 'gst' });
-  const { data: trend = [] } = useQuery({ queryKey: ['report-trend'], queryFn: getMonthlyTrend, enabled: tab === 'trend' });
+  const { data: trend = [] } = useQuery({ queryKey: ['report-trend', crusher?.id], queryFn: getMonthlyTrend, enabled: tab === 'trend' && !!crusher?.id });
   const { data: pl, isLoading: plLoading } = useQuery({ queryKey: ['report-pl', plRange], queryFn: () => getPlReport(plRange), enabled: tab === 'pl' });
 
   const tabs: { key: ReportTab; label: string }[] = [
@@ -237,6 +239,12 @@ export default function ReportsPage() {
                 <div className="card" style={{ padding: 40, textAlign: 'center', color: 'rgba(200,212,232,0.4)' }}>
                   Loading P&L data…
                 </div>
+              )}
+
+              {!plLoading && !s && (
+                <p style={{ textAlign: 'center', color: 'rgba(200,212,232,0.4)', padding: 40 }}>
+                  No P&L data for selected period
+                </p>
               )}
 
               {s && (

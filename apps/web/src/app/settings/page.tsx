@@ -68,7 +68,9 @@ export default function SettingsPage() {
     </div>
   );
 
-  const saveAction = (
+  const isAdmin = myProfile?.role === 'admin' || myProfile?.role === 'platform_admin';
+
+  const saveAction = isAdmin ? (
     <button
       onClick={() => mutation.mutate(form)}
       disabled={mutation.isPending}
@@ -76,13 +78,13 @@ export default function SettingsPage() {
     >
       <Save size={16} /> {mutation.isPending ? 'Saving…' : 'Save Settings'}
     </button>
-  );
+  ) : undefined;
 
   return (
     <AppLayout title="Settings" subtitle="Company configuration and preferences" actions={saveAction}>
-      <form onSubmit={e => { e.preventDefault(); mutation.mutate(form); }} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <form onSubmit={e => { e.preventDefault(); if (isAdmin) mutation.mutate(form); }} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-        {/* Company Info */}
+        {isAdmin && <>
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ width: 36, height: 36, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.25)' }}>
@@ -157,6 +159,7 @@ export default function SettingsPage() {
             />
           </div>
         </div>
+        </>}
 
         {/* Notification Preferences */}
         <div className="card" style={{ padding: 24 }}>

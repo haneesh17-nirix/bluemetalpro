@@ -1,8 +1,32 @@
 import axios from 'axios';
 import { log } from '@bluemetal/shared';
+import { jwtDecode } from 'jwt-decode';
+import Router from 'next/router';
+
+let isRedirecting = false;
+
+const SESSION_WARNING_MS = 5 * 60 * 1000;
+let _sessionWarningTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleSessionWarning(token: string) {
+  if (_sessionWarningTimer) clearTimeout(_sessionWarningTimer);
+  try {
+    const { exp } = jwtDecode<{ exp: number }>(token);
+    if (!exp) return;
+    const msUntilWarn = exp * 1000 - Date.now() - SESSION_WARNING_MS;
+    if (msUntilWarn > 0) {
+      _sessionWarningTimer = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('session-expiring-soon'));
+        }
+      }, msUntilWarn);
+    }
+  } catch {}
+}
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
@@ -11,17 +35,60 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let _refreshPromise: Promise<void> | null = null;
+
 api.interceptors.response.use(
   (r) => { log.debug("API " + (r.config.method || '').toUpperCase() + " " + r.config.url + " -> " + r.status); return r; },
-  (err) => {
-    if (err.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+  async (err) => {
+    const originalRequest = err.config;
+    if (
+      err.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      !originalRequest._retried &&
+      !originalRequest.url?.includes('/auth/refresh')
+    ) {
+      originalRequest._retried = true;
+      try {
+        if (!_refreshPromise) {
+          _refreshPromise = axios
+            .post(
+              (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api') + '/auth/refresh',
+              {},
+              { withCredentials: true }
+            )
+            .then((res) => {
+              const newToken = res.data?.token;
+              if (newToken) {
+                localStorage.setItem('token', newToken);
+                document.cookie = `token=${newToken}; path=/; SameSite=Lax`;
+                scheduleSessionWarning(newToken);
+              }
+            })
+            .finally(() => { _refreshPromise = null; });
+        }
+        await _refreshPromise;
+        const newToken = localStorage.getItem('token');
+        if (newToken) originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch {
+        if (!isRedirecting) {
+          isRedirecting = true;
+          localStorage.removeItem('token');
+          localStorage.removeItem('temp_token');
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          Router.push('/login').finally(() => { isRedirecting = false; });
+        }
+      }
     }
     log.error("API " + (err.config?.method || '').toUpperCase() + " " + (err.config?.url || '') + " failed", { status: err.response?.status });
     return Promise.reject(err);
   }
 );
+
+if (typeof window !== 'undefined') {
+  const token = localStorage.getItem('token');
+  if (token) scheduleSessionWarning(token);
+}
 
 export default api;
 

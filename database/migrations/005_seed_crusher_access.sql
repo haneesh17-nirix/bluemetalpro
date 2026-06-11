@@ -5,10 +5,16 @@
 -- created after 004_crushers.sql already ran.
 -- ============================================================
 
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'operations';
+
 -- Grant all users access to all crushers they don't have yet.
 -- Role defaults to the user's global role.
 INSERT INTO user_crusher_access (user_id, crusher_id, role)
-SELECT u.id, c.id, u.role
+SELECT u.id, c.id,
+       CASE WHEN u.role IN ('sales_operator','quarry_operator','vehicle_manager','accounts')
+            THEN 'operations'::user_role
+            ELSE u.role
+       END
 FROM users u
 CROSS JOIN crushers c
 WHERE c.is_active = true AND u.is_active = true

@@ -23,6 +23,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
       log.action('Receipt recorded', { amount: data?.amount, mode: data?.payment_mode });
       toast.success('Receipt recorded');
       qc.invalidateQueries({ queryKey: ['ledger-balances'] });
+      qc.invalidateQueries({ queryKey: ['party-ledger'] });
       onClose();
     },
     onError: () => toast.error('Failed to record receipt'),
@@ -35,7 +36,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-xl font-bold text-white">Record Receipt</h2>
           <button onClick={onClose} className="btn-ghost" style={{ padding: 8 }}><X size={18} /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={e => { e.preventDefault(); if (Number(form.amount) <= 0) { toast.error('Amount must be greater than zero'); return; } mutation.mutate(); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label className="label">Party (Customer) *</label>
             <select required value={form.party_id} onChange={e => setForm(f => ({ ...f, party_id: e.target.value }))} className="select">
@@ -50,7 +51,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <label className="label">Amount (₹) *</label>
-              <input required type="number" min="0" step="0.01" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="input" placeholder="0.00" />
+              <input required type="number" min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="input" placeholder="0.00" />
             </div>
           </div>
           <div>
