@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.2] — 2026-06-11
+
+
+### Bug Fixes
+
+- `cors` add credentials:true so browser allows withCredentials requests ([58523a4])
+
 ## [1.25.1] — 2026-06-11
 
 
