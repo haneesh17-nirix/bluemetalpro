@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.0] — 2026-06-11
+
+
+### Features
+
+- `logging` add descriptive structured logging to all 19 backend routes ([48b1153])
+
 ## [1.23.7] — 2026-06-11
 
 
