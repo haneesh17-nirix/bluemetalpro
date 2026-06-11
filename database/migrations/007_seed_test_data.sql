@@ -13,6 +13,7 @@ DECLARE
   -- Crusher IDs
   c1 UUID;
   c2 UUID;
+  t_default UUID;
 
   -- User IDs (pulled from test accounts)
   u_admin      UUID;
@@ -38,6 +39,11 @@ DECLARE
 
 BEGIN
 
+  -- ── Ensure Default Company tenant exists (idempotent) ────────
+  INSERT INTO tenants (name, is_active) VALUES ('Default Company', true)
+  ON CONFLICT DO NOTHING;
+  SELECT id INTO t_default FROM tenants WHERE name = 'Default Company' LIMIT 1;
+
   -- ── Fetch test user IDs ─────────────────────────────────────
   SELECT id INTO u_admin   FROM users WHERE email = 'admin@bluemetal.local'    LIMIT 1;
   SELECT id INTO u_sales   FROM users WHERE email = 'sales@bluemetal.local'    LIMIT 1;
@@ -47,14 +53,14 @@ BEGIN
   INSERT INTO crushers (
     name, legal_name, gstin, pan, address, city, state, state_code, pincode,
     phone, email, bank_name, bank_account, bank_ifsc, bank_branch,
-    invoice_prefix, quarry_invoice_prefix, is_active
+    invoice_prefix, quarry_invoice_prefix, is_active, tenant_id
   ) VALUES (
     'BlueMetal Quarry Unit 1', 'BlueMetal Industries Pvt Ltd',
     '33AABCB1234A1Z5', 'AABCB1234A',
     '45, Krishnagiri Main Road, Hosur Industrial Area', 'Hosur', 'Tamil Nadu', '33', '635109',
     '9876543210', 'unit1@bluemetal.in',
     'State Bank of India', '32145678901', 'SBIN0005612', 'Hosur Branch',
-    'HU1', 'QU1', true
+    'HU1', 'QU1', true, t_default
   )
   ON CONFLICT DO NOTHING;
   SELECT id INTO c1 FROM crushers WHERE name = 'BlueMetal Quarry Unit 1' LIMIT 1;
@@ -63,14 +69,14 @@ BEGIN
   INSERT INTO crushers (
     name, legal_name, gstin, pan, address, city, state, state_code, pincode,
     phone, email, bank_name, bank_account, bank_ifsc, bank_branch,
-    invoice_prefix, quarry_invoice_prefix, is_active
+    invoice_prefix, quarry_invoice_prefix, is_active, tenant_id
   ) VALUES (
     'BlueMetal Quarry Unit 2', 'BlueMetal Industries Pvt Ltd',
     '33AABCB1234A2Z4', 'AABCB1234A',
     '12, Salem Bypass Road, Edappadi', 'Salem', 'Tamil Nadu', '33', '637102',
     '9876543211', 'unit2@bluemetal.in',
     'Indian Bank', '61234567890', 'IDIB000S512', 'Salem Branch',
-    'SU2', 'QU2', true
+    'SU2', 'QU2', true, t_default
   )
   ON CONFLICT DO NOTHING;
   SELECT id INTO c2 FROM crushers WHERE name = 'BlueMetal Quarry Unit 2' LIMIT 1;
