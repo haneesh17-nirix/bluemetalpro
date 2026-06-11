@@ -10,8 +10,8 @@ reportsRouter.use(authorize('admin', 'report_viewer', 'operations'));
 
 // Item-wise sales report
 reportsRouter.get('/item-wise', async (req, res) => {
-  try {
     const cid = req.user!.crusher_id!;
+  try {
     const { from, to } = req.query;
     const rows = await query(`
       SELECT
@@ -43,8 +43,8 @@ reportsRouter.get('/item-wise', async (req, res) => {
 
 // Party-wise sales report
 reportsRouter.get('/party-wise', async (req, res) => {
-  try {
     const cid = req.user!.crusher_id!;
+  try {
     const { from, to, type = 'customer' } = req.query;
     const rows = await query(`
       SELECT
@@ -70,11 +70,11 @@ reportsRouter.get('/party-wise', async (req, res) => {
 
 // Vehicle-wise report
 reportsRouter.get('/vehicle-wise', async (req, res) => {
+  const cid = req.user!.crusher_id!;
+  const { from, to } = req.query;
+  const f = (from as string) || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
+  const t = (to as string) || new Date().toISOString().split('T')[0];
   try {
-    const cid = req.user!.crusher_id!;
-    const { from, to } = req.query;
-    const f = (from as string) || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
-    const t = (to as string) || new Date().toISOString().split('T')[0];
     const rows = await query(`
       SELECT
         COALESCE(v.registration_number, s.vehicle_number) AS vehicle_number,
@@ -99,11 +99,11 @@ reportsRouter.get('/vehicle-wise', async (req, res) => {
 
 // GST summary (GSTR-1 style)
 reportsRouter.get('/gst-summary', async (req, res) => {
+  const cid = req.user!.crusher_id!;
+  const { from, to } = req.query;
+  const f = (from as string) || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
+  const t = (to as string) || new Date().toISOString().split('T')[0];
   try {
-    const cid = req.user!.crusher_id!;
-    const { from, to } = req.query;
-    const f = (from as string) || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
-    const t = (to as string) || new Date().toISOString().split('T')[0];
     const rows = await query(`
       SELECT
         DATE_TRUNC('month', sale_date) AS month,
@@ -130,8 +130,8 @@ reportsRouter.get('/gst-summary', async (req, res) => {
 
 // Monthly trend
 reportsRouter.get('/monthly-trend', async (req, res) => {
-  try {
     const cid = req.user!.crusher_id!;
+  try {
     const rows = await query(`
       SELECT
         TO_CHAR(DATE_TRUNC('month', sale_date), 'Mon YYYY') AS month,
@@ -153,8 +153,8 @@ reportsRouter.get('/monthly-trend', async (req, res) => {
 
 // Ledger report for a party
 reportsRouter.get('/ledger/:party_id', async (req, res) => {
-  try {
     const cid = req.user!.crusher_id!;
+  try {
     const { from, to } = req.query;
     const transactions = await query(`
       SELECT 'sale' as type, invoice_number as ref, sale_date as date,
@@ -176,11 +176,11 @@ reportsRouter.get('/ledger/:party_id', async (req, res) => {
 
 // P&L / Opex report — monthly breakdown of revenue vs costs
 reportsRouter.get('/pl', async (req, res) => {
+  const cid = req.user!.crusher_id!;
+  const { from, to } = req.query;
+  const f = from || `${new Date().getFullYear()}-04-01`;
+  const t = to   || new Date().toISOString().split('T')[0];
   try {
-    const cid = req.user!.crusher_id!;
-    const { from, to } = req.query;
-    const f = from || `${new Date().getFullYear()}-04-01`;   // default: financial year start
-    const t = to   || new Date().toISOString().split('T')[0];
 
     logger.info({ crusher_id: cid, from: f, to: t, user: req.user!.email }, 'reports.pl fetch started');
     const [revenue, quarryRevenue, purchases, wages, maintenance, opex, monthly] = await Promise.all([
@@ -390,8 +390,8 @@ reportsRouter.get('/pl', async (req, res) => {
 
 // Dashboard KPIs
 reportsRouter.get('/dashboard', async (req, res) => {
-  try {
     const cid = req.user!.crusher_id!;
+  try {
     logger.info({ crusher_id: cid, user: req.user!.email }, 'reports.dashboard fetch started');
     const [sales, purchases, pending, topProducts, monthSales, monthPurchases, recentSales, yesterdaySales] = await Promise.all([
       // Today

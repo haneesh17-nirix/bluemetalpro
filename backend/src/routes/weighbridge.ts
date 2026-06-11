@@ -3,8 +3,7 @@ import { query, queryOne } from '../config/db';
 import { authenticate, authorize } from '../middleware/auth';
 import type { EdgeWeightPayload } from '../../../packages/shared/src/types/weighbridge';
 import { fanOut } from '../services/notifyService';
-import { logger } from '../config/logger';
-import { logAction } from '../services/auditService';
+import { logger, logAction } from '../utils/logger';
 
 export const weighbridgeRouter = Router();
 
