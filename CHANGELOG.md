@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.4] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` replace non-hex UUID prefixes in migration 019 seed data ([9bb582e])
+
 ## [1.26.3] — 2026-06-11
 
 
