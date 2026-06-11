@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.1] — 2026-06-11
+
+
+### Bug Fixes
+
+- `ci` resolve backend migration and frontend TypeScript build failures ([ffdebf1])
+
 ## [1.23.0] — 2026-06-11
 
 
