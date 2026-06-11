@@ -115,7 +115,7 @@ authRouter.post('/select-tenant', authenticate, async (req, res) => {
     const crushers = await query(
       `SELECT DISTINCT ON (c.id)
          c.id, c.name, c.legal_name, c.city, c.state, c.gstin, c.logo_url,
-         COALESCE(uca.role, uta.role) AS role
+         COALESCE(uca.role::text, uta.role) AS role
        FROM crushers c
        LEFT JOIN user_crusher_access uca
          ON uca.crusher_id = c.id AND uca.user_id = $1 AND uca.is_active = true
@@ -156,7 +156,7 @@ authRouter.post('/select-crusher', authenticate, async (req, res) => {
     if (!crusher_id) return res.status(400).json({ error: 'crusher_id required' });
 
     const access = await queryOne(
-      `SELECT COALESCE(uca.role, uta.role) AS role,
+      `SELECT COALESCE(uca.role::text, uta.role) AS role,
               c.id, c.name, c.legal_name, c.gstin, c.pan,
               c.address, c.city, c.state, c.state_code, c.pincode, c.phone, c.email,
               c.logo_url, c.bank_name, c.bank_account, c.bank_ifsc, c.bank_branch,
