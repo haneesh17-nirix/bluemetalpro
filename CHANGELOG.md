@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.8] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` remove invalid notification_type cast in migration 019 ([78a4101])
+
 ## [1.26.7] — 2026-06-11
 
 
