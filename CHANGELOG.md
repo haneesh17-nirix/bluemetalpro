@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.2] — 2026-06-11
+
+
+### Bug Fixes
+
+- `deps` regenerate package-lock.json after adding jwt-decode to apps/web ([f870f81])
+
 ## [1.23.1] — 2026-06-11
 
 
