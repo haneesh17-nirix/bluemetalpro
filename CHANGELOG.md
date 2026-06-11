@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.1] — 2026-06-11
+
+
+### Bug Fixes
+
+- `auth` correct password hash for reports@bluemetal.local test account ([41c9835])
+
 ## [1.24.0] — 2026-06-11
 
 
