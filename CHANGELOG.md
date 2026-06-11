@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.0] — 2026-06-11
+
+
+### Features
+
+- `ui` restyle crusher card with logo green + explicit Switch Plant button ([6388540])
+
 ## [1.27.0] — 2026-06-11
 
 
