@@ -3,11 +3,10 @@ import { useState, useEffect } from 'react';
 import { log } from '@bluemetal/shared';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { login, selectCrusher } from '@/lib/api';
+import { login, selectCrusher, selectTenant } from '@/lib/api';
 import { useCrusher } from '@/contexts/CrusherContext';
 import { Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, Shield, TrendingUp, Cpu, Globe } from 'lucide-react';
 import LogoIcon from '@/components/ui/LogoIcon';
-import { selectTenant } from '@/lib/api';
 
 const features = [
   { icon: Shield,     label: 'Secure & Compliant',  sub: 'GST-ready, role-based access' },
