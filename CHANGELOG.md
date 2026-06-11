@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0] — 2026-06-11
+
+
+### Features
+
+- `git` add logging compliance automation to pre-commit and pre-push hooks ([3c40f14])
+
 ## [1.24.1] — 2026-06-11
 
 
