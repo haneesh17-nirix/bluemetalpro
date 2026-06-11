@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.0] — 2026-06-11
+
+
+### Features
+
+- `ui` replace crusher badge with mini-dashboard card + plant switcher ([37d64d2])
+
 ## [1.26.8] — 2026-06-11
 
 
