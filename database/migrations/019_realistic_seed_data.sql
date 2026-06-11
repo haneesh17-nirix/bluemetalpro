@@ -130,9 +130,9 @@ UPDATE products SET crusher_id = '22222222-0000-0000-0000-000000000001' WHERE cr
 -- Hash: $2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy
 DO $$
 DECLARE
-  plant1_id   UUID := '22222222-0000-0000-0000-000000000001';
-  plant2_id   UUID := '22222222-0000-0000-0000-000000000002';
-  tenant_id   UUID := '11111111-0000-0000-0000-000000000001';
+  v_plant1_id   UUID := '22222222-0000-0000-0000-000000000001';
+  v_plant2_id   UUID := '22222222-0000-0000-0000-000000000002';
+  v_tenant_id   UUID := '11111111-0000-0000-0000-000000000001';
   pw_hash     TEXT := '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy';
   -- resolved after insert so ON CONFLICT DO UPDATE (which preserves old UUIDs) is accounted for
   admin_id    UUID;
@@ -165,20 +165,20 @@ BEGIN
 
   -- tenant access
   INSERT INTO user_tenant_access (user_id, tenant_id, role) VALUES
-    (admin_id,   tenant_id, 'admin'),
-    (ops1_id,    tenant_id, 'operations'),
-    (ops2_id,    tenant_id, 'operations'),
-    (viewer_id,  tenant_id, 'report_viewer')
+    (admin_id,   v_tenant_id, 'admin'),
+    (ops1_id,    v_tenant_id, 'operations'),
+    (ops2_id,    v_tenant_id, 'operations'),
+    (viewer_id,  v_tenant_id, 'report_viewer')
   ON CONFLICT (user_id, tenant_id) DO NOTHING;
 
   -- crusher access
   INSERT INTO user_crusher_access (user_id, crusher_id, role) VALUES
-    (admin_id,  plant1_id, 'admin'),
-    (admin_id,  plant2_id, 'admin'),
-    (ops1_id,   plant1_id, 'operations'),
-    (ops2_id,   plant2_id, 'operations'),
-    (viewer_id, plant1_id, 'report_viewer'),
-    (viewer_id, plant2_id, 'report_viewer')
+    (admin_id,  v_plant1_id, 'admin'),
+    (admin_id,  v_plant2_id, 'admin'),
+    (ops1_id,   v_plant1_id, 'operations'),
+    (ops2_id,   v_plant2_id, 'operations'),
+    (viewer_id, v_plant1_id, 'report_viewer'),
+    (viewer_id, v_plant2_id, 'report_viewer')
   ON CONFLICT (user_id, crusher_id) DO NOTHING;
 END;
 $$;
