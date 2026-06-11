@@ -165,6 +165,7 @@ REQUIRED=(
   database/migrations/017_quarry_purchases.sql
   database/migrations/018_fix_report_viewer_password.sql
   database/migrations/019_realistic_seed_data.sql
+  database/migrations/020_fix_user_access.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
