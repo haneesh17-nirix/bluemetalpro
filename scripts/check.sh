@@ -163,6 +163,7 @@ REQUIRED=(
   database/migrations/015_weighbridge_counter_per_crusher.sql
   database/migrations/016_cascade_delete_tenant.sql
   database/migrations/017_quarry_purchases.sql
+  database/migrations/018_fix_report_viewer_password.sql
   # Backend
   backend/src/index.ts
   backend/.env.example
