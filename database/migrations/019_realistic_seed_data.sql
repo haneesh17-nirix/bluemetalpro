@@ -33,6 +33,8 @@ DELETE FROM user_tenant_access;
 DELETE FROM users WHERE email NOT LIKE '%@bluemetal.local';
 
 -- Wipe crushers & tenants (we'll rebuild cleanly)
+-- products.crusher_id → crushers.id FK must be cleared before deleting crushers
+UPDATE products SET crusher_id = NULL;
 DELETE FROM crushers;
 DELETE FROM tenants;
 DELETE FROM company_config;
@@ -120,32 +122,43 @@ INSERT INTO crushers (
   true
 );
 
+-- Re-link products to the primary crusher after crusher table was rebuilt
+UPDATE products SET crusher_id = '22222222-0000-0000-0000-000000000001' WHERE crusher_id IS NULL;
+
 -- ── 3. USERS (one per role, plus one extra operations user) ───────────────
 -- Password for all: Test@1234
 -- Hash: $2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy
 DO $$
 DECLARE
-  admin_id       UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
-  ops1_id        UUID := 'aaaaaaaa-0000-0000-0000-000000000002';
-  ops2_id        UUID := 'aaaaaaaa-0000-0000-0000-000000000003';
-  viewer_id      UUID := 'aaaaaaaa-0000-0000-0000-000000000004';
-  platform_id    UUID := 'aaaaaaaa-0000-0000-0000-000000000005';
-  plant1_id      UUID := '22222222-0000-0000-0000-000000000001';
-  plant2_id      UUID := '22222222-0000-0000-0000-000000000002';
-  tenant_id      UUID := '11111111-0000-0000-0000-000000000001';
-  pw_hash        TEXT := '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy';
+  plant1_id   UUID := '22222222-0000-0000-0000-000000000001';
+  plant2_id   UUID := '22222222-0000-0000-0000-000000000002';
+  tenant_id   UUID := '11111111-0000-0000-0000-000000000001';
+  pw_hash     TEXT := '$2a$10$uExSDVxMC/KADd3jiPZTz.SgF7qUlrOX0MNPrK5g6Qisma2T3QgZy';
+  -- resolved after insert so ON CONFLICT DO UPDATE (which preserves old UUIDs) is accounted for
+  admin_id    UUID;
+  ops1_id     UUID;
+  ops2_id     UUID;
+  viewer_id   UUID;
+  platform_id UUID;
 BEGIN
   INSERT INTO users (id, name, email, password_hash, role, is_active) VALUES
-    (admin_id,    'Rajesh Kumar (Admin)',       'admin@bluemetal.local',    pw_hash, 'admin',          true),
-    (ops1_id,     'Suresh Naik (Operator)',     'ops@bluemetal.local',      pw_hash, 'operations',     true),
-    (ops2_id,     'Priya Menon (Operator)',     'ops2@bluemetal.local',     pw_hash, 'operations',     true),
-    (viewer_id,   'Ananya Sharma (Reports)',    'reports@bluemetal.local',  pw_hash, 'report_viewer',  true),
-    (platform_id, 'Platform Admin',             'platform@bluemetal.local', pw_hash, 'admin',          true)
+    (gen_random_uuid(), 'Rajesh Kumar (Admin)',    'admin@bluemetal.local',    pw_hash, 'admin',         true),
+    (gen_random_uuid(), 'Suresh Naik (Operator)',  'ops@bluemetal.local',      pw_hash, 'operations',    true),
+    (gen_random_uuid(), 'Priya Menon (Operator)',  'ops2@bluemetal.local',     pw_hash, 'operations',    true),
+    (gen_random_uuid(), 'Ananya Sharma (Reports)', 'reports@bluemetal.local',  pw_hash, 'report_viewer', true),
+    (gen_random_uuid(), 'Platform Admin',          'platform@bluemetal.local', pw_hash, 'admin',         true)
   ON CONFLICT (email) DO UPDATE SET
     name          = EXCLUDED.name,
     password_hash = EXCLUDED.password_hash,
     role          = EXCLUDED.role,
     is_active     = EXCLUDED.is_active;
+
+  -- Resolve actual UUIDs (ON CONFLICT DO UPDATE preserves the existing UUID)
+  SELECT id INTO admin_id    FROM users WHERE email = 'admin@bluemetal.local';
+  SELECT id INTO ops1_id     FROM users WHERE email = 'ops@bluemetal.local';
+  SELECT id INTO ops2_id     FROM users WHERE email = 'ops2@bluemetal.local';
+  SELECT id INTO viewer_id   FROM users WHERE email = 'reports@bluemetal.local';
+  SELECT id INTO platform_id FROM users WHERE email = 'platform@bluemetal.local';
 
   -- platform_admin flag
   UPDATE users SET is_platform_admin = true WHERE id = platform_id;
