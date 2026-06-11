@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.3] — 2026-06-11
+
+
+### Bug Fixes
+
+- deduplicate login page api imports ([a4ada08])
+
 ## [1.22.2] — 2026-06-11
 
 
