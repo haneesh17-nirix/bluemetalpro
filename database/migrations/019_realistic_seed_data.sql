@@ -185,28 +185,28 @@ $$;
 
 -- ── 4. VEHICLES (Hosur Plant) ─────────────────────────────────────────────
 INSERT INTO vehicles (id, registration_number, vehicle_type, owner_name, owner_phone, capacity_mt, status, crusher_id) VALUES
-  ('vvvvvvvv-0000-0000-0000-000000000001', 'KA-01-AA-1234', 'Tipper',  'Manjunath S',   '9845001001', 16.0, 'active', '22222222-0000-0000-0000-000000000001'),
-  ('vvvvvvvv-0000-0000-0000-000000000002', 'KA-01-AB-5678', 'Tipper',  'Ravi Kumar',    '9845001002', 18.0, 'active', '22222222-0000-0000-0000-000000000001'),
-  ('vvvvvvvv-0000-0000-0000-000000000003', 'KA-02-AC-9012', 'Tipper',  'Venkatesh B',   '9845001003', 20.0, 'active', '22222222-0000-0000-0000-000000000001'),
-  ('vvvvvvvv-0000-0000-0000-000000000004', 'KA-03-AD-3456', 'Tractor', 'Nagesh P',      '9845001004', 10.0, 'active', '22222222-0000-0000-0000-000000000001'),
-  ('vvvvvvvv-0000-0000-0000-000000000005', 'KA-04-AE-7890', 'Tipper',  'Suresh Reddy',  '9845001005', 18.0, 'maintenance', '22222222-0000-0000-0000-000000000001'),
+  ('33333333-0000-0000-0000-000000000001', 'KA-01-AA-1234', 'Tipper',  'Manjunath S',   '9845001001', 16.0, 'active', '22222222-0000-0000-0000-000000000001'),
+  ('33333333-0000-0000-0000-000000000002', 'KA-01-AB-5678', 'Tipper',  'Ravi Kumar',    '9845001002', 18.0, 'active', '22222222-0000-0000-0000-000000000001'),
+  ('33333333-0000-0000-0000-000000000003', 'KA-02-AC-9012', 'Tipper',  'Venkatesh B',   '9845001003', 20.0, 'active', '22222222-0000-0000-0000-000000000001'),
+  ('33333333-0000-0000-0000-000000000004', 'KA-03-AD-3456', 'Tractor', 'Nagesh P',      '9845001004', 10.0, 'active', '22222222-0000-0000-0000-000000000001'),
+  ('33333333-0000-0000-0000-000000000005', 'KA-04-AE-7890', 'Tipper',  'Suresh Reddy',  '9845001005', 18.0, 'maintenance', '22222222-0000-0000-0000-000000000001'),
   -- Tumkur Plant
-  ('vvvvvvvv-0000-0000-0000-000000000006', 'KA-05-AF-2345', 'Tipper',  'Krishnamurthy', '9845001006', 16.0, 'active', '22222222-0000-0000-0000-000000000002'),
-  ('vvvvvvvv-0000-0000-0000-000000000007', 'KA-06-AG-6789', 'Tipper',  'Basavaraj M',   '9845001007', 20.0, 'active', '22222222-0000-0000-0000-000000000002');
+  ('33333333-0000-0000-0000-000000000006', 'KA-05-AF-2345', 'Tipper',  'Krishnamurthy', '9845001006', 16.0, 'active', '22222222-0000-0000-0000-000000000002'),
+  ('33333333-0000-0000-0000-000000000007', 'KA-06-AG-6789', 'Tipper',  'Basavaraj M',   '9845001007', 20.0, 'active', '22222222-0000-0000-0000-000000000002');
 
 -- ── 5. PARTIES ────────────────────────────────────────────────────────────
 -- Plant 1 parties
 INSERT INTO parties (id, name, type, gstin, phone, address, city, state, credit_limit, opening_balance, crusher_id) VALUES
-  ('pppppppp-0000-0000-0000-000000000001', 'L&T Construction Ltd',           'customer', '29AAACL1234F1Z8', '0802345678', 'L&T House, HMT Layout', 'Bengaluru', 'Karnataka', 2000000, 125000,  '22222222-0000-0000-0000-000000000001'),
-  ('pppppppp-0000-0000-0000-000000000002', 'Prestige Projects Pvt Ltd',      'customer', '29AABCP4567G1Z2', '0803456789', 'Prestige Tower, MG Road', 'Bengaluru', 'Karnataka', 5000000, 287500,  '22222222-0000-0000-0000-000000000001'),
-  ('pppppppp-0000-0000-0000-000000000003', 'NHAI — NH48 Project',            'customer', '07AAAGG1234C1Z5', '0111234567', 'NHAI Office, Rajaji Nagar', 'Bengaluru', 'Karnataka', 10000000, 0,       '22222222-0000-0000-0000-000000000001'),
-  ('pppppppp-0000-0000-0000-000000000004', 'Shapoorji Pallonji & Co',        'customer', '27AABCS3456H1Z9', '0224567890', 'SP House, Wankhede', 'Bengaluru', 'Karnataka', 3000000, 54200,   '22222222-0000-0000-0000-000000000001'),
-  ('pppppppp-0000-0000-0000-000000000005', 'Gangadhara & Sons (Retail)',     'customer', NULL,              '9845002001', 'Near Old Bus Stand', 'Bengaluru', 'Karnataka', 500000,  0,       '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000001', 'L&T Construction Ltd',           'customer', '29AAACL1234F1Z8', '0802345678', 'L&T House, HMT Layout', 'Bengaluru', 'Karnataka', 2000000, 125000,  '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000002', 'Prestige Projects Pvt Ltd',      'customer', '29AABCP4567G1Z2', '0803456789', 'Prestige Tower, MG Road', 'Bengaluru', 'Karnataka', 5000000, 287500,  '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000003', 'NHAI — NH48 Project',            'customer', '07AAAGG1234C1Z5', '0111234567', 'NHAI Office, Rajaji Nagar', 'Bengaluru', 'Karnataka', 10000000, 0,       '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000004', 'Shapoorji Pallonji & Co',        'customer', '27AABCS3456H1Z9', '0224567890', 'SP House, Wankhede', 'Bengaluru', 'Karnataka', 3000000, 54200,   '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000005', 'Gangadhara & Sons (Retail)',     'customer', NULL,              '9845002001', 'Near Old Bus Stand', 'Bengaluru', 'Karnataka', 500000,  0,       '22222222-0000-0000-0000-000000000001'),
   -- supplier
-  ('pppppppp-0000-0000-0000-000000000006', 'Deccan Mining Co',               'supplier', '29AABCD7890K1Z1', '9845003001', 'Quarry Village, Ramanagara', 'Ramanagara', 'Karnataka', 0, 0,    '22222222-0000-0000-0000-000000000001'),
+  ('44444444-0000-0000-0000-000000000006', 'Deccan Mining Co',               'supplier', '29AABCD7890K1Z1', '9845003001', 'Quarry Village, Ramanagara', 'Ramanagara', 'Karnataka', 0, 0,    '22222222-0000-0000-0000-000000000001'),
   -- Plant 2 parties
-  ('pppppppp-0000-0000-0000-000000000007', 'BMRCL (Metro Rail Corp)',        'customer', '29AABCB9012L1Z4', '0807890123', 'Metro Bhawan, Sampige Road', 'Bengaluru', 'Karnataka', 8000000, 430000,  '22222222-0000-0000-0000-000000000002'),
-  ('pppppppp-0000-0000-0000-000000000008', 'Sobha Developers Ltd',           'customer', '29AABCS5678M1Z7', '0804567890', 'Sobha Towers, Hebbal', 'Bengaluru', 'Karnataka', 3000000, 210000,  '22222222-0000-0000-0000-000000000002');
+  ('44444444-0000-0000-0000-000000000007', 'BMRCL (Metro Rail Corp)',        'customer', '29AABCB9012L1Z4', '0807890123', 'Metro Bhawan, Sampige Road', 'Bengaluru', 'Karnataka', 8000000, 430000,  '22222222-0000-0000-0000-000000000002'),
+  ('44444444-0000-0000-0000-000000000008', 'Sobha Developers Ltd',           'customer', '29AABCS5678M1Z7', '0804567890', 'Sobha Towers, Hebbal', 'Bengaluru', 'Karnataka', 3000000, 210000,  '22222222-0000-0000-0000-000000000002');
 
 -- ── 6. ASSETS & MAINTENANCE ───────────────────────────────────────────────
 INSERT INTO assets (id, asset_type, name, model, serial_number, purchase_date, purchase_cost, crusher_id) VALUES
@@ -253,14 +253,14 @@ INSERT INTO maintenance_records (asset_id, asset_type, title, description, sched
 
 -- ── 7. WORKERS & ATTENDANCE ───────────────────────────────────────────────
 INSERT INTO workers (id, name, phone, designation, wage_type, wage_rate, joining_date, is_active, crusher_id) VALUES
-  ('wwwwwwww-0000-0000-0000-000000000001', 'Ramesh Gowda',    '9741001001', 'Machine Operator', 'daily',   750.00, '2020-06-01', true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000002', 'Shivappa K',      '9741001002', 'Loader Operator',  'daily',   700.00, '2021-02-15', true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000003', 'Puttamma B',      '9741001003', 'Conveyor Operator','daily',   650.00, '2021-09-01', true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000004', 'Nagaraju S',      '9741001004', 'Weigh Operator',   'daily',   620.00, '2022-01-10', true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000005', 'Krishnappa M',    '9741001005', 'Helper',           'daily',   550.00, '2023-03-20', true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000006', 'Suresh Babu T',   '9741001006', 'Supervisor',       'monthly', 28000.00,'2019-11-01',true, '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000007', 'Venkatesha R',    '9741001007', 'Machine Operator', 'daily',   750.00, '2021-07-01', true, '22222222-0000-0000-0000-000000000002'),
-  ('wwwwwwww-0000-0000-0000-000000000008', 'Lakshmipathi',    '9741001008', 'Helper',           'daily',   550.00, '2022-08-15', true, '22222222-0000-0000-0000-000000000002');
+  ('55555555-0000-0000-0000-000000000001', 'Ramesh Gowda',    '9741001001', 'Machine Operator', 'daily',   750.00, '2020-06-01', true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000002', 'Shivappa K',      '9741001002', 'Loader Operator',  'daily',   700.00, '2021-02-15', true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000003', 'Puttamma B',      '9741001003', 'Conveyor Operator','daily',   650.00, '2021-09-01', true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000004', 'Nagaraju S',      '9741001004', 'Weigh Operator',   'daily',   620.00, '2022-01-10', true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000005', 'Krishnappa M',    '9741001005', 'Helper',           'daily',   550.00, '2023-03-20', true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000006', 'Suresh Babu T',   '9741001006', 'Supervisor',       'monthly', 28000.00,'2019-11-01',true, '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000007', 'Venkatesha R',    '9741001007', 'Machine Operator', 'daily',   750.00, '2021-07-01', true, '22222222-0000-0000-0000-000000000002'),
+  ('55555555-0000-0000-0000-000000000008', 'Lakshmipathi',    '9741001008', 'Helper',           'daily',   550.00, '2022-08-15', true, '22222222-0000-0000-0000-000000000002');
 
 -- Attendance for last 7 working days (plant 1 workers)
 DO $$
@@ -268,12 +268,12 @@ DECLARE
   d DATE;
   w UUID;
   workers1 UUID[] := ARRAY[
-    'wwwwwwww-0000-0000-0000-000000000001'::UUID,
-    'wwwwwwww-0000-0000-0000-000000000002'::UUID,
-    'wwwwwwww-0000-0000-0000-000000000003'::UUID,
-    'wwwwwwww-0000-0000-0000-000000000004'::UUID,
-    'wwwwwwww-0000-0000-0000-000000000005'::UUID,
-    'wwwwwwww-0000-0000-0000-000000000006'::UUID
+    '55555555-0000-0000-0000-000000000001'::UUID,
+    '55555555-0000-0000-0000-000000000002'::UUID,
+    '55555555-0000-0000-0000-000000000003'::UUID,
+    '55555555-0000-0000-0000-000000000004'::UUID,
+    '55555555-0000-0000-0000-000000000005'::UUID,
+    '55555555-0000-0000-0000-000000000006'::UUID
   ];
   statuses attendance_status[] := ARRAY['present','present','present','present','half_day','absent','present'];
   i INT;
@@ -299,9 +299,9 @@ $$;
 
 -- Wage payment last month
 INSERT INTO wage_payments (worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, crusher_id) VALUES
-  ('wwwwwwww-0000-0000-0000-000000000001', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 19500, 0, 1500, 18000, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000002', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 25, 17500, 0, 0,    17500, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
-  ('wwwwwwww-0000-0000-0000-000000000006', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 28000, 2800, 0,  25200, DATE_TRUNC('month', CURRENT_DATE) + 2, 'neft', '22222222-0000-0000-0000-000000000001');
+  ('55555555-0000-0000-0000-000000000001', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 19500, 0, 1500, 18000, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000002', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 25, 17500, 0, 0,    17500, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000006', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 28000, 2800, 0,  25200, DATE_TRUNC('month', CURRENT_DATE) + 2, 'neft', '22222222-0000-0000-0000-000000000001');
 
 -- ── 8. SALES (last 60 days, plant 1) ──────────────────────────────────────
 -- Helper: all sales reference plant 1, created_by admin
@@ -315,17 +315,17 @@ DECLARE
   mm12_id   UUID; dust_id  UUID; gsb_id   UUID;
 
   -- Party IDs
-  lt_id     UUID := 'pppppppp-0000-0000-0000-000000000001';
-  pres_id   UUID := 'pppppppp-0000-0000-0000-000000000002';
-  nhai_id   UUID := 'pppppppp-0000-0000-0000-000000000003';
-  sp_id     UUID := 'pppppppp-0000-0000-0000-000000000004';
-  gang_id   UUID := 'pppppppp-0000-0000-0000-000000000005';
+  lt_id     UUID := '44444444-0000-0000-0000-000000000001';
+  pres_id   UUID := '44444444-0000-0000-0000-000000000002';
+  nhai_id   UUID := '44444444-0000-0000-0000-000000000003';
+  sp_id     UUID := '44444444-0000-0000-0000-000000000004';
+  gang_id   UUID := '44444444-0000-0000-0000-000000000005';
 
   -- Vehicle IDs
-  v1 UUID := 'vvvvvvvv-0000-0000-0000-000000000001';
-  v2 UUID := 'vvvvvvvv-0000-0000-0000-000000000002';
-  v3 UUID := 'vvvvvvvv-0000-0000-0000-000000000003';
-  v4 UUID := 'vvvvvvvv-0000-0000-0000-000000000004';
+  v1 UUID := '33333333-0000-0000-0000-000000000001';
+  v2 UUID := '33333333-0000-0000-0000-000000000002';
+  v3 UUID := '33333333-0000-0000-0000-000000000003';
+  v4 UUID := '33333333-0000-0000-0000-000000000004';
 
   sale_id UUID;
   qty     NUMERIC;
@@ -549,10 +549,10 @@ DO $$
 DECLARE
   p2 UUID := '22222222-0000-0000-0000-000000000002';
   admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
-  bmrcl_id UUID := 'pppppppp-0000-0000-0000-000000000007';
-  sobha_id UUID := 'pppppppp-0000-0000-0000-000000000008';
-  v6 UUID := 'vvvvvvvv-0000-0000-0000-000000000006';
-  v7 UUID := 'vvvvvvvv-0000-0000-0000-000000000007';
+  bmrcl_id UUID := '44444444-0000-0000-0000-000000000007';
+  sobha_id UUID := '44444444-0000-0000-0000-000000000008';
+  v6 UUID := '33333333-0000-0000-0000-000000000006';
+  v7 UUID := '33333333-0000-0000-0000-000000000007';
   msand_id UUID; mm20_id UUID; gsb_id UUID;
   sale_id UUID; sub NUMERIC; gst_amt NUMERIC; total NUMERIC;
 BEGIN
@@ -605,8 +605,8 @@ DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
   admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
-  deccan_id UUID := 'pppppppp-0000-0000-0000-000000000006';
-  v3 UUID := 'vvvvvvvv-0000-0000-0000-000000000003';
+  deccan_id UUID := '44444444-0000-0000-0000-000000000006';
+  v3 UUID := '33333333-0000-0000-0000-000000000003';
   bollar_id UUID; mm40_id UUID;
   pur_id UUID;
 BEGIN
@@ -665,8 +665,8 @@ DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
   admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
-  lt_id   UUID := 'pppppppp-0000-0000-0000-000000000001';
-  pres_id UUID := 'pppppppp-0000-0000-0000-000000000002';
+  lt_id   UUID := '44444444-0000-0000-0000-000000000001';
+  pres_id UUID := '44444444-0000-0000-0000-000000000002';
 BEGIN
   -- Receipt from L&T (partial on inv 6)
   INSERT INTO ledger_transactions (txn_type, txn_date, party_id, amount, payment_mode, narration, created_by, crusher_id)
@@ -682,10 +682,10 @@ DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
   admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
-  nhai_id  UUID := 'pppppppp-0000-0000-0000-000000000003';
-  gang_id  UUID := 'pppppppp-0000-0000-0000-000000000005';
-  v3 UUID := 'vvvvvvvv-0000-0000-0000-000000000003';
-  v4 UUID := 'vvvvvvvv-0000-0000-0000-000000000004';
+  nhai_id  UUID := '44444444-0000-0000-0000-000000000003';
+  gang_id  UUID := '44444444-0000-0000-0000-000000000005';
+  v3 UUID := '33333333-0000-0000-0000-000000000003';
+  v4 UUID := '33333333-0000-0000-0000-000000000004';
   bollar_id UUID;
 BEGIN
   SELECT id INTO bollar_id FROM products WHERE code = 'BOLLAR';
