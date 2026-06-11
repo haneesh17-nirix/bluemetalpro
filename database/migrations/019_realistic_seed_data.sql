@@ -308,7 +308,7 @@ INSERT INTO wage_payments (worker_id, period_from, period_to, days_worked, gross
 DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
-  admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
+  admin_id UUID;
 
   -- Product IDs (from seeded products)
   msand_id  UUID; psand_id UUID; mm20_id UUID; mm40_id UUID;
@@ -341,6 +341,7 @@ BEGIN
   SELECT id INTO mm12_id  FROM products WHERE code = '12MM';
   SELECT id INTO dust_id  FROM products WHERE code = 'DUST';
   SELECT id INTO gsb_id   FROM products WHERE code = 'GSB';
+  SELECT id INTO admin_id FROM users WHERE email = 'admin@bluemetal.local';
 
   -- ── Invoice 1: L&T — M-Sand bulk (60 days ago) ──
   sale_id := gen_random_uuid();
@@ -548,7 +549,7 @@ $$;
 DO $$
 DECLARE
   p2 UUID := '22222222-0000-0000-0000-000000000002';
-  admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
+  admin_id UUID;
   bmrcl_id UUID := '44444444-0000-0000-0000-000000000007';
   sobha_id UUID := '44444444-0000-0000-0000-000000000008';
   v6 UUID := '33333333-0000-0000-0000-000000000006';
@@ -559,6 +560,7 @@ BEGIN
   SELECT id INTO msand_id FROM products WHERE code = 'MSAND';
   SELECT id INTO mm20_id  FROM products WHERE code = '20MM';
   SELECT id INTO gsb_id   FROM products WHERE code = 'GSB';
+  SELECT id INTO admin_id FROM users WHERE email = 'admin@bluemetal.local';
 
   -- BMRCL GSB order
   sale_id := gen_random_uuid();
@@ -604,13 +606,14 @@ $$;
 DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
-  admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
+  admin_id UUID;
   deccan_id UUID := '44444444-0000-0000-0000-000000000006';
   v3 UUID := '33333333-0000-0000-0000-000000000003';
   bollar_id UUID; mm40_id UUID;
   pur_id UUID;
 BEGIN
   SELECT id INTO bollar_id FROM products WHERE code = 'BOLLAR';
+  SELECT id INTO admin_id FROM users WHERE email = 'admin@bluemetal.local';
   SELECT id INTO mm40_id   FROM products WHERE code = '40MM';
 
   -- Purchase 1: Boulder from Deccan Mining (45 days ago)
@@ -664,10 +667,11 @@ $$;
 DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
-  admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
+  admin_id UUID;
   lt_id   UUID := '44444444-0000-0000-0000-000000000001';
   pres_id UUID := '44444444-0000-0000-0000-000000000002';
 BEGIN
+  SELECT id INTO admin_id FROM users WHERE email = 'admin@bluemetal.local';
   -- Receipt from L&T (partial on inv 6)
   INSERT INTO ledger_transactions (txn_type, txn_date, party_id, amount, payment_mode, narration, created_by, crusher_id)
   VALUES
@@ -681,7 +685,7 @@ $$;
 DO $$
 DECLARE
   p1 UUID := '22222222-0000-0000-0000-000000000001';
-  admin_id UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
+  admin_id UUID;
   nhai_id  UUID := '44444444-0000-0000-0000-000000000003';
   gang_id  UUID := '44444444-0000-0000-0000-000000000005';
   v3 UUID := '33333333-0000-0000-0000-000000000003';
@@ -689,6 +693,7 @@ DECLARE
   bollar_id UUID;
 BEGIN
   SELECT id INTO bollar_id FROM products WHERE code = 'BOLLAR';
+  SELECT id INTO admin_id FROM users WHERE email = 'admin@bluemetal.local';
 
   -- Quarry sale 1: NHAI boulders direct from quarry face
   INSERT INTO quarry_sales (invoice_number, sale_date, party_id, party_name, vehicle_id, vehicle_number,
