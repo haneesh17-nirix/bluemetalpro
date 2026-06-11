@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.3] — 2026-06-11
+
+
+### Bug Fixes
+
+- `ts` pass err as Record to log.error in select-crusher ([c32c06e])
+
 ## [1.23.2] — 2026-06-11
 
 
