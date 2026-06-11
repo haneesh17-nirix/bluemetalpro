@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.5] — 2026-06-11
+
+
+### Documentation
+
+- add incident report for login failure (2026-06-11) ([f81c3ef])
+
 ## [1.22.4] — 2026-06-11
 
 
