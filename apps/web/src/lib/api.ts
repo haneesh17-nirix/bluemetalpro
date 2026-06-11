@@ -30,7 +30,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -59,7 +59,7 @@ api.interceptors.response.use(
             .then((res) => {
               const newToken = res.data?.token;
               if (newToken) {
-                localStorage.setItem('token', newToken);
+                sessionStorage.setItem('token', newToken);
                 document.cookie = `token=${newToken}; path=/; SameSite=Lax`;
                 scheduleSessionWarning(newToken);
               }
@@ -67,14 +67,14 @@ api.interceptors.response.use(
             .finally(() => { _refreshPromise = null; });
         }
         await _refreshPromise;
-        const newToken = localStorage.getItem('token');
+        const newToken = sessionStorage.getItem('token');
         if (newToken) originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch {
         if (!isRedirecting) {
           isRedirecting = true;
-          localStorage.removeItem('token');
-          localStorage.removeItem('temp_token');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('temp_token');
           document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
           Router.push('/login').finally(() => { isRedirecting = false; });
         }
@@ -86,7 +86,7 @@ api.interceptors.response.use(
 );
 
 if (typeof window !== 'undefined') {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) scheduleSessionWarning(token);
 }
 

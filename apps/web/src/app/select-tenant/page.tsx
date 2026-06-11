@@ -26,7 +26,7 @@ export default function SelectTenantPage() {
     setSelecting(t.id);
     try {
       const data = await selectTenant(t.id);
-      localStorage.setItem('temp_token', data.temp_token);
+      sessionStorage.setItem('temp_token', data.temp_token);
       setTenant(data.tenant);
       localStorage.removeItem('tenants_list');
 
@@ -34,8 +34,8 @@ export default function SelectTenantPage() {
 
       if (crushers.length === 1) {
         const sel = await selectCrusher(crushers[0].id);
-        localStorage.removeItem('temp_token');
-        localStorage.setItem('token', sel.token);
+        sessionStorage.removeItem('temp_token');
+        sessionStorage.setItem('token', sel.token);
         document.cookie = `token=${sel.token}; path=/; SameSite=Lax`;
         localStorage.setItem('user', JSON.stringify(sel.user));
         setCrusher(sel.crusher);

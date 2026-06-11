@@ -26,8 +26,8 @@ export default function SelectCrusherPage() {
     setSelecting(c.id);
     try {
       const data = await selectCrusher(c.id);
-      localStorage.removeItem('temp_token');
-      localStorage.setItem('token', data.token);
+      sessionStorage.removeItem('temp_token');
+      sessionStorage.setItem('token', data.token);
       document.cookie = `token=${data.token}; path=/; SameSite=Lax`;
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.removeItem('crushers_list');

@@ -57,22 +57,25 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const tenantName = tenantStr ? (() => { try { return JSON.parse(tenantStr)?.name; } catch { return null; } })() : null;
 
   const logout = () => {
-    ['token', 'temp_token', 'user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('temp_token');
+    ['user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     window.location.href = '/login';
   };
 
   const switchCrusher = async () => {
     setUserOpen(false);
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) { window.location.href = '/login'; return; }
       const payload: any = JSON.parse(atob(token.split('.')[1]));
       const tenantId = payload.tenant_id;
       if (!tenantId) { window.location.href = '/select-tenant'; return; }
       const res = await api.post('/auth/select-tenant', { tenant_id: tenantId });
-      localStorage.setItem('temp_token', res.data.temp_token);
+      sessionStorage.setItem('temp_token', res.data.temp_token);
       localStorage.setItem('crushers_list', JSON.stringify(res.data.crushers));
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       localStorage.removeItem('crusher');
       window.location.href = '/select-crusher';
     } catch {
@@ -81,7 +84,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   };
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null;
     if (!token) return;
     let aborted = false;
     const controller = new AbortController();
