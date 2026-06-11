@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.5] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` fix timestamp arithmetic in migration 019 wage_payments seed ([a2b672f])
+
 ## [1.26.4] — 2026-06-11
 
 
