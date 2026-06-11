@@ -166,6 +166,10 @@ jobs:
           psql "$CONN" -f database/migrations/012_cleanup_duplicate_crushers.sql --set ON_ERROR_STOP=1 -q
           psql "$CONN" -f database/migrations/013_notify_events_extended.sql --set ON_ERROR_STOP=1 -q
           psql "$CONN" -f database/migrations/014_add_tenants.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/015_platform_admin_flag.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/015_weighbridge_counter_per_crusher.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/016_cascade_delete_tenant.sql --set ON_ERROR_STOP=1 -q
+          psql "$CONN" -f database/migrations/017_quarry_purchases.sql --set ON_ERROR_STOP=1 -q
 
       - name: Remove runner IP from firewall
         if: always()

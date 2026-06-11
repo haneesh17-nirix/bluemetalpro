@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Bell, CheckCheck, X, LogOut, ArrowRight } from 'lucide-react';
+import { Bell, CheckCheck, X, LogOut, ArrowRight, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { selectTenant } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -58,6 +59,25 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const logout = () => {
     ['token', 'temp_token', 'user', 'tenant', 'crusher', 'crushers_list', 'tenants_list'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/login';
+  };
+
+  const switchCrusher = async () => {
+    setUserOpen(false);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = '/login'; return; }
+      const payload: any = JSON.parse(atob(token.split('.')[1]));
+      const tenantId = payload.tenant_id;
+      if (!tenantId) { window.location.href = '/select-tenant'; return; }
+      const res = await api.post('/auth/select-tenant', { tenant_id: tenantId });
+      localStorage.setItem('temp_token', res.data.temp_token);
+      localStorage.setItem('crushers_list', JSON.stringify(res.data.crushers));
+      localStorage.removeItem('token');
+      localStorage.removeItem('crusher');
+      window.location.href = '/select-crusher';
+    } catch {
+      window.location.href = '/login';
+    }
   };
 
   useEffect(() => {
@@ -303,6 +323,17 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                 </div>
               </div>
               <div style={{ padding: 6 }}>
+                <button onClick={switchCrusher} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+                  padding: '9px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+                  cursor: 'pointer', background: 'transparent', border: 'none',
+                  color: 'rgba(200,212,232,0.6)', transition: 'all 0.12s', textAlign: 'left',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(96,165,250,0.08)'; (e.currentTarget as HTMLButtonElement).style.color = '#93c5fd'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(200,212,232,0.6)'; }}
+                >
+                  <RefreshCw size={14} /> Switch Plant
+                </button>
                 <button onClick={logout} style={{
                   display: 'flex', alignItems: 'center', gap: 8, width: '100%',
                   padding: '9px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500,

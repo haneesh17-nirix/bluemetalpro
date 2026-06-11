@@ -162,6 +162,7 @@ REQUIRED=(
   database/migrations/015_platform_admin_flag.sql
   database/migrations/015_weighbridge_counter_per_crusher.sql
   database/migrations/016_cascade_delete_tenant.sql
+  database/migrations/017_quarry_purchases.sql
   # Backend
   backend/src/index.ts
   backend/.env.example

@@ -140,6 +140,8 @@ export const createReceipt = (data: any) => api.post('/ledger/receipt', data).th
 // Quarry
 export const getQuarrySales = (params?: any) => api.get('/quarry', { params }).then(r => r.data);
 export const createQuarrySale = (data: any) => api.post('/quarry', data).then(r => r.data);
+export const getQuarryPurchases = (params?: any) => api.get('/quarry/purchases', { params }).then(r => r.data);
+export const createQuarryPurchase = (data: any) => api.post('/quarry/purchases', data).then(r => r.data);
 
 // Users
 export const getUsers = () => api.get('/users').then(r => r.data);
