@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.4] — 2026-06-11
+
+
+### Bug Fixes
+
+- `auth` cast user_role enum to text in COALESCE for tenant/crusher queries ([f7a8e59])
+
 ## [1.22.3] — 2026-06-11
 
 
