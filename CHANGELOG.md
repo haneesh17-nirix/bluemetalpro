@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.1] — 2026-06-11
+
+
+### Bug Fixes
+
+- `ui` force page reload after plant switch so data re-fetches ([4b22bdc])
+
 ## [1.28.0] — 2026-06-11
 
 
