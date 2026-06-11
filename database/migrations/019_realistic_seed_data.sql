@@ -735,7 +735,7 @@ CROSS JOIN (SELECT id FROM users WHERE email = 'admin@bluemetal.local') u;
 
 -- ── 13. NOTIFICATIONS ─────────────────────────────────────────────────────
 INSERT INTO notifications (user_id, title, body, type, is_read, crusher_id)
-SELECT u.id, title, body, type::notification_type, is_read, '22222222-0000-0000-0000-000000000001'
+SELECT u.id, title, body, type, is_read, '22222222-0000-0000-0000-000000000001'
 FROM (VALUES
   ('admin@bluemetal.local',   'New Sale — BMP/2526/0009',      'Gangadhara & Sons: 12 MT M-Sand | ₹10,710',             'sale',        false),
   ('admin@bluemetal.local',   'Sale Cancelled — BMP/2526/0010','Prestige Projects: Order cancelled by customer.',        'sale',        true),
