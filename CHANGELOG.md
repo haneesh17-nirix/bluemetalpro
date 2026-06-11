@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.6] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` resolve admin_id FK violations in migration 019 DO blocks ([0b2181f])
+
 ## [1.26.5] — 2026-06-11
 
 
