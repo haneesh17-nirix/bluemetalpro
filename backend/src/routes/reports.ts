@@ -36,7 +36,7 @@ reportsRouter.get('/item-wise', async (req, res) => {
     logAction('reports.item_wise_viewed', { from: String(req.query.from || ''), to: String(req.query.to || ''), by: req.user!.email });
     res.json(rows);
   } catch (err) {
-    logger.error('reports.item_wise error', err);
+    logger.error({ err, crusher_id: cid, from: req.query.from, to: req.query.to, user: req.user!.email }, 'reports.item_wise error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -63,7 +63,7 @@ reportsRouter.get('/party-wise', async (req, res) => {
     logAction('reports.party_wise_viewed', { from: String(req.query.from || ''), to: String(req.query.to || ''), by: req.user!.email });
     res.json(rows);
   } catch (err) {
-    logger.error('reports.party_wise error', err);
+    logger.error({ err, crusher_id: cid, from: req.query.from, to: req.query.to, type: req.query.type, user: req.user!.email }, 'reports.party_wise error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -89,9 +89,10 @@ reportsRouter.get('/vehicle-wise', async (req, res) => {
       GROUP BY v.id, v.registration_number, s.vehicle_number, v.vehicle_type
       ORDER BY trip_count DESC
     `, [f, t, cid]);
+    logAction('reports.vehicle_wise_viewed', { from: f, to: t, by: req.user!.email });
     res.json(rows);
   } catch (err) {
-    logger.error('reports.vehicle_wise error', err);
+    logger.error({ err, crusher_id: cid, from: f, to: t, user: req.user!.email }, 'reports.vehicle_wise error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -122,7 +123,7 @@ reportsRouter.get('/gst-summary', async (req, res) => {
     logAction('reports.gst_summary_viewed', { from: String(req.query.from || ''), to: String(req.query.to || ''), by: req.user!.email });
     res.json(rows);
   } catch (err) {
-    logger.error('reports.gst_summary error', err);
+    logger.error({ err, crusher_id: cid, from: f, to: t, user: req.user!.email }, 'reports.gst_summary error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -142,9 +143,10 @@ reportsRouter.get('/monthly-trend', async (req, res) => {
       GROUP BY DATE_TRUNC('month', sale_date)
       ORDER BY month_date
     `, [cid]);
+    logAction('reports.monthly_trend_viewed', { by: req.user!.email });
     res.json(rows);
   } catch (err) {
-    logger.error('reports.monthly_trend error', err);
+    logger.error({ err, crusher_id: cid, user: req.user!.email }, 'reports.monthly_trend error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -164,9 +166,10 @@ reportsRouter.get('/ledger/:party_id', async (req, res) => {
       FROM ledger_transactions WHERE party_id = $1 AND txn_date BETWEEN $2 AND $3 AND txn_type = 'receipt' AND crusher_id = $4
       ORDER BY date
     `, [req.params.party_id, from, to, cid]);
+    logAction('reports.ledger_viewed', { party_id: req.params.party_id, from: req.query.from, to: req.query.to, by: req.user!.email });
     res.json(transactions);
   } catch (err) {
-    logger.error('reports.ledger error', err);
+    logger.error({ err, crusher_id: cid, party_id: req.params.party_id, from: req.query.from, to: req.query.to, user: req.user!.email }, 'reports.ledger error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -179,6 +182,7 @@ reportsRouter.get('/pl', async (req, res) => {
     const f = from || `${new Date().getFullYear()}-04-01`;   // default: financial year start
     const t = to   || new Date().toISOString().split('T')[0];
 
+    logger.info({ crusher_id: cid, from: f, to: t, user: req.user!.email }, 'reports.pl fetch started');
     const [revenue, quarryRevenue, purchases, wages, maintenance, opex, monthly] = await Promise.all([
 
       // Revenue from crusher sales
@@ -379,7 +383,7 @@ reportsRouter.get('/pl', async (req, res) => {
       monthly,
     });
   } catch (err) {
-    logger.error('reports.pl error', err);
+    logger.error({ err, crusher_id: cid, from: f, to: t, user: req.user!.email }, 'reports.pl error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -388,6 +392,7 @@ reportsRouter.get('/pl', async (req, res) => {
 reportsRouter.get('/dashboard', async (req, res) => {
   try {
     const cid = req.user!.crusher_id!;
+    logger.info({ crusher_id: cid, user: req.user!.email }, 'reports.dashboard fetch started');
     const [sales, purchases, pending, topProducts, monthSales, monthPurchases, recentSales, yesterdaySales] = await Promise.all([
       // Today
       query(`SELECT SUM(grand_total) as total, COUNT(*) as count FROM sales WHERE sale_date = CURRENT_DATE AND status='confirmed' AND crusher_id = $1`, [cid]),
@@ -428,7 +433,7 @@ reportsRouter.get('/dashboard', async (req, res) => {
       yesterday_sales: yesterdaySales[0],
     });
   } catch (err) {
-    logger.error('reports.dashboard error', err);
+    logger.error({ err, crusher_id: cid, user: req.user!.email }, 'reports.dashboard error');
     res.status(500).json({ error: 'Server error' });
   }
 });

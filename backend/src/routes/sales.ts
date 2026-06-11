@@ -14,6 +14,7 @@ salesRouter.use(requireCrusher);
 salesRouter.get('/', async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to, party_id, status, page = 1, limit = 20 } = req.query;
+  logger.info({ crusher_id: cid, filters: { from, to, party_id, status, page, limit } }, 'Listing sales');
   const offset = (Number(page) - 1) * Number(limit);
   let where = 'WHERE 1=1';
   const params: any[] = [];
@@ -24,23 +25,33 @@ salesRouter.get('/', async (req, res) => {
   if (status) { params.push(status); where += ` AND status = $${params.length}`; }
 
   params.push(Number(limit), offset);
-  const rows = await query(
-    `SELECT s.*, u.name as created_by_name FROM sales s
-     LEFT JOIN users u ON u.id = s.created_by
-     ${where} ORDER BY sale_date DESC, created_at DESC
-     LIMIT $${params.length - 1} OFFSET $${params.length}`,
-    params
-  );
-  res.json(rows);
+  try {
+    const rows = await query(
+      `SELECT s.*, u.name as created_by_name FROM sales s
+       LEFT JOIN users u ON u.id = s.created_by
+       ${where} ORDER BY sale_date DESC, created_at DESC
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+    res.json(rows);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid }, 'Failed to list sales');
+    res.status(500).json({ error: 'Failed to list sales' });
+  }
 });
 
 // Get single sale with items
 salesRouter.get('/:id', async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const sale = await queryOne('SELECT * FROM sales WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
-  if (!sale) return res.status(404).json({ error: 'Not found' });
-  const items = await query('SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY sort_order', [req.params.id]);
-  res.json({ ...sale, items });
+  try {
+    const sale = await queryOne('SELECT * FROM sales WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
+    if (!sale) return res.status(404).json({ error: 'Not found' });
+    const items = await query('SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY sort_order', [req.params.id]);
+    res.json({ ...sale, items });
+  } catch (err) {
+    logger.error({ err, crusher_id: cid, saleId: req.params.id }, 'Failed to fetch sale');
+    res.status(500).json({ error: 'Failed to fetch sale' });
+  }
 });
 
 // Create sale
@@ -119,10 +130,8 @@ salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     await client.query('COMMIT');
     const created = sale;
 
-    // Send push notification async
-    sendSaleNotification(created).catch(console.error);
+    sendSaleNotification(created).catch(err => logger.error({ err, saleId: created.id, invoice: invoice_number, crusher_id: cid }, 'Push notification failed after sale creation'));
 
-    // Real-time SSE fan-out (fire-and-forget)
     fanOut(cid, {
       type: 'sale',
       title: `New Sale — ${invoice_number}`,
@@ -135,7 +144,7 @@ salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     res.status(201).json({ ...created, items: processedItems });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
+    logger.error({ err, crusher_id: cid, by: req.user!.email, party: req.body.party_name }, 'Failed to create sale');
     logAction('sale.create.failed', { error: String(err), by: req.user!.email, crusher_id: cid }, 'error');
     res.status(500).json({ error: 'Failed to create sale' });
   } finally {
@@ -146,26 +155,37 @@ salesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
 // Cancel sale
 salesRouter.patch('/:id/cancel', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const sale = await queryOne(
-    "UPDATE sales SET status = 'cancelled', updated_at = now() WHERE id = $1 AND crusher_id = $2 AND status != 'cancelled' RETURNING *",
-    [req.params.id, cid]
-  );
-  if (!sale) return res.status(404).json({ error: 'Not found or already cancelled' });
-  logAction('sale.cancelled', { saleId: req.params.id, by: req.user!.email, crusher_id: cid }, 'warn');
-  res.json(sale);
+  try {
+    const sale = await queryOne(
+      "UPDATE sales SET status = 'cancelled', updated_at = now() WHERE id = $1 AND crusher_id = $2 AND status != 'cancelled' RETURNING *",
+      [req.params.id, cid]
+    );
+    if (!sale) return res.status(404).json({ error: 'Not found or already cancelled' });
+    logAction('sale.cancelled', { saleId: req.params.id, by: req.user!.email, crusher_id: cid }, 'warn');
+    res.json(sale);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid, saleId: req.params.id, by: req.user!.email }, 'Failed to cancel sale');
+    res.status(500).json({ error: 'Failed to cancel sale' });
+  }
 });
 
 // Dashboard summary
 salesRouter.get('/summary/today', async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const rows = await query(`
-    SELECT
-      COUNT(*) as invoice_count,
-      SUM(grand_total) as total_sales,
-      SUM(amount_received) as total_received,
-      SUM(balance_due) as total_pending
-    FROM sales
-    WHERE sale_date = CURRENT_DATE AND status = 'confirmed' AND crusher_id = $1
-  `, [cid]);
-  res.json(rows[0]);
+  logger.info({ crusher_id: cid }, 'Fetching today sales summary');
+  try {
+    const rows = await query(`
+      SELECT
+        COUNT(*) as invoice_count,
+        SUM(grand_total) as total_sales,
+        SUM(amount_received) as total_received,
+        SUM(balance_due) as total_pending
+      FROM sales
+      WHERE sale_date = CURRENT_DATE AND status = 'confirmed' AND crusher_id = $1
+    `, [cid]);
+    res.json(rows[0]);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid }, 'Failed to fetch today summary');
+    res.status(500).json({ error: 'Failed to fetch today summary' });
+  }
 });

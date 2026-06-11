@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { query, queryOne } from '../config/db';
 import { authenticate, authorize } from '../middleware/auth';
-import { logAction } from '../utils/logger';
+import { logger, logAction } from '../utils/logger';
 
 export const platformRouter = Router();
 platformRouter.use(authenticate);
@@ -25,7 +25,10 @@ platformRouter.get('/tenants', async (req, res) => {
       ORDER BY t.created_at DESC
     `);
     res.json(tenants);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err }, 'Failed to list tenants');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Get single tenant ─────────────────────────────────────────────────────────
@@ -34,7 +37,10 @@ platformRouter.get('/tenants/:id', async (req, res) => {
     const tenant = await queryOne('SELECT * FROM tenants WHERE id = $1', [req.params.id]);
     if (!tenant) return res.status(404).json({ error: 'Tenant not found' });
     res.json(tenant);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id }, 'Failed to fetch tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Create tenant (with optional first crusher + admin user) ──────────────────
@@ -50,6 +56,8 @@ platformRouter.post('/tenants', async (req, res) => {
     } = req.body;
 
     if (!name) return res.status(400).json({ error: 'name is required' });
+
+    logger.info({ name, plan: plan || 'standard', has_crusher: !!crusher_name, has_admin: !!admin_email, by: req.user?.email }, 'Creating tenant');
 
     const tenant = await queryOne(
       `INSERT INTO tenants (name, legal_name, gstin, pan, address, city, state, phone, email, plan, logo_url)
@@ -94,7 +102,10 @@ platformRouter.post('/tenants', async (req, res) => {
       crusher,
       admin_user: adminUser ? { id: (adminUser as any).id, email: (adminUser as any).email } : null,
     });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, name: req.body.name, admin_email: req.body.admin_email, by: req.user?.email }, 'Failed to create tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Update tenant ─────────────────────────────────────────────────────────────
@@ -111,7 +122,10 @@ platformRouter.put('/tenants/:id', async (req, res) => {
     );
     logAction('platform.tenant.updated', { id: req.params.id, by: req.user!.email });
     res.json(tenant);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id, by: req.user?.email }, 'Failed to update tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Activate / deactivate tenant ──────────────────────────────────────────────
@@ -121,7 +135,10 @@ platformRouter.patch('/tenants/:id/status', async (req, res) => {
     await query('UPDATE tenants SET is_active=$1, updated_at=now() WHERE id=$2', [is_active, req.params.id]);
     logAction('platform.tenant.status', { id: req.params.id, is_active, by: req.user!.email });
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id, is_active: req.body.is_active, by: req.user?.email }, 'Failed to update tenant status');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── List crushers for a tenant ────────────────────────────────────────────────
@@ -136,7 +153,10 @@ platformRouter.get('/tenants/:id/crushers', async (req, res) => {
       [req.params.id]
     );
     res.json(crushers);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id }, 'Failed to list crushers for tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Add crusher to tenant ─────────────────────────────────────────────────────
@@ -161,7 +181,10 @@ platformRouter.post('/tenants/:id/crushers', async (req, res) => {
     );
     logAction('platform.crusher.created', { tenant_id: req.params.id, name, by: req.user!.email });
     res.status(201).json(crusher);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id, crusher_name: req.body.name, by: req.user?.email }, 'Failed to add crusher to tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Add user to tenant ────────────────────────────────────────────────────────
@@ -177,10 +200,13 @@ platformRouter.post('/tenants/:id/users', async (req, res) => {
     );
     logAction('platform.tenant.user.added', { user_id, tenant_id: req.params.id, role, by: req.user!.email });
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, tenant_id: req.params.id, user_id: req.body.user_id, by: req.user?.email }, 'Failed to add user to tenant');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// ── Overview: all crushers + high-level stats ──────────────────────────────
+// ── Overview: all crushers + high-level stats ──────────────────────────
 platformRouter.get('/overview', async (req, res) => {
   try {
     const crushers = await query(`
@@ -193,7 +219,10 @@ platformRouter.get('/overview', async (req, res) => {
     ORDER BY c.created_at DESC
   `);
     res.json(crushers);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err }, 'Failed to fetch platform overview');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── All users across the platform ─────────────────────────────────────────
@@ -212,7 +241,10 @@ platformRouter.get('/users', async (req, res) => {
     ORDER BY u.created_at DESC
   `);
     res.json(users);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err }, 'Failed to list platform users');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Create a new crusher (with optional first admin user) ─────────────────
@@ -226,6 +258,8 @@ platformRouter.post('/crushers', async (req, res) => {
     } = req.body;
 
     if (!name) return res.status(400).json({ error: 'name is required' });
+
+    logger.info({ name, has_admin: !!admin_email, by: req.user?.email }, 'Creating crusher');
 
     const crusher = await queryOne(
       `INSERT INTO crushers (name, legal_name, gstin, pan, address, city, state, state_code, pincode,
@@ -257,7 +291,10 @@ platformRouter.post('/crushers', async (req, res) => {
 
     logAction('platform.crusher.created', { name, city, by: req.user!.email });
     res.status(201).json({ crusher, admin_user: adminUser ? { id: (adminUser as any).id, email: (adminUser as any).email } : null });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, name: req.body.name, admin_email: req.body.admin_email, by: req.user?.email }, 'Failed to create crusher');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Get users for a crusher ───────────────────────────────────────────────
@@ -272,7 +309,10 @@ platformRouter.get('/crushers/:id/users', async (req, res) => {
       [req.params.id]
     );
     res.json(rows);
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, crusher_id: req.params.id }, 'Failed to list crusher users');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Add user to a crusher ────────────────────────────────────────────────
@@ -288,7 +328,10 @@ platformRouter.post('/crushers/:id/users', async (req, res) => {
     );
     logAction('platform.user.access.granted', { user_id, crusher_id: req.params.id, role, by: req.user!.email });
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, crusher_id: req.params.id, user_id: req.body.user_id, by: req.user?.email }, 'Failed to grant crusher access');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Remove user from a crusher ───────────────────────────────────────────
@@ -301,7 +344,10 @@ platformRouter.delete('/crushers/:crusherId/users/:userId', async (req, res) => 
     );
     logAction('platform.user.access.revoked', { user_id: req.params.userId, crusher_id: req.params.crusherId, by: req.user!.email });
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, crusher_id: req.params.crusherId, user_id: req.params.userId, by: req.user?.email }, 'Failed to revoke crusher access');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Deactivate / activate a crusher ──────────────────────────────────────
@@ -311,7 +357,10 @@ platformRouter.patch('/crushers/:id/status', async (req, res) => {
     await query('UPDATE crushers SET is_active = $1, updated_at = now() WHERE id = $2', [is_active, req.params.id]);
     logAction('platform.crusher.status', { crusher_id: req.params.id, is_active, by: req.user!.email });
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, crusher_id: req.params.id, is_active: req.body.is_active, by: req.user?.email }, 'Failed to update crusher status');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ── Create a new user and optionally assign to a crusher ─────────────────
@@ -336,5 +385,8 @@ platformRouter.post('/users', async (req, res) => {
     }
     logAction('platform.user.created', { email, role, by: req.user!.email });
     res.status(201).json({ id: (user as any).id, email: (user as any).email, role: (user as any).role });
-  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    logger.error({ err, email: req.body.email, crusher_id: req.body.crusher_id, by: req.user?.email }, 'Failed to create user');
+    res.status(500).json({ error: 'Server error' });
+  }
 });

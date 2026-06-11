@@ -12,14 +12,20 @@ quarryRouter.get('/', authorize('admin', 'operations', 'report_viewer'), async (
   const cid = req.user!.crusher_id!;
   const { from, to, page = 1, limit = 20 } = req.query;
   const offset = (Number(page) - 1) * Number(limit);
-  const rows = await query(
-    `SELECT qs.*, u.name as created_by_name FROM quarry_sales qs
-     LEFT JOIN users u ON u.id = qs.created_by
-     WHERE qs.sale_date BETWEEN $1 AND $2 AND qs.crusher_id = $3
-     ORDER BY sale_date DESC LIMIT $4 OFFSET $5`,
-    [from || 'now()-interval 30 days', to || 'now()', cid, Number(limit), offset]
-  );
-  res.json(rows);
+  logger.debug({ crusher_id: cid, from, to, page, limit }, 'quarry sales list request');
+  try {
+    const rows = await query(
+      `SELECT qs.*, u.name as created_by_name FROM quarry_sales qs
+       LEFT JOIN users u ON u.id = qs.created_by
+       WHERE qs.sale_date BETWEEN $1 AND $2 AND qs.crusher_id = $3
+       ORDER BY sale_date DESC LIMIT $4 OFFSET $5`,
+      [from || 'now()-interval 30 days', to || 'now()', cid, Number(limit), offset]
+    );
+    res.json(rows);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid, from, to, page, limit }, 'quarry sales list failed');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 quarryRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
@@ -59,6 +65,7 @@ quarryRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
     res.status(201).json(qs.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');
+    logger.error({ err, crusher_id: cid, by: req.user!.email }, 'quarry sale create failed');
     logAction('quarry_sale.create.failed', { error: String(err), by: req.user!.email, crusher_id: cid }, 'error');
     res.status(500).json({ error: 'Failed' });
   } finally {
@@ -83,7 +90,9 @@ quarryRouter.get('/purchases', authorize('admin', 'operations', 'report_viewer')
     );
     res.json(rows);
   } catch (err) {
-    logger.error(err, 'quarry purchases fetch error');
+    const cid = req.user!.crusher_id!;
+    const { from, to } = req.query;
+    logger.error({ err, crusher_id: cid, user: req.user!.email, from, to }, 'quarry purchases fetch failed');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -110,7 +119,8 @@ quarryRouter.post('/purchases', authorize('admin', 'operations'), async (req, re
     logAction('quarry_purchase.created', { supplier: supplier_name, product: product_name, quantity, by: req.user!.email, crusher_id: cid });
     res.status(201).json((rows as any[])[0]);
   } catch (err) {
-    logger.error(err, 'quarry purchase create error');
+    const { supplier_name, product_name, quantity } = req.body;
+    logger.error({ err, crusher_id: cid, supplier_name, product_name, quantity, by: req.user!.email }, 'quarry purchase create failed');
     res.status(500).json({ error: 'Failed to record purchase' });
   }
 });
@@ -118,13 +128,18 @@ quarryRouter.post('/purchases', authorize('admin', 'operations'), async (req, re
 quarryRouter.get('/summary', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to } = req.query;
-  const rows = await query(
-    `SELECT product_name, SUM(quantity) as total_qty, SUM(grand_total) as total_amount,
-     COUNT(*) as trips FROM quarry_sales
-     WHERE sale_date BETWEEN $1 AND $2 AND crusher_id = $3
-     GROUP BY product_name ORDER BY total_amount DESC`,
-    [from || 'now()-interval 30 days', to || 'now()', cid]
-  );
-  res.json(rows);
+  logger.debug({ crusher_id: cid, from, to }, 'quarry summary request');
+  try {
+    const rows = await query(
+      `SELECT product_name, SUM(quantity) as total_qty, SUM(grand_total) as total_amount,
+       COUNT(*) as trips FROM quarry_sales
+       WHERE sale_date BETWEEN $1 AND $2 AND crusher_id = $3
+       GROUP BY product_name ORDER BY total_amount DESC`,
+      [from || 'now()-interval 30 days', to || 'now()', cid]
+    );
+    res.json(rows);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid, from, to }, 'quarry summary fetch failed');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
-

@@ -11,6 +11,7 @@ purchasesRouter.use(requireCrusher);
 purchasesRouter.get('/', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { from, to, party_id, page = 1, limit = 20 } = req.query;
+  logger.debug({ crusher_id: cid, from, to, party_id, page, limit }, 'Listing purchases');
   const offset = (Number(page) - 1) * Number(limit);
   let where = 'WHERE 1=1';
   const params: any[] = [];
@@ -19,19 +20,25 @@ purchasesRouter.get('/', authorize('admin', 'operations', 'report_viewer'), asyn
   if (to) { params.push(to); where += ` AND purchase_date <= $${params.length}`; }
   if (party_id) { params.push(party_id); where += ` AND party_id = $${params.length}`; }
   params.push(Number(limit), offset);
-  const rows = await query(
-    `SELECT * FROM purchases ${where} ORDER BY purchase_date DESC LIMIT $${params.length-1} OFFSET $${params.length}`,
-    params
-  );
-  res.json(rows);
+  try {
+    const rows = await query(
+      `SELECT * FROM purchases ${where} ORDER BY purchase_date DESC LIMIT $${params.length-1} OFFSET $${params.length}`,
+      params
+    );
+    res.json(rows);
+  } catch (err) {
+    logger.error({ err, crusher_id: cid, from, to, party_id, page, limit }, 'Failed to list purchases');
+    res.status(500).json({ error: 'Failed to fetch purchases' });
+  }
 });
 
 purchasesRouter.post('/', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const client = await (await import('../config/db')).pool.connect();
   try {
-    await client.query('BEGIN');
     const { bill_number, purchase_date, party_id, party_name, vehicle_id, vehicle_number, items, amount_paid = 0, payment_mode, notes } = req.body;
+    logger.info({ crusher_id: cid, bill_number, party_id, itemCount: items?.length }, 'Creating purchase');
+    await client.query('BEGIN');
     let subtotal = 0;
     for (const item of items) subtotal += item.quantity * item.rate;
     const grand_total = items.reduce((s: number, i: any) => s + (i.quantity * i.rate * (1 + (i.gst_rate || 0) / 100)), 0);
@@ -65,8 +72,9 @@ purchasesRouter.post('/', authorize('admin', 'operations'), async (req, res) => 
     res.status(201).json(p.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');
+    logger.error({ err, bill_number: req.body?.bill_number, crusher_id: cid, by: req.user!.email }, 'purchase.create.failed');
     logAction('purchase.create.failed', { error: String(err), by: req.user!.email, crusher_id: cid }, 'error');
-    res.status(500).json({ error: 'Failed' });
+    res.status(500).json({ error: 'Failed to create purchase' });
   } finally {
     client.release();
   }
@@ -74,23 +82,33 @@ purchasesRouter.post('/', authorize('admin', 'operations'), async (req, res) => 
 
 purchasesRouter.get('/:id', authorize('admin', 'operations', 'report_viewer'), async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const purchase = await queryOne('SELECT * FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
-  if (!purchase) return res.status(404).json({ error: 'Not found' });
-  const items = await query('SELECT * FROM purchase_items WHERE purchase_id = $1', [req.params.id]);
-  res.json({ ...purchase, items });
+  try {
+    const purchase = await queryOne('SELECT * FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
+    if (!purchase) return res.status(404).json({ error: 'Not found' });
+    const items = await query('SELECT * FROM purchase_items WHERE purchase_id = $1', [req.params.id]);
+    res.json({ ...purchase, items });
+  } catch (err) {
+    logger.error({ err, purchaseId: req.params.id, crusher_id: cid }, 'Failed to fetch purchase');
+    res.status(500).json({ error: 'Failed to fetch purchase' });
+  }
 });
 
 purchasesRouter.put('/:id', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
   const { amount_paid, payment_mode, notes } = req.body;
-  const existing = await queryOne('SELECT grand_total FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
-  if (!existing) return res.status(404).json({ error: 'Not found' });
-  const balance_due = (existing as any).grand_total - amount_paid;
-  const updated = await queryOne(
-    `UPDATE purchases SET amount_paid=$1, payment_mode=$2, notes=$3, balance_due=$4
-     WHERE id=$5 AND crusher_id=$6 RETURNING *`,
-    [amount_paid, payment_mode, notes, balance_due, req.params.id, cid]
-  );
-  logAction('purchase.updated', { purchaseId: req.params.id, by: req.user!.email, crusher_id: cid });
-  res.json(updated);
+  try {
+    const existing = await queryOne('SELECT grand_total FROM purchases WHERE id = $1 AND crusher_id = $2', [req.params.id, cid]);
+    if (!existing) return res.status(404).json({ error: 'Not found' });
+    const balance_due = (existing as any).grand_total - amount_paid;
+    const updated = await queryOne(
+      `UPDATE purchases SET amount_paid=$1, payment_mode=$2, notes=$3, balance_due=$4
+       WHERE id=$5 AND crusher_id=$6 RETURNING *`,
+      [amount_paid, payment_mode, notes, balance_due, req.params.id, cid]
+    );
+    logAction('purchase.updated', { purchaseId: req.params.id, by: req.user!.email, crusher_id: cid });
+    res.json(updated);
+  } catch (err) {
+    logger.error({ err, purchaseId: req.params.id, crusher_id: cid }, 'Failed to update purchase');
+    res.status(500).json({ error: 'Failed to update purchase' });
+  }
 });

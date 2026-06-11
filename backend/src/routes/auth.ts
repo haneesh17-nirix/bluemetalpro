@@ -9,7 +9,7 @@ import { logger, logAction } from '../utils/logger';
 export const authRouter = Router();
 
 setInterval(async () => {
-  try { await query('DELETE FROM user_sessions WHERE expires_at < now()', []); } catch (_) {}
+  try { await query('DELETE FROM user_sessions WHERE expires_at < now()', []); } catch (err) { logger.warn({ err }, 'session cleanup failed') }
 }, 60 * 60 * 1000);
 
 // ── Step 1: Login — returns user + accessible tenants ───────────────────────
@@ -87,7 +87,7 @@ authRouter.post('/login', async (req, res) => {
       tenants,
     });
   } catch (err) {
-    logger.error(err, 'Login error');
+    logger.error({ err, email: req.body.email, ip: req.ip }, 'Login error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -96,6 +96,7 @@ authRouter.post('/login', async (req, res) => {
 authRouter.post('/select-tenant', authenticate, async (req, res) => {
   try {
     const { tenant_id } = req.body;
+    logger.debug({ userId: req.user?.id, tenant_id }, 'select-tenant: start');
     if (!tenant_id) return res.status(400).json({ error: 'tenant_id required' });
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!UUID_RE.test(tenant_id)) return res.status(400).json({ error: 'Invalid tenant_id' });
@@ -160,7 +161,7 @@ authRouter.post('/select-tenant', authenticate, async (req, res) => {
 
     res.json({ temp_token: tenantToken, tenant, crushers });
   } catch (err) {
-    logger.error(err, 'select-tenant error');
+    logger.error({ err, userId: req.user?.id, email: req.user?.email, tenant_id: req.body.tenant_id }, 'select-tenant error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -169,6 +170,7 @@ authRouter.post('/select-tenant', authenticate, async (req, res) => {
 authRouter.post('/select-crusher', authenticate, async (req, res) => {
   try {
     const { crusher_id } = req.body;
+    logger.debug({ userId: req.user?.id, crusher_id }, 'select-crusher: start');
     if (!crusher_id) return res.status(400).json({ error: 'crusher_id required' });
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!UUID_RE.test(crusher_id)) return res.status(400).json({ error: 'Invalid crusher_id' });
@@ -221,6 +223,7 @@ authRouter.post('/select-crusher', authenticate, async (req, res) => {
 
     const resolved_tenant_id = req.user!.tenant_id || (access as any).tenant_id;
     if (!resolved_tenant_id) {
+      logger.error({ userId: req.user?.id, crusher_id, access }, 'Unable to resolve tenant_id for crusher');
       return res.status(500).json({ error: 'Unable to determine tenant for this crusher. Contact your administrator.' });
     }
 
@@ -247,7 +250,7 @@ authRouter.post('/select-crusher', authenticate, async (req, res) => {
 
     logAction('user.crusher_selected', {
       userId: req.user!.id, email: req.user!.email,
-      crusher: (access as any).name, role: (access as any).role,
+      crusher: (access as any).name, role: (access as any).role, crusher_id: (access as any).id,
     });
 
     const { role: _r, id: _i, tenant_id: _t, ...crusher } = access as any;
@@ -257,7 +260,7 @@ authRouter.post('/select-crusher', authenticate, async (req, res) => {
       crusher,
     });
   } catch (err) {
-    logger.error(err, 'select-crusher error');
+    logger.error({ err, userId: req.user?.id, email: req.user?.email, crusher_id: req.body.crusher_id }, 'select-crusher error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -268,7 +271,7 @@ authRouter.get('/me', authenticate, async (req, res) => {
     const user = await queryOne('SELECT id, name, email, role, phone FROM users WHERE id = $1', [req.user!.id]);
     res.json(user);
   } catch (err) {
-    logger.error(err, 'me error');
+    logger.error({ err, userId: req.user?.id }, 'me error');
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -292,17 +295,22 @@ authRouter.post('/change-password', authenticate, async (req, res) => {
     logAction('user.password_changed', { userId: req.user!.id, email: req.user!.email });
     res.json({ message: 'Password updated' });
   } catch (err) {
-    logger.error(err, 'change-password error');
+    logger.error({ err, userId: req.user?.id, email: req.user?.email }, 'change-password error');
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // ── Logout ───────────────────────────────────────────────────────────────────
 authRouter.post('/logout', authenticate, async (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(' ')[1] ?? '';
-  const tokenHash = token.slice(-20);
-  await query('DELETE FROM user_sessions WHERE user_id = $1 AND token_hash = $2', [req.user!.id, tokenHash]);
-  logAction('user.logout', { userId: req.user!.id, email: req.user!.email });
-  res.json({ message: 'Logged out' });
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1] ?? '';
+    const tokenHash = token.slice(-20);
+    await query('DELETE FROM user_sessions WHERE user_id = $1 AND token_hash = $2', [req.user!.id, tokenHash]);
+    logAction('user.logout', { userId: req.user!.id, email: req.user!.email });
+    res.json({ message: 'Logged out' });
+  } catch (err) {
+    logger.error({ err, userId: req.user?.id, email: req.user?.email }, 'logout error');
+    res.status(500).json({ error: 'Server error' });
+  }
 });
