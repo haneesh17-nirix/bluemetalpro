@@ -120,97 +120,141 @@ function CrusherCard() {
 
   if (!crusher) return null;
 
+  // Logo green: extracted from /logo-icon.png dominant hue — forest emerald
+  const G = {
+    base:   'rgba(34,160,90,0.12)',
+    border: 'rgba(34,160,90,0.28)',
+    glow:   'rgba(34,160,90,0.08)',
+    icon:   '#22a05a',
+    iconBg: 'rgba(34,160,90,0.15)',
+    iconBorder: 'rgba(34,160,90,0.35)',
+    text:   '#4dd68c',
+    muted:  'rgba(34,160,90,0.45)',
+    dim:    'rgba(34,160,90,0.25)',
+  };
+
   return (
     <div ref={ref} style={{ padding: '10px 12px 0', position: 'relative' }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%', textAlign: 'left', cursor: 'pointer',
-          background: open
-            ? 'linear-gradient(145deg, rgba(184,149,62,0.14), rgba(184,149,62,0.07))'
-            : 'linear-gradient(145deg, rgba(184,149,62,0.08), rgba(184,149,62,0.04))',
-          border: open
-            ? '1px solid rgba(184,149,62,0.35)'
-            : '1px solid rgba(184,149,62,0.18)',
-          borderRadius: 12, padding: '10px 11px',
-          transition: 'all 0.18s ease',
-        }}
-      >
-        {/* header row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
-          <div style={{
-            width: 26, height: 26, borderRadius: 7, flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(184,149,62,0.15)', border: '1px solid rgba(184,149,62,0.3)',
-          }}>
-            <Building2 size={13} style={{ color: '#c9a84c' }} />
+      {/* ── Card ── */}
+      <div style={{
+        borderRadius: 12,
+        background: `linear-gradient(145deg, ${G.base}, rgba(34,160,90,0.05))`,
+        border: `1px solid ${G.border}`,
+        boxShadow: `0 0 16px ${G.glow}, inset 0 1px 0 rgba(255,255,255,0.03)`,
+        overflow: 'hidden',
+        position: 'relative',
+      }}>
+        {/* green top-edge glow stripe */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+          background: 'linear-gradient(90deg, transparent 0%, rgba(34,160,90,0.6) 40%, rgba(72,210,130,0.8) 60%, transparent 100%)',
+        }} />
+
+        <div style={{ padding: '10px 11px 9px' }}>
+          {/* header row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: `linear-gradient(135deg, ${G.iconBg}, rgba(34,160,90,0.08))`,
+              border: `1px solid ${G.iconBorder}`,
+              boxShadow: `0 0 8px rgba(34,160,90,0.2)`,
+            }}>
+              <Building2 size={14} style={{ color: G.icon }} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                margin: 0, fontSize: 11, fontWeight: 700,
+                color: G.text,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                lineHeight: 1.2,
+                textShadow: `0 0 12px rgba(34,160,90,0.4)`,
+              }}>{crusher.name}</p>
+              {crusher.city && (
+                <p style={{ margin: 0, fontSize: 9, color: 'rgba(180,210,195,0.5)', lineHeight: 1.3 }}>
+                  {crusher.city}{crusher.state ? `, ${crusher.state}` : ''}
+                </p>
+              )}
+            </div>
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{
-              margin: 0, fontSize: 11, fontWeight: 700, color: '#e8d898',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-              lineHeight: 1.2,
-            }}>{crusher.name}</p>
-            {crusher.city && (
-              <p style={{ margin: 0, fontSize: 9, color: 'rgba(180,200,230,0.45)', lineHeight: 1.3 }}>
-                {crusher.city}{crusher.state ? `, ${crusher.state}` : ''}
-              </p>
+
+          {/* detail rows */}
+          <div style={{
+            display: 'flex', flexDirection: 'column', gap: 3,
+            paddingBottom: 9, marginBottom: 8,
+            borderBottom: `1px solid ${G.dim}`,
+          }}>
+            {crusher.address && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5 }}>
+                <MapPin size={9} style={{ color: G.muted, flexShrink: 0, marginTop: 1 }} />
+                <span style={{
+                  fontSize: 9.5, color: 'rgba(180,210,195,0.55)', lineHeight: 1.35,
+                  overflow: 'hidden', display: '-webkit-box',
+                  WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                }}>{crusher.address}</span>
+              </div>
+            )}
+            {crusher.phone && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <Phone size={9} style={{ color: G.muted, flexShrink: 0 }} />
+                <span style={{ fontSize: 9.5, color: 'rgba(180,210,195,0.55)' }}>{crusher.phone}</span>
+              </div>
+            )}
+            {crusher.gstin && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <FileText size={9} style={{ color: G.muted, flexShrink: 0 }} />
+                <span style={{ fontSize: 9.5, color: 'rgba(180,210,195,0.55)', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
+                  {crusher.gstin}
+                </span>
+              </div>
             )}
           </div>
-          <ChevronDown size={11} style={{
-            color: 'rgba(184,149,62,0.55)', flexShrink: 0,
-            transform: open ? 'rotate(180deg)' : 'rotate(0)',
-            transition: 'transform 0.18s ease',
-          }} />
-        </div>
 
-        {/* detail rows */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {crusher.address && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5 }}>
-              <MapPin size={9} style={{ color: 'rgba(184,149,62,0.45)', flexShrink: 0, marginTop: 1 }} />
-              <span style={{
-                fontSize: 9.5, color: 'rgba(180,200,230,0.5)', lineHeight: 1.35,
-                overflow: 'hidden', display: '-webkit-box',
-                WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-              }}>{crusher.address}</span>
-            </div>
-          )}
-          {crusher.phone && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <Phone size={9} style={{ color: 'rgba(184,149,62,0.45)', flexShrink: 0 }} />
-              <span style={{ fontSize: 9.5, color: 'rgba(180,200,230,0.5)' }}>{crusher.phone}</span>
-            </div>
-          )}
-          {crusher.gstin && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <FileText size={9} style={{ color: 'rgba(184,149,62,0.45)', flexShrink: 0 }} />
-              <span style={{ fontSize: 9.5, color: 'rgba(180,200,230,0.5)', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
-                {crusher.gstin}
-              </span>
-            </div>
-          )}
+          {/* ── Switch button ── */}
+          <button
+            onClick={() => setOpen(o => !o)}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+              padding: '5px 10px', borderRadius: 7, cursor: 'pointer',
+              background: open
+                ? 'linear-gradient(135deg, rgba(34,160,90,0.28), rgba(34,160,90,0.18))'
+                : 'linear-gradient(135deg, rgba(34,160,90,0.18), rgba(34,160,90,0.10))',
+              border: `1px solid ${open ? 'rgba(34,160,90,0.5)' : 'rgba(34,160,90,0.3)'}`,
+              boxShadow: open ? '0 0 10px rgba(34,160,90,0.2)' : 'none',
+              transition: 'all 0.18s ease',
+            }}
+          >
+            <RefreshCw size={9} style={{ color: G.text, flexShrink: 0 }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: G.text, letterSpacing: '0.05em' }}>
+              Switch Plant
+            </span>
+            <ChevronDown size={9} style={{
+              color: G.muted, flexShrink: 0,
+              transform: open ? 'rotate(180deg)' : 'rotate(0)',
+              transition: 'transform 0.18s ease',
+            }} />
+          </button>
         </div>
-      </button>
+      </div>
 
       {/* plant switcher dropdown */}
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 4px)', left: 12, right: 12, zIndex: 200,
-          background: 'linear-gradient(145deg, #0e1a2e, #0a1422)',
-          border: '1px solid rgba(184,149,62,0.25)', borderRadius: 10,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          background: 'linear-gradient(145deg, #0c1a12, #0a1610)',
+          border: `1px solid ${G.border}`, borderRadius: 10,
+          boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px rgba(34,160,90,0.06)`,
           overflow: 'hidden',
         }}>
           <div style={{
             padding: '7px 10px 5px',
             fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
-            color: 'rgba(184,149,62,0.5)', textTransform: 'uppercase',
-            borderBottom: '1px solid rgba(184,149,62,0.1)',
-          }}>Switch Plant</div>
+            color: G.muted, textTransform: 'uppercase',
+            borderBottom: `1px solid ${G.dim}`,
+          }}>Select Plant</div>
           {plants.length === 0 ? (
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'center' }}>
-              <RefreshCw size={12} style={{ color: 'rgba(184,149,62,0.4)', animation: 'spin 0.8s linear infinite' }} />
+              <RefreshCw size={12} style={{ color: G.muted, animation: 'spin 0.8s linear infinite' }} />
             </div>
           ) : plants.map(p => {
             const isCurrent = p.id === crusher?.id;
@@ -219,32 +263,32 @@ function CrusherCard() {
               <button key={p.id} onClick={() => handleSwitch(p)} style={{
                 width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                 padding: '8px 10px', cursor: isCurrent ? 'default' : 'pointer',
-                background: isCurrent ? 'rgba(184,149,62,0.07)' : 'transparent',
+                background: isCurrent ? 'rgba(34,160,90,0.1)' : 'transparent',
                 border: 'none', transition: 'background 0.15s',
               }}
-              onMouseEnter={e => { if (!isCurrent) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(184,149,62,0.05)'; }}
+              onMouseEnter={e => { if (!isCurrent) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(34,160,90,0.06)'; }}
               onMouseLeave={e => { if (!isCurrent) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
               >
                 <div style={{
                   width: 22, height: 22, borderRadius: 6, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: isCurrent ? 'rgba(184,149,62,0.2)' : 'rgba(184,149,62,0.07)',
-                  border: `1px solid ${isCurrent ? 'rgba(184,149,62,0.4)' : 'rgba(184,149,62,0.15)'}`,
+                  background: isCurrent ? G.iconBg : 'rgba(34,160,90,0.06)',
+                  border: `1px solid ${isCurrent ? G.iconBorder : G.dim}`,
                 }}>
                   {isLoading
-                    ? <RefreshCw size={10} style={{ color: '#c9a84c', animation: 'spin 0.8s linear infinite' }} />
-                    : <Factory size={10} style={{ color: isCurrent ? '#c9a84c' : 'rgba(184,149,62,0.5)' }} />
+                    ? <RefreshCw size={10} style={{ color: G.icon, animation: 'spin 0.8s linear infinite' }} />
+                    : <Factory size={10} style={{ color: isCurrent ? G.icon : G.muted }} />
                   }
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{
                     margin: 0, fontSize: 11, fontWeight: isCurrent ? 700 : 500,
-                    color: isCurrent ? '#e8d898' : 'rgba(210,220,240,0.7)',
+                    color: isCurrent ? G.text : 'rgba(210,230,215,0.7)',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>{p.name}</p>
-                  {p.city && <p style={{ margin: 0, fontSize: 9, color: 'rgba(180,200,230,0.35)' }}>{p.city}</p>}
+                  {p.city && <p style={{ margin: 0, fontSize: 9, color: 'rgba(180,210,195,0.35)' }}>{p.city}</p>}
                 </div>
-                {isCurrent && <Check size={11} style={{ color: '#c9a84c', flexShrink: 0 }} />}
+                {isCurrent && <Check size={11} style={{ color: G.icon, flexShrink: 0 }} />}
               </button>
             );
           })}
