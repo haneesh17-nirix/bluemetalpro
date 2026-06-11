@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0] — 2026-06-11
+
+
+### Features
+
+- `notifications` redesign bell icon, dropdown, and filter tabs ([8f99412])
+
 ## [1.25.3] — 2026-06-11
 
 
