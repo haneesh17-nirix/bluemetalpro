@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.4] — 2026-06-11
+
+
+### CI / DevOps
+
+- trigger backend deploy with updated lock file ([2e18aad])
+
 ## [1.23.3] — 2026-06-11
 
 
