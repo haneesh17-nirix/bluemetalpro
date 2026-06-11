@@ -297,10 +297,6 @@ export default function LoginPage() {
           .lp-right { padding: 24px 16px 40px !important; }
           .lp-card { padding: 28px 22px !important; }
         }
-        @media (min-width: 768px) {
-          .lp-brand { flex-direction: row; align-items: center; }
-          .lp-brand .lp-logo-wrap { flex-direction: column; align-items: flex-start; }
-        }
       `}</style>
 
       <div className="lp-root">
