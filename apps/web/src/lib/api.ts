@@ -30,7 +30,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null;
+  const token = typeof window !== 'undefined'
+    ? (sessionStorage.getItem('token') || sessionStorage.getItem('temp_token'))
+    : null;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
