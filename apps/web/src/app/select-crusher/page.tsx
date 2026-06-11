@@ -35,7 +35,7 @@ export default function SelectCrusherPage() {
       log.action('Crusher selected', { name: c.name });
       router.push('/dashboard');
     } catch (err) {
-      log.error('Crusher selection failed', err instanceof Error ? err.message : String(err));
+      log.error('Crusher selection failed', { message: err instanceof Error ? err.message : String(err) });
       toast.error('Failed to select plant. Please try again.');
       setSelecting(null);
     }
