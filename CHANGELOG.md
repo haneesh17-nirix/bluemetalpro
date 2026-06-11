@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.1] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` restore user_tenant/crusher_access broken by migration 019 ([32ca85a])
+
 ## [1.26.0] — 2026-06-11
 
 
