@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.3] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` rename PL/pgSQL vars to avoid column name ambiguity in 019 ([61d6b59])
+
 ## [1.26.2] — 2026-06-11
 
 
