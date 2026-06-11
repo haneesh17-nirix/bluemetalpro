@@ -110,7 +110,7 @@ function CrusherCard() {
       localStorage.setItem('user', JSON.stringify(data.user));
       setCrusher(data.crusher);
       setOpen(false);
-      router.refresh();
+      window.location.reload();
     } catch {
       /* ignore */
     } finally {
