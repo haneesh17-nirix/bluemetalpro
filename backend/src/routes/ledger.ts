@@ -10,17 +10,17 @@ ledgerRouter.use(requireCrusher);
 
 ledgerRouter.post('/receipt', authorize('admin', 'operations'), async (req, res) => {
   const cid = req.user!.crusher_id!;
-  const { party_id, txn_date, amount, payment_mode, cheque_number, cheque_date, bank_name, reference_id, narration } = req.body;
+  const { party_id, txn_date, amount, payment_mode, cheque_number, cheque_date, bank_name, sale_id, narration } = req.body;
   const txn = await queryOne(
-    `INSERT INTO ledger_transactions (txn_type, txn_date, party_id, amount, payment_mode, cheque_number, cheque_date, bank_name, reference_id, reference_type, narration, created_by, crusher_id)
-     VALUES ('receipt',$1,$2,$3,$4,$5,$6,$7,$8,'sale',$9,$10,$11) RETURNING *`,
-    [txn_date, party_id, amount, payment_mode, cheque_number, cheque_date, bank_name, reference_id, narration, req.user!.id, cid]
+    `INSERT INTO ledger_transactions (txn_type, txn_date, party_id, amount, payment_mode, cheque_number, cheque_date, bank_name, sale_id, narration, created_by, crusher_id)
+     VALUES ('receipt',$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+    [txn_date, party_id, amount, payment_mode, cheque_number, cheque_date, bank_name, sale_id || null, narration, req.user!.id, cid]
   );
-  // Update balance_due on sale if reference provided
-  if (reference_id) {
-    await query('UPDATE sales SET amount_received = amount_received + $1, balance_due = balance_due - $1 WHERE id = $2 AND crusher_id = $3', [amount, reference_id, cid]);
+  // Update balance_due on sale if sale reference provided
+  if (sale_id) {
+    await query('UPDATE sales SET amount_received = amount_received + $1, balance_due = balance_due - $1 WHERE id = $2 AND crusher_id = $3', [amount, sale_id, cid]);
   }
-  logAction('ledger.receipt_recorded', { party_id, amount, payment_mode, reference_id, by: req.user!.email });
+  logAction('ledger.receipt_recorded', { party_id, amount, payment_mode, sale_id, by: req.user!.email });
   const partyRow = party_id ? await queryOne('SELECT name FROM parties WHERE id = $1', [party_id]) : null;
   fanOut(cid, {
     type: 'ledger',

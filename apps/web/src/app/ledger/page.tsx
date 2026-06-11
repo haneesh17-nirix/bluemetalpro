@@ -14,7 +14,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
   const { data: parties = [] } = useQuery({ queryKey: ['parties'], queryFn: () => getParties() });
   const [form, setForm] = useState({
     party_id: '', txn_date: dayjs().format('YYYY-MM-DD'),
-    amount: '', payment_mode: 'cash', cheque_number: '', bank_name: '', reference_id: '', narration: '',
+    amount: '', payment_mode: 'cash', cheque_number: '', bank_name: '', sale_id: '', narration: '',
   });
 
   const mutation = useMutation({
@@ -74,7 +74,7 @@ function ReceiptModal({ onClose }: { onClose: () => void }) {
           )}
           <div>
             <label className="label">Linked Invoice No. (optional)</label>
-            <input value={form.reference_id} onChange={e => setForm(f => ({ ...f, reference_id: e.target.value }))} className="input" placeholder="Sale ID to mark as paid" />
+            <input value={form.sale_id} onChange={e => setForm(f => ({ ...f, sale_id: e.target.value }))} className="input" placeholder="Sale ID to mark as paid" />
           </div>
           <div>
             <label className="label">Narration</label>
