@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0] — 2026-06-11
+
+
+### Features
+
+- crusher switcher + quarry split into Sales and Purchases tabs ([ed20202])
+
 ## [1.22.6] — 2026-06-11
 
 
