@@ -34,7 +34,10 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 app.use(compression());
-app.use(cors({ origin: process.env.CORS_ORIGINS?.split(',') || '*' }));
+app.use(cors({
+  origin: process.env.CORS_ORIGINS?.split(',') || '*',
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(pinoHttp({ logger, customLogLevel: (_, res) => res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info' }));
 
