@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.3] — 2026-06-11
+
+
+### Other Changes
+
+- replace all test data with realistic demo data for all flows ([d15db3c])
+
 ## [1.25.2] — 2026-06-11
 
 
