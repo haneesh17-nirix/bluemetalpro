@@ -127,3 +127,4 @@ quarryRouter.get('/summary', authorize('admin', 'operations', 'report_viewer'), 
   );
   res.json(rows);
 });
+
