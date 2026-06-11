@@ -299,9 +299,9 @@ $$;
 
 -- Wage payment last month
 INSERT INTO wage_payments (worker_id, period_from, period_to, days_worked, gross_wages, deductions, advances_deducted, net_wages, payment_date, payment_mode, crusher_id) VALUES
-  ('55555555-0000-0000-0000-000000000001', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 19500, 0, 1500, 18000, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
-  ('55555555-0000-0000-0000-000000000002', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 25, 17500, 0, 0,    17500, DATE_TRUNC('month', CURRENT_DATE) + 2, 'cash', '22222222-0000-0000-0000-000000000001'),
-  ('55555555-0000-0000-0000-000000000006', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - 1, 26, 28000, 2800, 0,  25200, DATE_TRUNC('month', CURRENT_DATE) + 2, 'neft', '22222222-0000-0000-0000-000000000001');
+  ('55555555-0000-0000-0000-000000000001', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 day', 26, 19500, 0, 1500, 18000, DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '2 days', 'cash', '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000002', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 day', 25, 17500, 0, 0,    17500, DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '2 days', 'cash', '22222222-0000-0000-0000-000000000001'),
+  ('55555555-0000-0000-0000-000000000006', DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'), DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 day', 26, 28000, 2800, 0,  25200, DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '2 days', 'neft', '22222222-0000-0000-0000-000000000001');
 
 -- ── 8. SALES (last 60 days, plant 1) ──────────────────────────────────────
 -- Helper: all sales reference plant 1, created_by admin
