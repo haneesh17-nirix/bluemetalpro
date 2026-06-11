@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.5] — 2026-06-11
+
+
+### CI / DevOps
+
+- retrigger backend deploy ([de121f7])
+
 ## [1.23.4] — 2026-06-11
 
 
