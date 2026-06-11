@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.22.6] — 2026-06-11
+
+
+### Bug Fixes
+
+- `ledger` update reference_id/reference_type to sale_id after schema migration ([7a93d5c])
+
+### Other Changes
+
+- `audit` full codebase audit — 75 bugs fixed across auth, RBAC, backend, frontend, DB ([1ef9e1a])
+
 ## [1.22.5] — 2026-06-11
 
 
