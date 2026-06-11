@@ -724,18 +724,25 @@ $$;
 
 -- ── 12. QUARRY PURCHASES ──────────────────────────────────────────────────
 INSERT INTO quarry_purchases (purchase_date, supplier_name, product_name, quantity, unit, rate, royalty_rate, vehicle_number, payment_mode, notes, created_by, crusher_id)
-VALUES
-  (CURRENT_DATE - 38, 'Ramanagara Stone Mines', 'Boulder / Raw Stone',    500.0, 'MT', 350, 55, 'KA-02-AC-9012', 'neft',  'Monthly contract supply',        'aaaaaaaa-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001'),
-  (CURRENT_DATE - 22, 'Ramanagara Stone Mines', 'Boulder / Raw Stone',    420.0, 'MT', 350, 55, 'KA-01-AA-1234', 'neft',  'Second fortnight supply',        'aaaaaaaa-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001'),
-  (CURRENT_DATE - 5,  'Savandurga Quarries',    'Boulder / Raw Stone',    300.0, 'MT', 360, 55, 'KA-02-AC-9012', 'cash',  'New supplier trial — spot rate', 'aaaaaaaa-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001'),
-  (CURRENT_DATE - 18, 'Tumkur Granite Works',   'Granite / Hard Rock',    250.0, 'MT', 380, 60, 'KA-05-AF-2345', 'neft',  'Tumkur plant supply',            'aaaaaaaa-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000002');
+SELECT purchase_date, supplier_name, product_name, quantity, unit, rate, royalty_rate, vehicle_number, payment_mode, notes, u.id, crusher_id
+FROM (VALUES
+  (CURRENT_DATE - 38, 'Ramanagara Stone Mines', 'Boulder / Raw Stone',    500.0::NUMERIC, 'MT', 350::NUMERIC, 55::NUMERIC, 'KA-02-AC-9012', 'neft',  'Monthly contract supply',        '22222222-0000-0000-0000-000000000001'::UUID),
+  (CURRENT_DATE - 22, 'Ramanagara Stone Mines', 'Boulder / Raw Stone',    420.0::NUMERIC, 'MT', 350::NUMERIC, 55::NUMERIC, 'KA-01-AA-1234', 'neft',  'Second fortnight supply',        '22222222-0000-0000-0000-000000000001'::UUID),
+  (CURRENT_DATE - 5,  'Savandurga Quarries',    'Boulder / Raw Stone',    300.0::NUMERIC, 'MT', 360::NUMERIC, 55::NUMERIC, 'KA-02-AC-9012', 'cash',  'New supplier trial — spot rate', '22222222-0000-0000-0000-000000000001'::UUID),
+  (CURRENT_DATE - 18, 'Tumkur Granite Works',   'Granite / Hard Rock',    250.0::NUMERIC, 'MT', 380::NUMERIC, 60::NUMERIC, 'KA-05-AF-2345', 'neft',  'Tumkur plant supply',            '22222222-0000-0000-0000-000000000002'::UUID)
+) AS t(purchase_date, supplier_name, product_name, quantity, unit, rate, royalty_rate, vehicle_number, payment_mode, notes, crusher_id)
+CROSS JOIN (SELECT id FROM users WHERE email = 'admin@bluemetal.local') u;
 
 -- ── 13. NOTIFICATIONS ─────────────────────────────────────────────────────
-INSERT INTO notifications (user_id, title, body, type, is_read, crusher_id) VALUES
-  ('aaaaaaaa-0000-0000-0000-000000000001', 'New Sale — BMP/2526/0009',     'Gangadhara & Sons: 12 MT M-Sand | ₹10,710',              'sale',        false, '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000001', 'Sale Cancelled — BMP/2526/0010','Prestige Projects: Order cancelled by customer.',         'sale',        true,  '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000001', 'Payment Received — L&T',        '₹80,000 received. Outstanding: ₹1,12,800.',              'payment',     false, '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000001', 'Maintenance Due in 7 Days',      'Screen Mesh Replacement scheduled for next week.',       'maintenance', false, '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000001', 'Conveyor Belt Repair In Progress','Emergency splice repair underway — plant slowdown.',    'maintenance', false, '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000002', 'New Sale — BMP/2526/0009',     'Today''s retail: 12 MT M-Sand dispatched.',               'sale',        false, '22222222-0000-0000-0000-000000000001'),
-  ('aaaaaaaa-0000-0000-0000-000000000004', 'Monthly Report Ready',           'June P&L and GST summary available in reports.',         'sale',        false, '22222222-0000-0000-0000-000000000001');
+INSERT INTO notifications (user_id, title, body, type, is_read, crusher_id)
+SELECT u.id, title, body, type::notification_type, is_read, '22222222-0000-0000-0000-000000000001'
+FROM (VALUES
+  ('admin@bluemetal.local',   'New Sale — BMP/2526/0009',      'Gangadhara & Sons: 12 MT M-Sand | ₹10,710',             'sale',        false),
+  ('admin@bluemetal.local',   'Sale Cancelled — BMP/2526/0010','Prestige Projects: Order cancelled by customer.',        'sale',        true),
+  ('admin@bluemetal.local',   'Payment Received — L&T',         '₹80,000 received. Outstanding: ₹1,12,800.',            'payment',     false),
+  ('admin@bluemetal.local',   'Maintenance Due in 7 Days',       'Screen Mesh Replacement scheduled for next week.',     'maintenance', false),
+  ('admin@bluemetal.local',   'Conveyor Belt Repair In Progress','Emergency splice repair underway — plant slowdown.',   'maintenance', false),
+  ('ops@bluemetal.local',     'New Sale — BMP/2526/0009',      'Today''s retail: 12 MT M-Sand dispatched.',             'sale',        false),
+  ('reports@bluemetal.local', 'Monthly Report Ready',            'June P&L and GST summary available in reports.',      'sale',        false)
+) AS t(email, title, body, type, is_read)
+JOIN users u ON u.email = t.email;
