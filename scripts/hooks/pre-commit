@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# BlueMetal Pro — pre-commit hook
+# Checks staged backend route files for logging compliance before commit.
+# Install: cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT"
+
+FAIL=0
+
+# ── Logging compliance (staged backend route files only) ───────────────────
+if git diff --cached --name-only | grep -q "backend/src/routes/.*\.ts$"; then
+  echo ""
+  echo "▶ Logging compliance check (staged route files)..."
+  if python3 scripts/check_logging.py --staged; then
+    :
+  else
+    echo ""
+    echo "  ✗  Fix logging issues above, then re-stage and commit."
+    echo "  ℹ  Standards: docs/logging-standards.md"
+    FAIL=1
+  fi
+fi
+
+echo ""
+if [ $FAIL -ne 0 ]; then
+  echo "✗ Pre-commit checks failed. Commit blocked."
+  echo ""
+  exit 1
+fi

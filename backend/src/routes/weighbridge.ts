@@ -35,6 +35,7 @@ weighbridgeRouter.post('/ingest', async (req, res) => {
       [payload.weighbridgeId, payload.weight.value, payload.weight.status, payload.weight.raw, payload.vehicleNumber || null]
     );
 
+    logAction('weighbridge.ingest', { weighbridge_id: payload.weighbridgeId, status: payload.weight.status, weight_kg: payload.weight.value, vehicle: payload.vehicleNumber || null });
     res.json({ success: true });
   } catch (err) {
     logger.error({ err, weighbridgeId: payload.weighbridgeId }, 'weighbridge ingest failed');

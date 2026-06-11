@@ -52,6 +52,15 @@ EOF
 JSON_EXIT=$?
 [ $JSON_EXIT -ne 0 ] && FAIL=1
 
+# 4. Logging compliance (all backend route files)
+echo "▶ Logging compliance check..."
+if python3 scripts/check_logging.py; then
+  :
+else
+  echo "  ℹ  Standards: docs/logging-standards.md"
+  FAIL=1
+fi
+
 echo ""
 echo "─────────────────────────────────"
 if [ $FAIL -ne 0 ]; then

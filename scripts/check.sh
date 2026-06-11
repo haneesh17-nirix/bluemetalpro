@@ -284,6 +284,18 @@ else
   ERRORS+=("python3 not installed")
 fi
 
+# ── 8. Logging compliance ──────────────────────────────────────────────────────
+
+header "Logging compliance (backend routes)"
+
+if command -v python3 &> /dev/null; then
+  run "check_logging.py" python3 scripts/check_logging.py
+else
+  red "python3 not found — skipping logging check"
+  FAIL=$((FAIL + 1))
+  ERRORS+=("python3 not installed")
+fi
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 
 echo ""
