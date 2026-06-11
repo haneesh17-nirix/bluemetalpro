@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.7] — 2026-06-11
+
+
+### Bug Fixes
+
+- `db` fix hardcoded user UUIDs in quarry_purchases and notifications ([858e600])
+
 ## [1.26.6] — 2026-06-11
 
 
