@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.7] — 2026-06-11
+
+
+### Bug Fixes
+
+- `auth` send temp_token as Bearer during tenant/crusher selection ([4b131c1])
+
 ## [1.23.6] — 2026-06-11
 
 
