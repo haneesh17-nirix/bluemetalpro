@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.6] — 2026-06-11
+
+
+### Bug Fixes
+
+- `auth` align all token storage to sessionStorage consistently ([791035f])
+
 ## [1.23.5] — 2026-06-11
 
 
