@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -61,7 +61,7 @@ jobs:
       name: production
 
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
 
       - name: Login to Azure
         uses: azure/login@v2

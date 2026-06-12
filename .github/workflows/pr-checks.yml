@@ -29,9 +29,9 @@ jobs:
             workspace: packages/weighbridge-agent
 
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
 
-      - uses: actions/setup-node@v4.5.0
+      - uses: actions/setup-node@v4.4.0
         with:
           node-version: '20'
           cache: npm
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
         with:
           fetch-depth: 0
 
@@ -106,7 +106,7 @@ jobs:
     name: SQL migrations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Validate SQL
         run: |
           python3 - <<'EOF'
@@ -144,7 +144,7 @@ jobs:
     name: Required files (auto-synced)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Verify required file list is up to date
         run: python3 scripts/sync_checks.py --verify
       - name: Check all required files exist
@@ -173,7 +173,7 @@ jobs:
     name: JSON validity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Validate JSON files
         run: |
           python3 - <<'EOF'
@@ -199,7 +199,7 @@ jobs:
     name: Secrets scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Scan for hardcoded secrets
         run: |
           FAIL=0
@@ -226,7 +226,7 @@ jobs:
     name: Bicep syntax
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Install Azure CLI + Bicep
         run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && az bicep install
       - name: Build Bicep
@@ -239,7 +239,7 @@ jobs:
     name: Cross-layer contract tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
       - name: Run contract_test.py
         run: python3 scripts/contract_test.py
 
@@ -254,7 +254,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4.4.0
+      - uses: actions/checkout@v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
