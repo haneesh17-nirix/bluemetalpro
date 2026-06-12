@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.3] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` point API URL to direct container URL ([33bdfd2])
+
 ## [1.30.2] — 2026-06-12
 
 
