@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.0] — 2026-06-12
+
+
+### Features
+
+- `mobile` upgrade to Expo SDK 54 (RN 0.81.5 / React 19) ([0248c81])
+
 ## [1.29.15] — 2026-06-12
 
 
