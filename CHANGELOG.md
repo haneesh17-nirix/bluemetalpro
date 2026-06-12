@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.2] — 2026-06-12
+
+
+### Bug Fixes
+
+- `db` remove bare dollar-dollar in 020 comment (SQL validator false-positive) ([ddcfad9])
+
 ## [1.28.1] — 2026-06-11
 
 
