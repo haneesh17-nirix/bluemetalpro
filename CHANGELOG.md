@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.14] — 2026-06-12
+
+
+### Documentation
+
+- full repo audit fixes — app.json version, naming-conventions, mobile-setup ([cc65f4c])
+
 ## [1.29.13] — 2026-06-12
 
 
