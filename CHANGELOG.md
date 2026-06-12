@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.5] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` revert expo-print to ~12.8.1 (SDK 51 compatible) ([40a4015])
+
 ## [1.29.4] — 2026-06-12
 
 
