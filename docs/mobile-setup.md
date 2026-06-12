@@ -1,6 +1,6 @@
 # Mobile App — Setup & Build Guide
 
-React Native (Expo 51 / SDK 51) — Android + iOS via EAS Build.
+React Native (Expo SDK 54) — Android + iOS via EAS Build.
 
 ## Prerequisites
 
@@ -62,16 +62,7 @@ Without this variable, the app will fail to connect to the backend on production
 
 ## Dependency Notes
 
-The mobile app uses exact pins for several packages to avoid version conflicts in the Expo SDK 51 / RN 0.74 build environment:
-
-| Package | Pinned version | Reason |
-|---------|---------------|--------|
-| `react-native-gesture-handler` | `2.16.2` | 3.x requires New Architecture APIs not present in RN 0.74 old-arch mode; also pulls `androidx.core:1.16.0` which requires compileSdk 35 |
-| `expo-print` | `~12.8.1` | 13.x is SDK 52 only; SDK 51 needs 12.x |
-| `@react-navigation/stack` | `^6.3.29` | 6.4.x bumped gesture-handler peer dep to `^3.0.0` |
-| `typescript` | `^5.4.0` | 5.3.x causes JSX type errors with RN 0.74 bundled types |
-
-The root `package.json` has `"overrides": { "react-native-gesture-handler": "2.16.2" }` to prevent any transitive dependency from pulling in a newer version.
+SDK 54 uses React Native 0.81.5 and React 19.1.0. All Expo packages are pinned to their SDK 54 bundled versions.
 
 ### Adding a new dependency
 
@@ -91,42 +82,19 @@ cd apps/mobile
 npx expo-doctor
 ```
 
-Expected warnings (all intentional — do not "fix"):
-- `react-native-gesture-handler` — pinned to 2.16.2, not expo's suggestion of ^3
-- `typescript` — pinned to ^5.4.0
-
 ## Native Patches
 
 EAS build servers now use Gradle 8.8 / AGP 8.3+ which introduced two breaking changes in Expo SDK 51 libraries. Two patches are applied automatically by `eas-build-post-install` after EAS installs packages:
 
 | Patch | File | Bug |
 |-------|------|-----|
-| `patches/expo-modules-core+1.12.26.patch` | `ExpoModulesCorePlugin.gradle:85` | `components.release` → `components.findByName("release")` — AGP 8.3 removed named property access on `SoftwareComponentContainer` |
-| `scripts/patch-expo-print.js` | `expo-print/android/build.gradle:14` | Adds missing `useDefaultAndroidSdkVersions()` call — without it `compileSdkVersion` is never set when `expoProvidesDefaultConfig` is true |
+| `patches/expo-modules-core+3.0.30.patch` | `ExpoModulesCorePlugin.gradle:95` | `components.release` → `components.findByName("release")` — AGP 8.3+ removed named property access on `SoftwareComponentContainer` |
 
-The patches are idempotent. `eas-build-post-install` runs after EAS installs fresh packages (so they aren't overwritten) and before `expo prebuild` / Gradle.
+The patch is idempotent. `eas-build-post-install` runs after EAS installs fresh packages (so it isn't overwritten) and before `expo prebuild` / Gradle.
 
-If you upgrade `expo-modules-core` or `expo-print`, re-verify whether the patches still apply cleanly with `npx patch-package --error-on-fail`.
+If you upgrade `expo-modules-core`, re-verify the patch applies cleanly with `npx patch-package --error-on-fail` and rename the patch file to match the new version.
 
 ## Build Troubleshooting
-
-### Kotlin compilation errors in `react-native-gesture-handler`
-
-```
-e: RNGestureHandlerButtonViewManager.kt: Unresolved reference: BackgroundStyleApplicator
-```
-
-Cause: gesture-handler 3.x installed. Check lock file:
-
-```bash
-node -e "const l=require('./package-lock.json'); const k=Object.keys(l.packages).filter(k=>k.includes('gesture')); k.forEach(k=>console.log(k,l.packages[k].version))"
-```
-
-Fix: remove the entry from `package-lock.json` and run `npm install`.
-
-### `androidx.core:core:1.16.0` requires compileSdk 35
-
-Caused by gesture-handler 3.x pulling in a newer `androidx.core`. Fixing the gesture-handler version (above) also resolves this.
 
 ### `No project environment variables` warning in EAS
 
@@ -153,6 +121,6 @@ The app lives in a npm workspaces monorepo. Two EAS lifecycle hooks are defined 
 | Hook | When it runs | What it does |
 |------|-------------|-------------|
 | `eas-build-pre-install` | Before EAS installs packages | `npm install --ignore-scripts` from repo root — makes all workspace packages available |
-| `eas-build-post-install` | After EAS installs packages | Applies `patch-package` patches + `scripts/patch-expo-print.js` fix |
+| `eas-build-post-install` | After EAS installs packages | Applies `patch-package` patches (expo-modules-core AGP fix) |
 
 Metro is configured in `apps/mobile/metro.config.js` to watch the monorepo root and resolve modules from both `apps/mobile/node_modules` and the root `node_modules`.

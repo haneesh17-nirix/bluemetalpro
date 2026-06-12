@@ -16,15 +16,12 @@
     "infra:deploy": "az deployment group create --template-file infra/main.bicep --parameters @infra/params.json",
     "check": "bash scripts/check.sh",
     "check:types": "yarn workspaces run typecheck",
-    "postinstall": "patch-package && node scripts/patch-expo-print.js"
+    "postinstall": "patch-package"
   },
   "devDependencies": {
-    "@types/react": "~18.2.79",
+    "@types/react": "~19.1.10",
     "patch-package": "^8.0.1",
     "turbo": "^2.0.0"
-  },
-  "overrides": {
-    "react-native-gesture-handler": "2.16.2"
   },
   "version": "1.29.15"
 }
