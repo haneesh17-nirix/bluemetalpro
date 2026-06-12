@@ -55,7 +55,7 @@ You must add them in the **Expo dashboard**:
 
 1. Go to [expo.dev/accounts/haneesh17/projects/bluemetal-pro](https://expo.dev/accounts/haneesh17/projects/bluemetal-pro)
 2. Settings → Environment variables
-3. Add `EXPO_PUBLIC_API_URL` = `https://api.bluemetalpro.in/api`
+3. Add `EXPO_PUBLIC_API_URL` = `https://bluemetal-prod-api.redflower-fa4e0eb0.eastus2.azurecontainerapps.io/api`
 4. Set visibility to **Secret** (only available during builds, not exposed to users)
 
 Without this variable, the app will fail to connect to the backend on production builds.
