@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.6] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` suppress expo doctor version warnings via expo.install.exclude ([c5e70ec])
+
 ## [1.29.5] — 2026-06-12
 
 
