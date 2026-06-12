@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.2] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` set REACT_NATIVE_NODE_MODULES_DIR in root android/build.gradle ([19f4911])
+
 ## [1.30.1] — 2026-06-12
 
 
