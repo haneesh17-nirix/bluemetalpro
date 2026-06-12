@@ -183,20 +183,79 @@ weighbridgeRouter.get('/:id/live', async (req, res) => {
   }
 });
 
+// Get single weighbridge
+weighbridgeRouter.get('/:id', async (req, res) => {
+  try {
+    const wb = await queryOne(
+      `SELECT w.*, wl.weight_kg, wl.status as live_status, wl.vehicle_number, wl.captured_at
+       FROM weighbridges w
+       LEFT JOIN weighbridge_live wl ON wl.weighbridge_id = w.id
+       WHERE w.id = $1 AND w.crusher_id = $2`,
+      [req.params.id, req.user!.crusher_id]
+    );
+    if (!wb) return res.status(404).json({ error: 'Not found' });
+    res.json(wb);
+  } catch (err) {
+    logger.error({ err, weighbridge_id: req.params.id }, 'failed to get weighbridge');
+    return res.status(500).json({ error: 'Failed to get weighbridge' });
+  }
+});
+
 // Admin — add weighbridge
 weighbridgeRouter.post('/', authorize('admin'), async (req, res) => {
-  const { name, type, com_port, baud_rate, ip_address, ip_port, max_capacity_kg, location_label, sort_order } = req.body;
+  const { name, type, com_port, baud_rate, data_bits, stop_bits, parity, ip_address, ip_port, max_capacity_kg, location_label, sort_order, protocol } = req.body;
   try {
     const apiKey = require('crypto').randomBytes(32).toString('hex');
     const wb = await queryOne(
-      `INSERT INTO weighbridges (name, type, com_port, baud_rate, ip_address, ip_port, max_capacity_kg, location_label, sort_order, api_key)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-      [name, type || 'serial', com_port, baud_rate || 9600, ip_address, ip_port, max_capacity_kg || 60000, location_label, sort_order || 0, apiKey]
+      `INSERT INTO weighbridges (name, type, com_port, baud_rate, ip_address, ip_port, max_capacity_kg, location_label, sort_order, api_key, crusher_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [name, type || 'serial', com_port, baud_rate || 9600, ip_address, ip_port || null,
+       max_capacity_kg || 60000, location_label, sort_order || 0, apiKey, req.user!.crusher_id]
     );
     res.status(201).json(wb);
-    logAction('weighbridge.created', { weighbridge_id: (wb as any).id, name, crusher_id: req.user!.crusher_id, admin_id: req.user!.id });
+    logAction('weighbridge.created', { weighbridge_id: (wb as any).id, name, type, crusher_id: req.user!.crusher_id, admin_id: req.user!.id });
   } catch (err) {
     logger.error({ err, crusher_id: req.user!.crusher_id, name }, 'failed to create weighbridge');
     return res.status(500).json({ error: 'Failed to create weighbridge' });
+  }
+});
+
+// Admin — update weighbridge config
+weighbridgeRouter.patch('/:id', authorize('admin'), async (req, res) => {
+  const { name, type, com_port, baud_rate, ip_address, ip_port, max_capacity_kg, location_label, sort_order, is_active } = req.body;
+  try {
+    const wb = await queryOne(
+      `UPDATE weighbridges SET
+         name = COALESCE($1, name), type = COALESCE($2, type),
+         com_port = COALESCE($3, com_port), baud_rate = COALESCE($4, baud_rate),
+         ip_address = COALESCE($5, ip_address), ip_port = COALESCE($6, ip_port),
+         max_capacity_kg = COALESCE($7, max_capacity_kg),
+         location_label = COALESCE($8, location_label),
+         sort_order = COALESCE($9, sort_order),
+         is_active = COALESCE($10, is_active),
+         updated_at = now()
+       WHERE id = $11 AND crusher_id = $12 RETURNING *`,
+      [name, type, com_port, baud_rate, ip_address, ip_port,
+       max_capacity_kg, location_label, sort_order, is_active,
+       req.params.id, req.user!.crusher_id]
+    );
+    if (!wb) return res.status(404).json({ error: 'Not found' });
+    res.json(wb);
+    logAction('weighbridge.updated', { weighbridge_id: req.params.id, crusher_id: req.user!.crusher_id, admin_id: req.user!.id });
+  } catch (err) {
+    logger.error({ err, weighbridge_id: req.params.id, crusher_id: req.user!.crusher_id }, 'failed to update weighbridge');
+    return res.status(500).json({ error: 'Failed to update weighbridge' });
+  }
+});
+
+// Admin — delete weighbridge
+weighbridgeRouter.delete('/:id', authorize('admin'), async (req, res) => {
+  try {
+    await query('DELETE FROM weighbridges WHERE id = $1 AND crusher_id = $2', [req.params.id, req.user!.crusher_id]);
+    res.json({ success: true });
+    logAction('weighbridge.deleted', { weighbridge_id: req.params.id, crusher_id: req.user!.crusher_id, admin_id: req.user!.id });
+  } catch (err) {
+    logger.error({ err, weighbridge_id: req.params.id, crusher_id: req.user!.crusher_id }, 'failed to delete weighbridge');
+    return res.status(500).json({ error: 'Failed to delete weighbridge' });
   }
 });
