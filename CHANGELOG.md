@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.8] — 2026-06-12
+
+
+### Documentation
+
+- update all docs and add mobile-setup guide ([96cdb2e])
+
 ## [1.29.7] — 2026-06-12
 
 
