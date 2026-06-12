@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.31.0] — 2026-06-12
+
+
+### Features
+
+- `mobile` redesign login screen to match web app ([1127ae4])
+
 ## [1.30.3] — 2026-06-12
 
 

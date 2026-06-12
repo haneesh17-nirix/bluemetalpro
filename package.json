@@ -23,5 +23,5 @@
     "patch-package": "^8.0.1",
     "turbo": "^2.0.0"
   },
-  "version": "1.30.3"
+  "version": "1.31.0"
 }
