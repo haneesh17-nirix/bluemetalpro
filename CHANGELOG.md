@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.10] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` downgrade expo-build-properties to ~0.11.0 (SDK 51); revert expo-print to ~12.8.1 ([c389577])
+
 ## [1.29.9] — 2026-06-12
 
 
