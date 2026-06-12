@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.29.0] — 2026-06-12
+
+
+### Features
+
+- `db` add crusher_id FK column to weighbridges ([4db4f2d])
+- `weighbridge` full page rebuild with modern connection standards ([bff0752])
+
+### Chores
+
+- sync check.sh required file list ([993f8c0])
+
 ## [1.28.2] — 2026-06-12
 
 
