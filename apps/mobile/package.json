@@ -47,7 +47,8 @@
   "expo": {
     "install": {
       "exclude": [
-        "typescript"
+        "typescript",
+        "@react-native-picker/picker"
       ]
     }
   }

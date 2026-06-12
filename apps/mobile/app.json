@@ -23,6 +23,7 @@
       "bundleIdentifier": "com.bluemetal.pro"
     },
     "plugins": [
+      "./plugins/withReactNativeMonorepo",
       [
         "expo-build-properties",
         {
