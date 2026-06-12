@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.3] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` bump EAS build Node version 20.18.0 → 22.14.0 ([766f4c9])
+
 ## [1.29.2] — 2026-06-12
 
 
