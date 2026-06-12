@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.9] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` add expo-build-properties and update deps for Gradle 8.8 compat ([0e2996a])
+
 ## [1.29.8] — 2026-06-12
 
 
