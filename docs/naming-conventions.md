@@ -423,7 +423,7 @@ Screen names must match exactly between `navigation.navigate('ScreenName')` and 
 | `DB_PASSWORD` | **Yes** | |
 | `DB_SSL` | No | `true` in prod |
 | `AZURE_STORAGE_CONNECTION_STRING` | No | Required for invoice upload |
-| `AZURE_BLOB_CONTAINER` | No | Default `invoices` |
+| `AZURE_STORAGE_CONTAINER` | No | Default `stone-crusher-docs` |
 | `AZURE_NOTIFICATION_HUB_CONNECTION_STRING` | No | Required for push notifications |
 | `AZURE_NOTIFICATION_HUB_NAME` | No | Required for push notifications |
 | `MEDIAMTX_API_URL` | No | Required for camera registration |

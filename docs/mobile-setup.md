@@ -93,8 +93,20 @@ npx expo-doctor
 
 Expected warnings (all intentional — do not "fix"):
 - `react-native-gesture-handler` — pinned to 2.16.2, not expo's suggestion of ^3
-- `@types/react-native` — kept for JSX compatibility with SDK 51
 - `typescript` — pinned to ^5.4.0
+
+## Native Patches
+
+EAS build servers now use Gradle 8.8 / AGP 8.3+ which introduced two breaking changes in Expo SDK 51 libraries. Two patches are applied automatically by `eas-build-post-install` after EAS installs packages:
+
+| Patch | File | Bug |
+|-------|------|-----|
+| `patches/expo-modules-core+1.12.26.patch` | `ExpoModulesCorePlugin.gradle:85` | `components.release` → `components.findByName("release")` — AGP 8.3 removed named property access on `SoftwareComponentContainer` |
+| `scripts/patch-expo-print.js` | `expo-print/android/build.gradle:14` | Adds missing `useDefaultAndroidSdkVersions()` call — without it `compileSdkVersion` is never set when `expoProvidesDefaultConfig` is true |
+
+The patches are idempotent. `eas-build-post-install` runs after EAS installs fresh packages (so they aren't overwritten) and before `expo prebuild` / Gradle.
+
+If you upgrade `expo-modules-core` or `expo-print`, re-verify whether the patches still apply cleanly with `npx patch-package --error-on-fail`.
 
 ## Build Troubleshooting
 
@@ -136,6 +148,11 @@ The `--non-interactive` flag is required for CI. The EAS build runs asynchronous
 
 ## Monorepo Notes
 
-The app lives in a npm workspaces monorepo. The `eas-build-pre-install` script in `apps/mobile/package.json` runs `npm install --ignore-scripts` from the repo root before the EAS build, so all workspace packages are available.
+The app lives in a npm workspaces monorepo. Two EAS lifecycle hooks are defined in `apps/mobile/package.json`:
+
+| Hook | When it runs | What it does |
+|------|-------------|-------------|
+| `eas-build-pre-install` | Before EAS installs packages | `npm install --ignore-scripts` from repo root — makes all workspace packages available |
+| `eas-build-post-install` | After EAS installs packages | Applies `patch-package` patches + `scripts/patch-expo-print.js` fix |
 
 Metro is configured in `apps/mobile/metro.config.js` to watch the monorepo root and resolve modules from both `apps/mobile/node_modules` and the root `node_modules`.
