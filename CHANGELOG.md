@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.2] — 2026-06-12
+
+
+### Chores
+
+- `ci` bump GitHub Actions to Node 24-compatible versions ([31a4090])
+
 ## [1.29.1] — 2026-06-12
 
 
