@@ -40,7 +40,7 @@ A platform admin provisions tenants and crushers via `/platform`. Users are gran
 | User Management | — | ✅ |
 | Company Config / GST Setup | — | ✅ |
 | Platform Admin (tenant/crusher mgmt) | — | ✅ |
-| Weighbridge Integration | — | ⏳ |
+| Weighbridge Integration | — | ✅ |
 | CCTV Live Cameras | — | ⏳ |
 
 ## Roles

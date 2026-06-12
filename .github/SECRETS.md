@@ -39,7 +39,7 @@ Copy the full JSON output as the value of `AZURE_CREDENTIALS`.
 | Secret | Value |
 |---|---|
 | `AZURE_STATIC_WEB_APPS_API_TOKEN` | From Azure portal → Static Web App → Manage deployment token |
-| `NEXT_PUBLIC_API_URL` | `https://stonecrusher-prod-api.azurewebsites.net/api` |
+| `NEXT_PUBLIC_API_URL` | `https://api.bluemetalpro.in/api` |
 | `NEXT_PUBLIC_API_URL_STAGING` | Staging API URL (for PR previews) |
 
 ---
@@ -49,7 +49,7 @@ Copy the full JSON output as the value of `AZURE_CREDENTIALS`.
 | Secret | Value |
 |---|---|
 | `EXPO_TOKEN` | From expo.dev → Account → Access Tokens |
-| `EXPO_PUBLIC_API_URL` | `https://stonecrusher-prod-api.azurewebsites.net/api` |
+| `EXPO_PUBLIC_API_URL` | `https://api.bluemetalpro.in/api` — **also add this in Expo dashboard** (expo.dev → Project → Environment variables) so EAS builds can access it |
 
 ---
 

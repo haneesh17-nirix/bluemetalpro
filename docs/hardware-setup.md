@@ -4,7 +4,7 @@
 
 ### Prerequisites
 - Windows PC on the same LAN as the weighbridge (Win 10/11)
-- Node.js 20+ installed
+- Node.js 22+ installed
 - RS-232 serial cable (for legacy weighbridges) or network access (for IP-based)
 
 ### Edge Agent Installation

@@ -8,7 +8,7 @@ BlueMetal Pro is a monorepo containing:
 | Package | Path | Runtime |
 |---------|------|---------|
 | Web dashboard | `apps/web` | Next.js 14, Azure Static Web Apps (Free tier) |
-| Mobile app | `apps/mobile` | React Native (Expo 51), iOS + Android |
+| Mobile app | `apps/mobile` | React Native (Expo 51), iOS + Android — see [mobile-setup.md](./mobile-setup.md) |
 | Backend API | `backend` | Node.js + Express, Azure Container Apps (Consumption) |
 | Shared types | `packages/shared` | Pure TypeScript, zero runtime deps |
 | Edge agent | `packages/weighbridge-agent` | Node.js Windows Service |
@@ -129,11 +129,20 @@ Key tables:
 
 See [hardware-setup.md](./hardware-setup.md) for detailed setup.
 
-Two ingestion paths:
-1. **Legacy RS-232** → Edge Agent reads serial port → POST to `/api/weighbridge/ingest`
-2. **IP-based / cloud** → Direct webhook POST to `/api/weighbridge/ingest`
+Three connection types managed from the **Weighbridge** page (Settings → Weighbridges → Add Weighbridge):
 
-Live weight is stored in `weighbridge_live` (one row per device, upserted). Stable readings auto-save a `weigh_ticket`. Web dashboard connects to local edge agent WebSocket (ws://localhost:8765) for sub-second live display; falls back to 3s polling via cloud API.
+| Type | Description | Ingestion path |
+|------|-------------|---------------|
+| **Serial (RS-232/485)** | Legacy weighbridges via COM port | Edge Agent (Windows Service) reads serial → POST `/api/weighbridge/ingest` |
+| **TCP/IP** | LAN-connected indicators with Modbus/ASCII TCP | Edge Agent polls TCP socket → POST `/api/weighbridge/ingest` |
+| **Cloud** | Modern IP-enabled scales / cloud APIs | Scale POSTs directly to `/api/weighbridge/ingest` |
+
+Live weight is stored in `weighbridge_live` (one row per device, upserted). Stable readings auto-save a `weigh_ticket`. Web dashboard connects to local edge agent WebSocket (`ws://localhost:8765`) for sub-second live display; falls back to 3 s polling via cloud API.
+
+The weighbridge page has three tabs:
+- **Live Scales** — real-time weight cards with capacity bar and "Capture Live Weight" button
+- **Weigh Tickets** — scrollable ticket history with status badges
+- **Configuration** — per-scale settings, API key management, edge agent `.env` snippet
 
 ## CCTV / Camera Integration
 
