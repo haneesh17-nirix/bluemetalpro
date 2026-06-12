@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.29.12] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` patch expo-print build.gradle missing useDefaultAndroidSdkVersions call ([2d8e0b9])
+
+### CI / DevOps
+
+- revert actions to v4.3.1/v4.4.0 — v4.4.0/v4.5.0 do not exist ([e2d1763])
+- bump actions/checkout to v4.4.0 and setup-node to v4.5.0 (Node 24) ([fbef098])
+
 ## [1.29.11] — 2026-06-12
 
 
