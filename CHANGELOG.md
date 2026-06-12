@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.7] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` pin gesture-handler to 2.16.2 to fix Android build ([19f04a0])
+
 ## [1.29.6] — 2026-06-12
 
 
