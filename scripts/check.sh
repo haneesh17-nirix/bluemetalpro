@@ -160,13 +160,13 @@ REQUIRED=(
   database/migrations/013_notify_events_extended.sql
   database/migrations/014_add_tenants.sql
   database/migrations/015_platform_admin_flag.sql
-  database/migrations/015_weighbridge_counter_per_crusher.sql
   database/migrations/016_cascade_delete_tenant.sql
   database/migrations/017_quarry_purchases.sql
   database/migrations/018_fix_report_viewer_password.sql
   database/migrations/019_realistic_seed_data.sql
   database/migrations/020_fix_user_access.sql
   database/migrations/021_weighbridge_crusher_id.sql
+  database/migrations/022_weighbridge_counter_per_crusher.sql
   # Backend
   backend/src/index.ts
   backend/.env.example

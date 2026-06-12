@@ -13,7 +13,7 @@ on:
       - 'backend/**'
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   IMAGE_NAME: bluemetal-api
   CONTAINER_APP_NAME: bluemetal-prod-api
   RESOURCE_GROUP: bluemetal-prod-rg
@@ -27,9 +27,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.3.1
+      - uses: actions/checkout@v6.0.3
 
-      - uses: actions/setup-node@v4.4.0
+      - uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -112,7 +112,7 @@ jobs:
     environment: production
 
     steps:
-      - uses: actions/checkout@v4.3.1
+      - uses: actions/checkout@v6.0.3
 
       - name: Install PostgreSQL client
         run: sudo apt-get install -y postgresql-client
@@ -152,28 +152,10 @@ jobs:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           CONN="host=bluemetal-prod-postgres.postgres.database.azure.com port=5432 dbname=stonecrusherdb user=${{ secrets.DB_USER }} sslmode=require"
-          psql "$CONN" -f database/migrations/001_initial.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/002_weighbridge_cameras.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/003_test_accounts.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/004_crushers.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/005_seed_crusher_access.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/006_notifications_v2.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/007_seed_test_data.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/008_platform_admin.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/009_more_test_data.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/010_simplify_roles.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/011_fix_test_passwords.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/012_cleanup_duplicate_crushers.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/013_notify_events_extended.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/014_add_tenants.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/015_platform_admin_flag.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/015_weighbridge_counter_per_crusher.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/016_cascade_delete_tenant.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/017_quarry_purchases.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/018_fix_report_viewer_password.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/019_realistic_seed_data.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/020_fix_user_access.sql --set ON_ERROR_STOP=1 -q
-          psql "$CONN" -f database/migrations/021_weighbridge_crusher_id.sql --set ON_ERROR_STOP=1 -q
+          for f in $(ls database/migrations/*.sql | sort); do
+            echo "Applying $f…"
+            psql "$CONN" -f "$f" --set ON_ERROR_STOP=1 -q
+          done
 
       - name: Remove runner IP from firewall
         if: always()
