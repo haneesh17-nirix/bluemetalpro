@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.13] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` move patches to eas-build-post-install hook ([afb947f])
+
 ## [1.29.12] — 2026-06-12
 
 
