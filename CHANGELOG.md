@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.4] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` resolve expo doctor warnings and type errors ([489bb19])
+
 ## [1.29.3] — 2026-06-12
 
 
