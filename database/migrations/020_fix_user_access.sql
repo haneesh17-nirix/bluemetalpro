@@ -1,7 +1,7 @@
 -- ============================================================
 -- 020_fix_user_access.sql
 -- Restore user_tenant_access and user_crusher_access broken by
--- migration 019: the DO $$ block used hardcoded UUIDs that did
+-- migration 019: the DO block used hardcoded UUIDs that did
 -- not match the actual user UUIDs preserved by ON CONFLICT DO UPDATE.
 -- This migration uses email-based subqueries to find real UUIDs.
 -- Safe to re-run (ON CONFLICT DO NOTHING).
