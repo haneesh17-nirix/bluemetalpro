@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.11] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` patch expo-modules-core for AGP 8.3+ components.release compat ([9c6ba9e])
+
 ## [1.29.10] — 2026-06-12
 
 
