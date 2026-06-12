@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.15] — 2026-06-12
+
+
+### CI / DevOps
+
+- fix pre-flight/post-deploy automation and documentation ([504d9df])
+
 ## [1.29.14] — 2026-06-12
 
 
