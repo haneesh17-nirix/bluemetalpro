@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "eas-build-pre-install": "cd ../.. && npm install --ignore-scripts"
+    "eas-build-pre-install": "cd ../.. && npm install --ignore-scripts && npx patch-package"
   },
   "dependencies": {
     "@expo/ngrok": "^4.1.0",
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@types/react": "~18.2.79",
+    "patch-package": "^8.0.1",
     "typescript": "^5.4.0"
   },
   "expo": {
