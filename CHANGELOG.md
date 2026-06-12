@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.1] — 2026-06-12
+
+
+### Chores
+
+- `sidebar` rename Wages nav item to Attendance & Pay ([9e7265b])
+
 ## [1.29.0] — 2026-06-12
 
 
