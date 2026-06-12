@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.1] — 2026-06-12
+
+
+### Bug Fixes
+
+- `mobile` resolve @react-native-picker monorepo react-native lookup ([30ea4eb])
+
 ## [1.30.0] — 2026-06-12
 
 
